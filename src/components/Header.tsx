@@ -90,20 +90,24 @@ export function Header() {
   
   return (
     <>
-      <header className="bg-[#fff5f7] border-b border-[#ffc1d4] sticky top-0 z-40">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-24">
-            {/* Logo - Much Bigger */}
-            <Link to="/" className="flex items-center hover:opacity-80 transition-smooth">
+      <header className="bg-[#fff5f7] border-b border-[#ffc1d4] sticky top-0 z-40 safe-top">
+        <div className="mobile-container">
+          {/* Mobile-first: compact header */}
+          <div className="flex items-center justify-between h-16 sm:h-20">
+            {/* Logo - Compact on mobile */}
+            <Link to="/" className="flex items-center hover:opacity-80 transition-smooth touch-target">
               <img 
                 src="/ChucksBakesLogo.png" 
                 alt="Chuck's Bakes" 
-                className="h-20 w-auto"
+                className="h-12 w-auto sm:h-16"
+                loading="eager"
+                width="120"
+                height="48"
               />
             </Link>
             
-            {/* Navigation - Bigger Text */}
-            <nav className="hidden md:flex items-center gap-10">
+            {/* Desktop Navigation - Hidden on mobile */}
+            <nav className="hidden md:flex items-center gap-6 lg:gap-10">
               {navLinks.map((link) => {
                 const isActive = location.pathname === link.path;
                 
@@ -112,7 +116,7 @@ export function Header() {
                     key={link.path}
                     to={link.path}
                     className={classNames(
-                      'text-lg font-bold uppercase tracking-wide transition-smooth hover:text-[#3b1f1e]',
+                      'text-base lg:text-lg font-bold uppercase tracking-wide transition-smooth hover:text-[#3b1f1e] touch-target px-2',
                       isActive ? 'text-[#3b1f1e]' : 'text-[#7d4f45]'
                     )}
                   >
@@ -122,25 +126,23 @@ export function Header() {
               })}
             </nav>
             
-            {/* Right side - Just Cart */}
-            <div className="flex items-center">
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="relative p-3 hover:bg-[#ffd1dc] rounded-lg transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7]"
-                aria-label={`View request (${requestList.length} items)`}
-              >
-                <ShoppingBag className="w-7 h-7 text-[#3b1f1e]" strokeWidth={2.5} />
-                {requestList.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-6 h-6 bg-[#ff6b9d] text-white text-sm font-bold rounded-full flex items-center justify-center">
-                    {requestList.length}
-                  </span>
-                )}
-              </button>
-            </div>
+            {/* Cart Button - Bigger touch target */}
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="relative p-3 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] focus:ring-offset-2 touch-target active:scale-95"
+              aria-label={`View request (${requestList.length} items)`}
+            >
+              <ShoppingBag className="w-6 h-6 sm:w-7 sm:h-7 text-[#3b1f1e]" strokeWidth={2.5} />
+              {requestList.length > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[24px] h-6 px-1.5 bg-[#ff6b9d] text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  {requestList.length}
+                </span>
+              )}
+            </button>
           </div>
           
-          {/* Mobile nav */}
-          <nav className="md:hidden flex gap-4 pb-3 overflow-x-auto border-t border-[#ffc1d4] pt-3">
+          {/* Mobile bottom nav - scrollable */}
+          <nav className="md:hidden flex gap-4 pb-3 overflow-x-auto border-t border-[#ffc1d4] pt-3 -mx-4 px-4 scrollbar-hide">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.path;
               
@@ -149,8 +151,8 @@ export function Header() {
                   key={link.path}
                   to={link.path}
                   className={classNames(
-                    'text-xs font-bold uppercase whitespace-nowrap transition-smooth',
-                    isActive ? 'text-[#3b1f1e]' : 'text-[#7d4f45]'
+                    'text-sm font-bold uppercase whitespace-nowrap transition-smooth px-3 py-2 rounded-lg touch-target',
+                    isActive ? 'text-[#3b1f1e] bg-[#ffd1dc]' : 'text-[#7d4f45] hover:bg-[#ffd1dc]/50'
                   )}
                 >
                   {link.label}

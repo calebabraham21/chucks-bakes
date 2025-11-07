@@ -108,18 +108,18 @@ export function Order() {
   const showNextButton = currentStep >= 2 && currentStep < 4;
   
   return (
-    <div className="min-h-screen bg-[#fde7ee]">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <h1 className="text-3xl font-bold text-[#3b1f1e] mb-8 text-center">
+    <div className="min-h-screen bg-[#fde7ee] pb-24">
+      <div className="mobile-container py-4 sm:py-8 max-w-7xl">
+        <h1 className="font-bold text-[#3b1f1e] mb-4 sm:mb-8 text-center">
           Order Wizard
         </h1>
         
         <Stepper steps={STEPS} currentStep={currentStep} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-6">
           {/* Main content */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-3xl shadow-soft p-8">
+            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-soft p-4 sm:p-8">
               {currentStep === 1 && (
                 <ChooseItem onSelect={handleItemSelect} />
               )}
@@ -152,8 +152,8 @@ export function Order() {
                 <ReviewAndSend draft={orderDraft} />
               )}
               
-              {/* Navigation buttons */}
-              <div className="flex gap-3 mt-8 pt-8 border-t border-[#ffd1dc]">
+              {/* Navigation buttons - desktop only */}
+              <div className="hidden sm:flex gap-3 mt-8 pt-8 border-t border-[#ffd1dc]">
                 {canGoBack && (
                   <Button
                     variant="secondary"
@@ -182,6 +182,38 @@ export function Order() {
           {/* Summary sidebar */}
           <div className="lg:col-span-1">
             <SummarySidebar draft={orderDraft} currentStep={currentStep} />
+          </div>
+        </div>
+      </div>
+      
+      {/* Sticky bottom navigation - mobile only */}
+      <div className="sm:hidden sticky-cta-bar">
+        <div className="mobile-container py-3">
+          <div className="flex gap-3">
+            {canGoBack && (
+              <Button
+                variant="secondary"
+                onClick={handleBack}
+                size="lg"
+                className="flex-shrink-0 flex items-center gap-2"
+              >
+                <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+                <span className="sr-only sm:not-sr-only">Back</span>
+              </Button>
+            )}
+            
+            {showNextButton && (
+              <Button
+                variant="primary"
+                onClick={handleNext}
+                size="lg"
+                fullWidth={!canGoBack}
+                className="flex items-center justify-center gap-2"
+              >
+                <span>Continue to {STEPS[currentStep]?.label}</span>
+                <ArrowRight className="w-5 h-5" aria-hidden="true" />
+              </Button>
+            )}
           </div>
         </div>
       </div>

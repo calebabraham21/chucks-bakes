@@ -44,6 +44,8 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
       <Input
         label="Name"
         type="text"
+        inputMode="text"
+        autoComplete="name"
         placeholder="Your full name"
         error={errors.name?.message}
         required
@@ -53,6 +55,8 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
       <Input
         label="Email"
         type="email"
+        inputMode="email"
+        autoComplete="email"
         placeholder="your@email.com"
         error={errors.email?.message}
         required
@@ -60,10 +64,13 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
       />
       
       <Input
-        label="Phone (optional)"
+        label="Phone"
         type="tel"
+        inputMode="tel"
+        autoComplete="tel"
         placeholder="(555) 123-4567"
         error={errors.phone?.message}
+        helperText="We'll text you for quick updates"
         {...register('phone')}
       />
       
@@ -85,20 +92,22 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
         )}
       />
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="space-y-4">
         <Input
-          label="Preferred Date (optional)"
+          label="Preferred Date"
           type="date"
+          autoComplete="off"
           error={errors.targetDate?.message}
           helperText="When do you need it?"
           {...register('targetDate')}
         />
         
         <Input
-          label="Preferred Time (optional)"
+          label="Preferred Time"
           type="time"
+          autoComplete="off"
           error={errors.targetTime?.message}
-          helperText="What time?"
+          helperText="What time works best?"
           {...register('targetTime')}
         />
       </div>
@@ -106,37 +115,39 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
       <Input
         label="Budget (optional)"
         type="text"
+        inputMode="text"
         placeholder="e.g., $50-100"
         error={errors.budget?.message}
-        helperText="What's your approximate budget?"
+        helperText="Helps us suggest options"
         {...register('budget')}
       />
       
       <div className="w-full">
         <label 
           htmlFor="notes"
-          className="block text-sm font-medium text-bakery-brown-700 mb-1.5"
+          className="block text-base font-medium text-bakery-brown-700 mb-2"
         >
           Special Notes (optional)
         </label>
         <textarea
           id="notes"
-          rows={3}
+          rows={4}
           placeholder="Any special requests or dietary restrictions?"
-          className="w-full px-4 py-2.5 rounded-xl border border-bakery-brown-200 transition-smooth bg-white text-bakery-cocoa placeholder:text-bakery-brown-300 focus:outline-none focus:ring-2 focus:ring-bakery-pink-400 focus:border-bakery-pink-400"
+          className="w-full px-3 py-3 rounded-xl border-2 border-bakery-brown-200 transition-smooth bg-white text-bakery-cocoa text-base placeholder:text-bakery-brown-300 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-bakery-pink-400 touch-manipulation resize-y min-h-[100px]"
           {...register('notes')}
         />
         {errors.notes && (
-          <p className="mt-1.5 text-sm text-red-600" role="alert">
-            {errors.notes.message}
-          </p>
+          <div className="mt-2 text-sm text-red-700 bg-red-50 px-3 py-2 rounded-lg border border-red-200" role="alert">
+            <span className="font-medium">⚠️ {errors.notes.message}</span>
+          </div>
         )}
       </div>
       
       <Input
         label="How did you hear about us? (optional)"
         type="text"
-        placeholder="e.g., Instagram, friend referral, Google search"
+        inputMode="text"
+        placeholder="Instagram, friend, Google, etc."
         error={errors.referralSource?.message}
         {...register('referralSource')}
       />
