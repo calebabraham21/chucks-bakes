@@ -5,10 +5,21 @@ import { Order } from './pages/Order';
 import { Recipes } from './pages/Recipes';
 import { Merch } from './pages/Merch';
 import { Success } from './pages/Success';
+import { ComingSoon } from './pages/ComingSoon';
+
+// 🚧 Toggle this to show/hide the coming soon page
+// Set to false when you're ready to launch the full site!
+const COMING_SOON_MODE = true;
 
 function AppContent() {
   const location = useLocation();
 
+  // If in coming soon mode, show only that page
+  if (COMING_SOON_MODE) {
+    return <ComingSoon />;
+  }
+
+  // Normal site
   return (
     <div className="min-h-screen bg-[#fde7ee]">
       <Header />
