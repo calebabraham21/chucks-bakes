@@ -109,7 +109,7 @@ export function Order() {
   
   return (
     <div className="min-h-screen bg-[#fde7ee] pb-24">
-      <div className="mobile-container py-4 sm:py-8 max-w-7xl">
+      <div className="container mx-auto px-4 sm:px-5 md:px-8 py-4 sm:py-8 max-w-7xl">
         <h1 className="font-bold text-[#3b1f1e] mb-4 sm:mb-8 text-center">
           Order Wizard
         </h1>

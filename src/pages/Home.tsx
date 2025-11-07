@@ -12,7 +12,7 @@ export function Home() {
   return (
     <div className="min-h-screen bg-[#fde7ee]">
       {/* Hero Section */}
-      <section className="mobile-container py-8 sm:py-12 md:py-20">
+      <section className="container mx-auto px-4 sm:px-5 md:px-8 py-8 sm:py-12 md:py-20">
         {/* Large Hero Text - mobile-first */}
         <div className="text-center mb-8 sm:mb-12 md:mb-16">
           <h1 className="font-black text-[#3b1f1e] leading-tight">

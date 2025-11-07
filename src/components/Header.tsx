@@ -91,7 +91,7 @@ export function Header() {
   return (
     <>
       <header className="bg-[#fff5f7] border-b border-[#ffc1d4] sticky top-0 z-40 safe-top">
-        <div className="mobile-container">
+        <div className="container mx-auto px-4 sm:px-5 md:px-8">
           {/* Mobile-first: compact header */}
           <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo - Compact on mobile */}
