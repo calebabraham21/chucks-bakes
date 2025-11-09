@@ -41,17 +41,17 @@ export function ReviewAndSend({ draft }: ReviewAndSendProps) {
   return (
     <div>
       <div>
-        <h2 id="step-heading" className="text-2xl font-semibold text-bakery-cocoa mb-2" tabIndex={-1}>
+        <h2 id="step-heading" className="text-2xl font-semibold text-black mb-2" tabIndex={-1}>
           Review & Send
         </h2>
-        <p className="text-bakery-brown-600 mb-6">
+        <p className="text-gray-600 mb-6">
           Check your order details and send your request
         </p>
       </div>
       
       <Card className="mb-6">
-        <h3 className="text-lg font-semibold text-bakery-cocoa mb-4">Order Summary</h3>
-        <pre className="whitespace-pre-wrap text-sm text-bakery-brown-700 font-sans bg-bakery-cream p-4 rounded-lg">
+        <h3 className="text-lg font-semibold text-black mb-4">Order Summary</h3>
+        <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-bakery-cream p-4 rounded-lg">
           {summary}
         </pre>
       </Card>
@@ -71,7 +71,7 @@ export function ReviewAndSend({ draft }: ReviewAndSendProps) {
           </Button>
         </div>
         
-        <p className="text-sm text-bakery-brown-600 text-center">
+        <p className="text-sm text-gray-600 text-center">
           Add this item to your request list. You can add multiple items before sending.
         </p>
         

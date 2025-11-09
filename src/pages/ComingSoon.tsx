@@ -13,7 +13,7 @@ export function ComingSoon() {
         </div>
         
         <h1 
-          className="text-[#3b1f1e] font-bold mb-8"
+          className="text-[#000000] font-bold mb-8"
           style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}
         >
           Coming Soon

@@ -23,7 +23,6 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
       phone: '',
       deliveryMethod: 'pickup',
       targetDate: '',
-      targetTime: '',
       budget: '',
       notes: '',
       referralSource: '',
@@ -33,10 +32,10 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <h2 id="step-heading" className="text-2xl font-semibold text-bakery-cocoa mb-2" tabIndex={-1}>
+        <h2 id="step-heading" className="text-2xl font-semibold text-black mb-2" tabIndex={-1}>
           Contact Information
         </h2>
-        <p className="text-bakery-brown-600 mb-6">
+        <p className="text-gray-600 mb-6">
           How can we reach you about your order?
         </p>
       </div>
@@ -92,25 +91,14 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
         )}
       />
       
-      <div className="space-y-4">
-        <Input
-          label="Preferred Date"
-          type="date"
-          autoComplete="off"
-          error={errors.targetDate?.message}
-          helperText="When do you need it?"
-          {...register('targetDate')}
-        />
-        
-        <Input
-          label="Preferred Time"
-          type="time"
-          autoComplete="off"
-          error={errors.targetTime?.message}
-          helperText="What time works best?"
-          {...register('targetTime')}
-        />
-      </div>
+      <Input
+        label="Preferred Date"
+        type="date"
+        autoComplete="off"
+        error={errors.targetDate?.message}
+        helperText="When do you need it?"
+        {...register('targetDate')}
+      />
       
       <Input
         label="Budget (optional)"
@@ -125,7 +113,7 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
       <div className="w-full">
         <label 
           htmlFor="notes"
-          className="block text-base font-medium text-bakery-brown-700 mb-2"
+          className="block text-base font-medium text-gray-700 mb-2"
         >
           Special Notes (optional)
         </label>
@@ -133,7 +121,7 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
           id="notes"
           rows={4}
           placeholder="Any special requests or dietary restrictions?"
-          className="w-full px-3 py-3 rounded-xl border-2 border-bakery-brown-200 transition-smooth bg-white text-bakery-cocoa text-base placeholder:text-bakery-brown-300 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-bakery-pink-400 touch-manipulation resize-y min-h-[100px]"
+          className="w-full px-3 py-3 rounded-xl border-2 border-gray-200 transition-smooth bg-white text-black text-base placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-bakery-pink-400 touch-manipulation resize-y min-h-[100px]"
           {...register('notes')}
         />
         {errors.notes && (

@@ -79,17 +79,27 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(dataToSend),
-      // Google Apps Script can take a moment
-      timeout: 10000,
+      redirect: 'follow', // Important: follow redirects from Google
     });
 
+    // Get response text first to handle parsing errors
+    const responseText = await response.text();
+    
     // Check if Google Apps Script responded
     if (!response.ok) {
       console.error('Google Apps Script error:', response.status, response.statusText);
+      console.error('Response body:', responseText);
       throw new Error('Failed to submit order to Google Sheets');
     }
 
-    const result = await response.json();
+    // Parse the response
+    let result;
+    try {
+      result = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('Failed to parse Google Apps Script response:', responseText);
+      throw new Error('Invalid response from Google Sheets');
+    }
 
     // Check if Google Apps Script reported success
     if (result.statusCode !== 200) {

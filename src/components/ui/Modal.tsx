@@ -60,7 +60,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
   
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-bakery-brown-900/50 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm animate-in fade-in duration-200"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -77,16 +77,16 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-bakery-brown-100">
-          <h2 id="modal-title" className="text-xl font-semibold text-bakery-cocoa">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+          <h2 id="modal-title" className="text-xl font-semibold text-black">
             {title}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-bakery-brown-100 transition-smooth focus:outline-none focus:ring-2 focus:ring-bakery-pink-400"
+            className="p-2 rounded-lg hover:bg-gray-100 transition-smooth focus:outline-none focus:ring-2 focus:ring-bakery-pink-400"
             aria-label="Close modal"
           >
-            <X className="w-5 h-5 text-bakery-brown-600" />
+            <X className="w-5 h-5 text-gray-600" />
           </button>
         </div>
         

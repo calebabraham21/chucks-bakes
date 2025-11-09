@@ -17,7 +17,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label 
             htmlFor={inputId}
-            className="block text-base font-medium text-bakery-brown-700 mb-2"
+            className="block text-base font-medium text-gray-700 mb-2"
           >
             {label}
             {props.required && <span className="text-red-600 ml-1" aria-label="required">*</span>}
@@ -29,14 +29,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           id={inputId}
           className={classNames(
             'w-full px-3 py-3 rounded-xl border-2 transition-smooth text-base min-h-[48px]',
-            'bg-white text-bakery-cocoa',
-            'placeholder:text-bakery-brown-300',
+            'bg-white text-black',
+            'placeholder:text-gray-300',
             'focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-bakery-pink-400',
             'touch-manipulation',
             error 
               ? 'border-red-500 bg-red-50/30 focus:ring-red-400 focus:border-red-500' 
-              : 'border-bakery-brown-200',
-            'disabled:bg-bakery-brown-50 disabled:cursor-not-allowed disabled:opacity-60',
+              : 'border-gray-200',
+            'disabled:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60',
             className
           )}
           aria-invalid={error ? 'true' : 'false'}
@@ -53,7 +53,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
         
         {!error && helperText && (
-          <p id={`${inputId}-helper`} className="mt-2 text-sm text-bakery-brown-600">
+          <p id={`${inputId}-helper`} className="mt-2 text-sm text-gray-600">
             {helperText}
           </p>
         )}

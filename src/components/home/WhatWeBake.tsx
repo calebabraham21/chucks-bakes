@@ -15,6 +15,12 @@ const items: BakeItem[] = [
     color: '#ffddeb'
   },
   {
+    title: 'Cupcakes',
+    description: 'Customizable flavors and frostings.',
+    image: '/cupcakes.PNG',
+    color: '#ffe5f0'
+  },
+  {
     title: 'Brownies',
     description: 'Fudgy, rich, and shareable.',
     image: '/brownies.PNG',
@@ -23,7 +29,7 @@ const items: BakeItem[] = [
   {
     title: 'Cookies',
     description: 'Chewy classics and seasonal specials.',
-    image: '/brownies.PNG', // Placeholder - update if you have cookies image
+    image: '/Cookies.PNG',
     color: '#ffc1d4'
   },
   {
@@ -36,24 +42,19 @@ const items: BakeItem[] = [
 
 export function WhatWeBake() {
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-white">
-      <div className="container mx-auto px-4 sm:px-5 md:px-8">
-        <div className="text-center mb-8 sm:mb-12">
+    <section className="py-8 sm:py-10 md:py-12 bg-white">
+      <div className="container mx-auto">
+        <div className="text-center mb-6 sm:mb-8">
           <h2 
-            className="font-black text-[#3b1f1e] mb-3"
-            style={{ fontSize: 'clamp(1.75rem, 5vw, 2.25rem)' }}
+            className="font-black text-[#000000] mb-2"
+            style={{ fontSize: 'clamp(1.5rem, 4.5vw, 1.875rem)' }}
           >
             What We Bake
           </h2>
-          <p 
-            className="text-[#4a2c2a] max-w-2xl mx-auto"
-            style={{ fontSize: 'clamp(0.938rem, 3.6vw, 1.063rem)' }}
-          >
-            Made fresh to order, just for you
-          </p>
+          
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           {items.map((item) => (
             <Link 
               key={item.title}
@@ -78,16 +79,16 @@ export function WhatWeBake() {
                 </div>
                 
                 {/* Content */}
-                <div className="p-5 sm:p-6">
+                <div className="p-3 sm:p-4">
                   <h3 
-                    className="font-black text-[#3b1f1e] mb-2"
-                    style={{ fontSize: 'clamp(1.25rem, 4vw, 1.5rem)' }}
+                    className="font-black text-[#000000] mb-1"
+                    style={{ fontSize: 'clamp(1.125rem, 3.5vw, 1.313rem)' }}
                   >
                     {item.title}
                   </h3>
                   <p 
-                    className="text-[#4a2c2a] leading-snug"
-                    style={{ fontSize: 'clamp(0.875rem, 3.5vw, 0.938rem)' }}
+                    className="text-[#262626] leading-snug"
+                    style={{ fontSize: 'clamp(0.75rem, 3vw, 0.813rem)' }}
                   >
                     {item.description}
                   </p>

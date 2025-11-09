@@ -4,14 +4,15 @@ import { Button } from '../components/ui/Button';
 import { Stepper } from '../components/ui/Stepper';
 import { ChooseItem } from '../components/order/ChooseItem';
 import { ConfigureCake } from '../components/order/ConfigureCake';
+import { ConfigureCupcakes } from '../components/order/ConfigureCupcakes';
 import { ConfigureTreats } from '../components/order/ConfigureTreats';
 import { ContactForm } from '../components/order/ContactForm';
 import { ReviewAndSend } from '../components/order/ReviewAndSend';
 import { SummarySidebar } from '../components/order/SummarySidebar';
 import { useOrderStore } from '../lib/state';
-import { ITEMS } from '../lib/constants';
+import { ITEMS, TREAT_UNITS } from '../lib/constants';
 import type { ItemType } from '../lib/constants';
-import type { CakeConfig, TreatOrder, ContactInfo } from '../lib/validation';
+import type { CakeConfig, CupcakeConfig, TreatOrder, ContactInfo } from '../lib/validation';
 
 const STEPS = [
   { id: 1, label: 'Choose Item' },
@@ -48,6 +49,19 @@ export function Order() {
           colors: [],
         },
       });
+    } else if (itemType === ITEMS.CUPCAKES) {
+      const unitInfo = TREAT_UNITS[ITEMS.CUPCAKES];
+      setOrderDraft({
+        itemType: ITEMS.CUPCAKES,
+        config: {
+          quantity: unitInfo.perUnit,
+          flavors: [],
+          fillings: [],
+          smbcFlavor: '',
+          theme: '',
+          colors: [],
+        },
+      });
     } else {
       setOrderDraft({
         itemType,
@@ -70,8 +84,18 @@ export function Order() {
     }
   };
   
+  const handleCupcakeConfig = (config: CupcakeConfig) => {
+    if (orderDraft?.itemType === ITEMS.CUPCAKES) {
+      setOrderDraft({
+        ...orderDraft,
+        config,
+      });
+      setCurrentStep(3);
+    }
+  };
+  
   const handleTreatConfig = (order: TreatOrder) => {
-    if (orderDraft && orderDraft.itemType !== ITEMS.CAKE) {
+    if (orderDraft && orderDraft.itemType !== ITEMS.CAKE && orderDraft.itemType !== ITEMS.CUPCAKES) {
       setOrderDraft({
         ...orderDraft,
         order,
@@ -109,17 +133,17 @@ export function Order() {
   
   return (
     <div className="min-h-screen bg-[#fde7ee] pb-24">
-      <div className="container mx-auto px-4 sm:px-5 md:px-8 py-4 sm:py-8 max-w-7xl">
-        <h1 className="font-bold text-[#3b1f1e] mb-4 sm:mb-8 text-center">
+      <div className="container mx-auto py-3 sm:py-5">
+        <h1 className="font-bold text-[#000000] mb-3 sm:mb-5 text-center">
           Order Wizard
         </h1>
         
         <Stepper steps={STEPS} currentStep={currentStep} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5 mt-4">
           {/* Main content */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-soft p-4 sm:p-8">
+            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-soft p-3 sm:p-5">
               {currentStep === 1 && (
                 <ChooseItem onSelect={handleItemSelect} />
               )}
@@ -130,6 +154,11 @@ export function Order() {
                     <ConfigureCake
                       defaultValues={'config' in orderDraft ? orderDraft.config : undefined}
                       onSubmit={handleCakeConfig}
+                    />
+                  ) : orderDraft.itemType === ITEMS.CUPCAKES ? (
+                    <ConfigureCupcakes
+                      defaultValues={'config' in orderDraft ? orderDraft.config : undefined}
+                      onSubmit={handleCupcakeConfig}
                     />
                   ) : (
                     <ConfigureTreats
@@ -153,7 +182,7 @@ export function Order() {
               )}
               
               {/* Navigation buttons - desktop only */}
-              <div className="hidden sm:flex gap-3 mt-8 pt-8 border-t border-[#ffd1dc]">
+              <div className="hidden sm:flex gap-3 mt-5 pt-5 border-t border-[#ffd1dc]">
                 {canGoBack && (
                   <Button
                     variant="secondary"

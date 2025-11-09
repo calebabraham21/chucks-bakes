@@ -1,5 +1,5 @@
-import type { OrderDraft, RequestItem, CakeConfig, TreatOrder } from './validation';
-import { ITEMS, ITEM_LABELS, CAKE_SIZES, CAKE_FLAVORS, CAKE_FILLINGS, FROSTING_OPTIONS, SMBC_FLAVORS } from './constants';
+import type { OrderDraft, RequestItem, CakeConfig, CupcakeConfig, TreatOrder } from './validation';
+import { ITEMS, ITEM_LABELS, CAKE_SIZES, CAKE_FLAVORS, CUPCAKE_FLAVORS, CAKE_FILLINGS, FROSTING_OPTIONS, SMBC_FLAVORS } from './constants';
 
 // Generate human-readable summary for cake configuration
 function summarizeCakeConfig(config: CakeConfig): string {
@@ -31,6 +31,42 @@ function summarizeCakeConfig(config: CakeConfig): string {
   return lines.join('\n');
 }
 
+// Generate human-readable summary for cupcake configuration
+function summarizeCupcakeConfig(config: CupcakeConfig): string {
+  let lines = [
+    `Quantity: ${config.quantity}`,
+  ];
+  
+  if (config.flavors && config.flavors.length > 0) {
+    const flavorLabels = config.flavors.map(f => 
+      CUPCAKE_FLAVORS.find(flavor => flavor.value === f)?.label || f
+    );
+    lines.push(`Flavors: ${flavorLabels.join(', ')}`);
+  }
+  
+  if (config.fillings && config.fillings.length > 0) {
+    const fillingLabels = config.fillings.map(f => 
+      CAKE_FILLINGS.find(filling => filling.value === f)?.label || f
+    );
+    lines.push(`Fillings: ${fillingLabels.join(', ')}`);
+  }
+  
+  if (config.smbcFlavor) {
+    const smbcFlavor = SMBC_FLAVORS.find(f => f.value === config.smbcFlavor)?.label || config.smbcFlavor;
+    lines.push(`Buttercream: ${smbcFlavor}`);
+  }
+  
+  if (config.theme) {
+    lines.push(`Theme: ${config.theme}`);
+  }
+  
+  if (config.colors && config.colors.length > 0) {
+    lines.push(`Colors: ${config.colors.join(', ')}`);
+  }
+  
+  return lines.join('\n');
+}
+
 // Generate human-readable summary for treat order
 function summarizeTreatOrder(order: TreatOrder): string {
   return `Quantity: ${order.quantity}`;
@@ -47,6 +83,8 @@ export function makePlainTextSummary(item: OrderDraft | RequestItem): string {
   // Configuration details
   if (item.itemType === ITEMS.CAKE && 'config' in item) {
     lines.push(summarizeCakeConfig(item.config));
+  } else if (item.itemType === ITEMS.CUPCAKES && 'config' in item) {
+    lines.push(summarizeCupcakeConfig(item.config));
   } else if ('order' in item) {
     lines.push(summarizeTreatOrder(item.order));
   }

@@ -22,7 +22,20 @@ export async function submitOrder(orderData: RequestItem & { website?: string })
       body: JSON.stringify(orderData),
     });
 
-    const data = await response.json();
+    // Check if response has content
+    const text = await response.text();
+    
+    if (!text) {
+      throw new Error('Empty response from server');
+    }
+    
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (parseError) {
+      console.error('Failed to parse response:', text);
+      throw new Error('Invalid response from server');
+    }
 
     if (!response.ok) {
       throw new Error(data.message || 'Failed to submit order');

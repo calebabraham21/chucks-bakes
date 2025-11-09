@@ -22,7 +22,7 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
     return (
       <fieldset ref={ref} className={classNames('w-full', className)}>
         {label && (
-          <legend className="block text-sm font-medium text-bakery-brown-700 mb-3">
+          <legend className="block text-sm font-medium text-gray-700 mb-3">
             {label}
             {props.required && <span className="text-bakery-pink-500 ml-1">*</span>}
           </legend>
@@ -41,7 +41,7 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
                     'flex items-start p-4 rounded-xl border-2 cursor-pointer transition-smooth',
                     isChecked
                       ? 'border-bakery-pink-400 bg-bakery-pink-50'
-                      : 'border-bakery-brown-200 hover:border-bakery-pink-300 hover:bg-bakery-pink-50/50',
+                      : 'border-gray-200 hover:border-bakery-pink-300 hover:bg-bakery-pink-50/50',
                     'focus-within:ring-2 focus-within:ring-bakery-pink-400 focus-within:ring-offset-2'
                   )}
                 >
@@ -52,16 +52,16 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
                     value={option.value}
                     checked={isChecked}
                     onChange={(e) => onChange?.(e.target.value)}
-                    className="mt-0.5 w-4 h-4 text-bakery-pink-500 border-bakery-brown-300 focus:ring-bakery-pink-400"
+                    className="mt-0.5 w-4 h-4 text-bakery-pink-500 border-gray-300 focus:ring-bakery-pink-400"
                     {...props}
                   />
                   
                   <div className="ml-3 flex-1">
-                    <span className="block text-sm font-medium text-bakery-brown-800">
+                    <span className="block text-sm font-medium text-gray-800">
                       {option.label}
                     </span>
                     {option.helper && (
-                      <span className="block mt-1 text-sm text-bakery-brown-600">
+                      <span className="block mt-1 text-sm text-gray-600">
                         {option.helper}
                       </span>
                     )}

@@ -25,7 +25,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label 
             htmlFor={selectId}
-            className="block text-sm font-medium text-bakery-brown-700 mb-1.5"
+            className="block text-sm font-medium text-gray-700 mb-1.5"
           >
             {label}
             {props.required && <span className="text-bakery-pink-500 ml-1">*</span>}
@@ -38,12 +38,12 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             id={selectId}
             className={classNames(
               'w-full px-4 py-2.5 pr-10 rounded-xl border transition-smooth appearance-none',
-              'bg-white text-bakery-cocoa',
+              'bg-white text-black',
               'focus:outline-none focus:ring-2 focus:ring-bakery-pink-400 focus:border-bakery-pink-400',
               error 
                 ? 'border-red-400 focus:ring-red-400 focus:border-red-400' 
-                : 'border-bakery-brown-200',
-              'disabled:bg-bakery-brown-50 disabled:cursor-not-allowed',
+                : 'border-gray-200',
+              'disabled:bg-gray-50 disabled:cursor-not-allowed',
               className
             )}
             aria-invalid={error ? 'true' : 'false'}
@@ -65,7 +65,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           </select>
           
           <ChevronDown 
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-bakery-brown-400 pointer-events-none" 
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" 
             aria-hidden="true"
           />
         </div>
@@ -77,7 +77,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         )}
         
         {!error && helperText && (
-          <p id={`${selectId}-helper`} className="mt-1.5 text-sm text-bakery-brown-500">
+          <p id={`${selectId}-helper`} className="mt-1.5 text-sm text-gray-500">
             {helperText}
           </p>
         )}

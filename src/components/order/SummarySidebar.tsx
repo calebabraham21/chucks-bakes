@@ -28,14 +28,14 @@ export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
           aria-expanded={!isCollapsed}
           aria-controls="summary-content"
         >
-          <h3 className="text-lg font-semibold text-bakery-cocoa">
+          <h3 className="text-lg font-semibold text-black">
             Order Summary
           </h3>
           <span className="lg:hidden">
             {isCollapsed ? (
-              <ChevronDown className="w-5 h-5 text-bakery-brown-600" />
+              <ChevronDown className="w-5 h-5 text-gray-600" />
             ) : (
-              <ChevronUp className="w-5 h-5 text-bakery-brown-600" />
+              <ChevronUp className="w-5 h-5 text-gray-600" />
             )}
           </span>
         </button>
@@ -49,10 +49,10 @@ export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
         >
           {/* Item type */}
           <div>
-            <p className="text-xs font-medium text-bakery-brown-500 uppercase tracking-wide mb-1">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
               Item
             </p>
-            <p className="text-sm font-medium text-bakery-cocoa">
+            <p className="text-sm font-medium text-black">
               {itemLabel}
             </p>
           </div>
@@ -60,10 +60,10 @@ export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
           {/* Configuration details */}
           {draft.itemType === ITEMS.CAKE && 'config' in draft && currentStep >= 2 && (
             <div>
-              <p className="text-xs font-medium text-bakery-brown-500 uppercase tracking-wide mb-2">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
                 Configuration
               </p>
-              <div className="space-y-1.5 text-sm text-bakery-brown-700">
+              <div className="space-y-1.5 text-sm text-gray-700">
                 {draft.config.size && (
                   <p>Size: {draft.config.size}</p>
                 )}
@@ -86,12 +86,40 @@ export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
             </div>
           )}
           
-          {draft.itemType !== ITEMS.CAKE && 'order' in draft && currentStep >= 2 && (
+          {draft.itemType === ITEMS.CUPCAKES && 'config' in draft && currentStep >= 2 && (
             <div>
-              <p className="text-xs font-medium text-bakery-brown-500 uppercase tracking-wide mb-2">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                Configuration
+              </p>
+              <div className="space-y-1.5 text-sm text-gray-700">
+                {draft.config.quantity && (
+                  <p>Quantity: {draft.config.quantity}</p>
+                )}
+                {draft.config.flavors && draft.config.flavors.length > 0 && (
+                  <p>Flavors: {draft.config.flavors.join(', ')}</p>
+                )}
+                {draft.config.fillings && draft.config.fillings.length > 0 && (
+                  <p>Fillings: {draft.config.fillings.join(', ')}</p>
+                )}
+                {draft.config.smbcFlavor && (
+                  <p>Buttercream: {draft.config.smbcFlavor}</p>
+                )}
+                {draft.config.theme && (
+                  <p>Theme: {draft.config.theme}</p>
+                )}
+                {draft.config.colors && draft.config.colors.length > 0 && (
+                  <p>Colors: {draft.config.colors.join(', ')}</p>
+                )}
+              </div>
+            </div>
+          )}
+          
+          {draft.itemType !== ITEMS.CAKE && draft.itemType !== ITEMS.CUPCAKES && 'order' in draft && currentStep >= 2 && (
+            <div>
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
                 Quantity
               </p>
-              <p className="text-sm text-bakery-brown-700">
+              <p className="text-sm text-gray-700">
                 {draft.order.quantity || '—'}
               </p>
             </div>
@@ -100,10 +128,10 @@ export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
           {/* Contact info */}
           {'contact' in draft && draft.contact && currentStep >= 3 && (
             <div>
-              <p className="text-xs font-medium text-bakery-brown-500 uppercase tracking-wide mb-2">
+              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
                 Contact
               </p>
-              <div className="space-y-1.5 text-sm text-bakery-brown-700">
+              <div className="space-y-1.5 text-sm text-gray-700">
                 <p>{draft.contact.name}</p>
                 <p>{draft.contact.email}</p>
                 {draft.contact.phone && <p>{draft.contact.phone}</p>}
@@ -115,7 +143,7 @@ export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
           )}
           
           {currentStep < 3 && (
-            <p className="text-xs text-bakery-brown-500 italic">
+            <p className="text-xs text-gray-500 italic">
               Continue to see full summary
             </p>
           )}

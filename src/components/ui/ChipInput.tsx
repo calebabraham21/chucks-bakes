@@ -49,7 +49,7 @@ export const ChipInput = forwardRef<HTMLInputElement, ChipInputProps>(
         {label && (
           <label 
             htmlFor={chipInputId}
-            className="block text-sm font-medium text-bakery-brown-700 mb-1.5"
+            className="block text-sm font-medium text-gray-700 mb-1.5"
           >
             {label}
           </label>
@@ -62,13 +62,13 @@ export const ChipInput = forwardRef<HTMLInputElement, ChipInputProps>(
             'focus-within:ring-2 focus-within:ring-bakery-pink-400 focus-within:border-bakery-pink-400',
             error 
               ? 'border-red-400 focus-within:ring-red-400 focus-within:border-red-400' 
-              : 'border-bakery-brown-200'
+              : 'border-gray-200'
           )}
         >
           {value.map((chip, index) => (
             <span
               key={index}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-bakery-pink-100 text-bakery-brown-800 text-sm font-medium animate-in fade-in duration-200"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-bakery-pink-100 text-gray-800 text-sm font-medium animate-in fade-in duration-200"
             >
               {chip}
               <button
@@ -92,7 +92,7 @@ export const ChipInput = forwardRef<HTMLInputElement, ChipInputProps>(
             placeholder={value.length === 0 ? placeholder : undefined}
             disabled={!!isMaxReached}
             className={classNames(
-              'flex-1 min-w-[120px] outline-none bg-transparent text-bakery-cocoa placeholder:text-bakery-brown-300',
+              'flex-1 min-w-[120px] outline-none bg-transparent text-black placeholder:text-gray-300',
               isMaxReached && 'cursor-not-allowed'
             )}
             aria-describedby={
@@ -108,13 +108,13 @@ export const ChipInput = forwardRef<HTMLInputElement, ChipInputProps>(
         )}
         
         {!error && helperText && (
-          <p id={`${chipInputId}-helper`} className="mt-1.5 text-sm text-bakery-brown-500">
+          <p id={`${chipInputId}-helper`} className="mt-1.5 text-sm text-gray-500">
             {helperText}
           </p>
         )}
         
         {maxChips && (
-          <p className="mt-1 text-xs text-bakery-brown-500">
+          <p className="mt-1 text-xs text-gray-500">
             {value.length} / {maxChips} colors
           </p>
         )}

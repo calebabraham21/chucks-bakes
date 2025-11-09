@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingBag, X, Copy, Trash2, Send } from 'lucide-react';
+import { ShoppingBag, X, Copy, Trash2, Send, Menu } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Modal } from './ui/Modal';
 import { Toast } from './ui/Toast';
@@ -12,6 +12,7 @@ import type { RequestItem } from '../lib/validation';
 
 export function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,6 +30,24 @@ export function Header() {
     { path: '/recipes', label: 'Recipes' },
     { path: '/merch', label: 'Merch' },
   ];
+  
+  // Close sidebar when route changes
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
+  
+  // Prevent body scroll when sidebar is open
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isSidebarOpen]);
   
   const handleCopySummary = () => {
     const summary = makeCombinedPlainTextSummary(requestList);
@@ -91,15 +110,24 @@ export function Header() {
   return (
     <>
       <header className="bg-[#fff5f7] border-b border-[#ffc1d4] sticky top-0 z-40 safe-top">
-        <div className="container mx-auto px-4 sm:px-5 md:px-8">
+        <div className="container mx-auto">
           {/* Mobile-first: compact header */}
-          <div className="flex items-center justify-between h-16 sm:h-20">
+          <div className="flex items-center justify-between h-14 sm:h-16">
+            {/* Hamburger Menu - Mobile only */}
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="md:hidden p-3 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] focus:ring-offset-2 touch-target active:scale-95"
+              aria-label="Open navigation menu"
+            >
+              <Menu className="w-6 h-6 text-[#000000]" strokeWidth={2.5} />
+            </button>
+            
             {/* Logo - Compact on mobile */}
             <Link to="/" className="flex items-center hover:opacity-80 transition-smooth touch-target">
               <img 
                 src="/ChucksBakesLogo.png" 
                 alt="Chuck's Bakes" 
-                className="h-12 w-auto sm:h-16"
+                className="h-10 w-auto sm:h-12"
                 loading="eager"
                 width="120"
                 height="48"
@@ -116,8 +144,8 @@ export function Header() {
                     key={link.path}
                     to={link.path}
                     className={classNames(
-                      'text-base lg:text-lg font-bold uppercase tracking-wide transition-smooth hover:text-[#3b1f1e] touch-target px-2',
-                      isActive ? 'text-[#3b1f1e]' : 'text-[#7d4f45]'
+                      'text-base lg:text-lg font-bold uppercase tracking-wide transition-smooth hover:text-[#000000] touch-target px-2',
+                      isActive ? 'text-[#000000]' : 'text-[#525252]'
                     )}
                   >
                     {link.label}
@@ -132,7 +160,7 @@ export function Header() {
               className="relative p-3 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] focus:ring-offset-2 touch-target active:scale-95"
               aria-label={`View request (${requestList.length} items)`}
             >
-              <ShoppingBag className="w-6 h-6 sm:w-7 sm:h-7 text-[#3b1f1e]" strokeWidth={2.5} />
+              <ShoppingBag className="w-6 h-6 sm:w-7 sm:h-7 text-[#000000]" strokeWidth={2.5} />
               {requestList.length > 0 && (
                 <span className="absolute -top-1 -right-1 min-w-[24px] h-6 px-1.5 bg-[#ff6b9d] text-white text-xs font-bold rounded-full flex items-center justify-center">
                   {requestList.length}
@@ -140,9 +168,44 @@ export function Header() {
               )}
             </button>
           </div>
+        </div>
+      </header>
+      
+      {/* Mobile Sidebar Navigation */}
+      <div className="md:hidden">
+        {/* Overlay */}
+        {isSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-50 transition-opacity"
+            onClick={() => setIsSidebarOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+        
+        {/* Sidebar */}
+        <aside
+          className={classNames(
+            'fixed top-0 left-0 h-full w-64 bg-[#fff5f7] border-r border-[#ffc1d4] z-50 transform transition-transform duration-300 ease-in-out',
+            isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          )}
+          aria-label="Mobile navigation"
+        >
+          {/* Sidebar Header */}
+          <div className="flex items-center justify-between p-4 border-b border-[#ffc1d4]">
+            <h2 className="text-lg font-bold text-[#000000] uppercase tracking-wide">
+              Menu
+            </h2>
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="p-2 hover:bg-[#ffd1dc] rounded-lg transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] touch-target"
+              aria-label="Close navigation menu"
+            >
+              <X className="w-6 h-6 text-[#000000]" strokeWidth={2.5} />
+            </button>
+          </div>
           
-          {/* Mobile bottom nav - scrollable */}
-          <nav className="md:hidden flex gap-4 pb-3 overflow-x-auto border-t border-[#ffc1d4] pt-3 -mx-4 px-4 scrollbar-hide">
+          {/* Sidebar Navigation Links */}
+          <nav className="p-4 space-y-2">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.path;
               
@@ -151,8 +214,10 @@ export function Header() {
                   key={link.path}
                   to={link.path}
                   className={classNames(
-                    'text-sm font-bold uppercase whitespace-nowrap transition-smooth px-3 py-2 rounded-lg touch-target',
-                    isActive ? 'text-[#3b1f1e] bg-[#ffd1dc]' : 'text-[#7d4f45] hover:bg-[#ffd1dc]/50'
+                    'block text-base font-bold uppercase tracking-wide transition-smooth px-4 py-3 rounded-lg touch-target',
+                    isActive 
+                      ? 'text-[#000000] bg-[#ffd1dc]' 
+                      : 'text-[#525252] hover:bg-[#ffd1dc]/50 hover:text-[#000000]'
                   )}
                 >
                   {link.label}
@@ -160,8 +225,8 @@ export function Header() {
               );
             })}
           </nav>
-        </div>
-      </header>
+        </aside>
+      </div>
       
       {/* Request Modal */}
       <Modal
@@ -172,11 +237,11 @@ export function Header() {
       >
         {requestList.length === 0 ? (
           <div className="text-center py-8">
-            <ShoppingBag className="w-16 h-16 text-bakery-brown-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-bakery-cocoa mb-2">
+            <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-black mb-2">
               Your request is empty
             </h3>
-            <p className="text-bakery-brown-600 mb-6">
+            <p className="text-gray-600 mb-6">
               Add items using the Order Wizard to build your request.
             </p>
             <Link to="/order" onClick={() => setIsModalOpen(false)}>
@@ -190,27 +255,27 @@ export function Header() {
             {requestList.map((item: any, index: number) => (
               <div
                 key={index}
-                className="p-4 bg-bakery-cream rounded-xl border border-bakery-brown-100"
+                className="p-4 bg-bakery-cream rounded-xl border border-gray-200"
               >
                 <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-semibold text-bakery-cocoa">
+                  <h4 className="font-semibold text-black">
                     Item {index + 1}
                   </h4>
                   <button
                     onClick={() => removeRequestItem(index)}
-                    className="p-1 rounded-lg hover:bg-bakery-brown-100 transition-smooth focus:outline-none focus:ring-2 focus:ring-bakery-pink-400"
+                    className="p-1 rounded-lg hover:bg-gray-100 transition-smooth focus:outline-none focus:ring-2 focus:ring-bakery-pink-400"
                     aria-label={`Remove item ${index + 1}`}
                   >
-                    <X className="w-4 h-4 text-bakery-brown-600" />
+                    <X className="w-4 h-4 text-gray-600" />
                   </button>
                 </div>
-                <pre className="whitespace-pre-wrap text-sm text-bakery-brown-700 font-sans">
+                <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans">
                   {makeCombinedPlainTextSummary([item])}
                 </pre>
               </div>
             ))}
             
-            <div className="flex flex-col gap-3 pt-4 border-t border-bakery-brown-200">
+            <div className="flex flex-col gap-3 pt-4 border-t border-gray-200">
               <Button
                 variant="primary"
                 size="lg"

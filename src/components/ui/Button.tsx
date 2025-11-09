@@ -13,9 +13,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center font-medium rounded-2xl transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bakery-pink-400 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none touch-manipulation';
     
     const variants = {
-      primary: 'bg-bakery-brown-700 text-white hover:bg-bakery-brown-800 active:bg-bakery-brown-900 shadow-soft active:scale-[0.98]',
-      secondary: 'border-2 border-bakery-pink-300 text-bakery-brown-700 hover:bg-bakery-pink-50 active:bg-bakery-pink-100 active:scale-[0.98]',
-      ghost: 'text-bakery-brown-600 hover:bg-bakery-brown-50 active:bg-bakery-brown-100 active:scale-[0.98]',
+      primary: 'bg-black text-white hover:bg-gray-800 active:bg-gray-900 shadow-soft active:scale-[0.98]',
+      secondary: 'border-2 border-bakery-pink-300 text-black hover:bg-bakery-pink-50 active:bg-bakery-pink-100 active:scale-[0.98]',
+      ghost: 'text-gray-700 hover:bg-gray-100 active:bg-gray-200 active:scale-[0.98]',
     };
     
     const sizes = {

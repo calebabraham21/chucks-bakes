@@ -27,17 +27,17 @@ export function Recipes() {
   
   return (
     <div className="min-h-screen bg-[#fde7ee]">
-      <div className="container mx-auto px-4 py-16 max-w-6xl">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-[#3b1f1e] mb-4">
+      <div className="container mx-auto py-8 sm:py-10">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-[#000000] mb-3">
             Recipes
           </h1>
-          <p className="text-lg text-[#7d4f45] max-w-2xl mx-auto">
+          <p className="text-base text-[#525252] max-w-2xl mx-auto">
             Explore our collection of tried-and-true recipes. Full recipe details coming soon!
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {placeholderRecipes.map((recipe, index) => {
             const Icon = recipe.icon;
             
@@ -49,13 +49,13 @@ export function Recipes() {
                   </div>
                   
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-bakery-cocoa mb-2">
+                    <h3 className="text-xl font-semibold text-black mb-2">
                       {recipe.title}
                     </h3>
-                    <p className="text-bakery-brown-600 mb-3">
+                    <p className="text-gray-600 mb-3">
                       {recipe.description}
                     </p>
-                    <span className="text-sm text-bakery-brown-500 italic">
+                    <span className="text-sm text-gray-500 italic">
                       Recipe coming soon
                     </span>
                   </div>
@@ -65,9 +65,9 @@ export function Recipes() {
           })}
         </div>
         
-        <div className="mt-12 text-center">
+        <div className="mt-8 text-center">
           <Card padding="lg" className="inline-block">
-            <p className="text-bakery-brown-600">
+            <p className="text-gray-600">
               📖 Check back soon for detailed recipes and baking tips!
             </p>
           </Card>

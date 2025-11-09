@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Button } from '../ui/Button';
 
 export function Hero() {
   return (
-    <section className="relative min-h-[85vh] sm:min-h-[70vh] flex items-center justify-center overflow-hidden">
+    <section className="relative py-8 sm:py-12 flex items-center justify-center overflow-hidden">
       {/* Background pattern or image */}
       <div 
         className="absolute inset-0 bg-gradient-to-br from-[#fde7ee] via-[#fff5f7] to-[#ffc1d4] opacity-90"
@@ -20,32 +19,30 @@ export function Hero() {
       />
       
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 sm:px-5 md:px-8 text-center">
-        <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8">
+      <div className="relative z-10 container mx-auto text-center">
+        <div className="space-y-4 sm:space-y-5">
           <h1 
-            className="font-black text-[#3b1f1e] leading-tight"
-            style={{ fontSize: 'clamp(1.75rem, 6vw, 2.5rem)' }}
+            className="font-black text-[#000000] leading-tight"
+            style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}
           >
             Made fresh in Arlington — small-batch cakes, brownies, and scones.
           </h1>
           
           <p 
-            className="text-[#4a2c2a] leading-relaxed max-w-2xl mx-auto"
-            style={{ fontSize: 'clamp(1rem, 3.6vw, 1.125rem)' }}
+            className="text-[#262626] leading-relaxed max-w-2xl mx-auto"
+            style={{ fontSize: 'clamp(0.875rem, 3.2vw, 1rem)' }}
           >
             Every order is baked by Cristina with locally sourced ingredients and a whole lot of love.
           </p>
           
-          <div className="pt-4">
+          <div className="pt-2">
             <Link to="/order">
-              <Button 
-                variant="primary" 
-                size="lg"
-                className="bg-[#ff6b9d] text-white hover:bg-[#ed5a8a] active:bg-[#d94f78] border-none font-bold shadow-lg hover:shadow-xl transition-all px-8 sm:px-12"
-                style={{ fontSize: 'clamp(1rem, 4vw, 1.125rem)' }}
+              <button 
+                className="inline-flex items-center justify-center font-bold rounded-2xl bg-[#ff6b9d] text-white hover:bg-[#ed5a8a] active:bg-[#d94f78] shadow-lg hover:shadow-xl transition-all px-6 sm:px-10 py-3.5 min-h-[48px] active:scale-[0.98]"
+                style={{ fontSize: 'clamp(0.875rem, 3.5vw, 1rem)' }}
               >
                 Start Your Order
-              </Button>
+              </button>
             </Link>
           </div>
         </div>

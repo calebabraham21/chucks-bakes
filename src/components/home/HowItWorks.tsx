@@ -28,52 +28,46 @@ const steps: Step[] = [
 
 export function HowItWorks() {
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-white">
-      <div className="container mx-auto px-4 sm:px-5 md:px-8">
-        <div className="text-center mb-8 sm:mb-12">
+    <section className="py-8 sm:py-10 md:py-12 bg-white">
+      <div className="container mx-auto">
+        <div className="text-center mb-6 sm:mb-8">
           <h2 
-            className="font-black text-[#3b1f1e] mb-3"
-            style={{ fontSize: 'clamp(1.75rem, 5vw, 2.25rem)' }}
+            className="font-black text-[#000000] mb-2"
+            style={{ fontSize: 'clamp(1.5rem, 4.5vw, 1.875rem)' }}
           >
             How It Works
           </h2>
-          <p 
-            className="text-[#4a2c2a] max-w-2xl mx-auto"
-            style={{ fontSize: 'clamp(0.938rem, 3.6vw, 1.063rem)' }}
-          >
-            Three simple steps to your perfect baked goods
-          </p>
+         
         </div>
         
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
             {steps.map((step) => (
               <div 
                 key={step.number}
                 className="relative"
               >
-                <div className="bg-[#fff5f7] rounded-2xl p-6 sm:p-8 border-2 border-[#ffc1d4] h-full transition-all hover:shadow-md">
+                <div className="bg-[#fff5f7] rounded-2xl p-4 sm:p-5 border-2 border-[#ffc1d4] h-full transition-all hover:shadow-md">
                   {/* Step number badge */}
-                  <div className="absolute -top-3 -left-3 w-10 h-10 sm:w-12 sm:h-12 bg-[#ff6b9d] text-white rounded-full flex items-center justify-center font-black shadow-lg">
+                  <div className="absolute -top-2 -left-2 w-8 h-8 sm:w-10 sm:h-10 bg-[#ff6b9d] text-white rounded-full flex items-center justify-center font-black shadow-lg text-sm sm:text-base">
                     {step.number}
                   </div>
                   
                   {/* Icon */}
-                  <div className="text-5xl sm:text-6xl mb-4 sm:mb-6 text-center">
+                  <div className="text-4xl sm:text-5xl mb-3 sm:mb-4 text-center">
                     {step.icon}
                   </div>
                   
                   {/* Content */}
                   <h3 
-                    className="font-bold text-[#3b1f1e] mb-3 text-center"
-                    style={{ fontSize: 'clamp(1.063rem, 4vw, 1.25rem)' }}
+                    className="font-bold text-[#000000] mb-2 text-center"
+                    style={{ fontSize: 'clamp(0.938rem, 3.5vw, 1.063rem)' }}
                   >
                     {step.title}
                   </h3>
                   
                   <p 
-                    className="text-[#4a2c2a] text-center leading-snug"
-                    style={{ fontSize: 'clamp(0.875rem, 3.5vw, 0.938rem)' }}
+                    className="text-[#262626] text-center leading-snug"
+                    style={{ fontSize: 'clamp(0.75rem, 3vw, 0.813rem)' }}
                   >
                     {step.description}
                   </p>
@@ -89,7 +83,6 @@ export function HowItWorks() {
                 )}
               </div>
             ))}
-          </div>
         </div>
       </div>
     </section>

@@ -78,24 +78,31 @@ function getOrdersSheet() {
 }
 
 /**
- * Add header row to the sheet
+ * Add header row to the sheet with granular columns
  */
 function addHeaders(sheet) {
   const headers = [
     'Timestamp',
+    'Status',
+    'Item Type',
+    // Contact Info
     'Name',
     'Email', 
     'Phone',
-    'Pickup/Delivery',
+    'Delivery Method',
     'Target Date',
-    'Target Time',
-    'Item Type',
-    'Details',
-    'Quantity',
     'Budget',
     'Notes',
     'Referral Source',
-    'Status'
+    // Cake/Cupcake Config
+    'Size',
+    'Quantity',
+    'Flavor(s)',
+    'Filling(s)',
+    'Frosting Type',
+    'SMBC Flavor',
+    'Theme',
+    'Colors'
   ];
   
   sheet.appendRow(headers);
@@ -103,7 +110,7 @@ function addHeaders(sheet) {
   // Format header row
   const headerRange = sheet.getRange(1, 1, 1, headers.length);
   headerRange.setFontWeight('bold');
-  headerRange.setBackground('#3b1f1e');
+  headerRange.setBackground('#000000');
   headerRange.setFontColor('#ffffff');
   
   // Freeze header row
@@ -116,62 +123,106 @@ function addHeaders(sheet) {
 }
 
 /**
- * Add an order row to the sheet
+ * Add an order row to the sheet with granular data
  */
 function addOrderRow(sheet, data) {
   const timestamp = new Date();
-  
-  // Extract order details based on item type
-  let details = '';
-  let quantity = '';
-  
-  if (data.itemType === 'cake' && data.config) {
-    const config = data.config;
-    details = `Size: ${config.size || 'N/A'}\n` +
-              `Flavor: ${config.flavor || 'N/A'}\n` +
-              `Filling: ${config.filling || 'N/A'}\n` +
-              `Frosting: ${config.frostingType || 'N/A'}` +
-              (config.smbcFlavor ? ` (${config.smbcFlavor})` : '') + '\n' +
-              (config.theme ? `Theme: ${config.theme}\n` : '') +
-              (config.colors && config.colors.length > 0 ? `Colors: ${config.colors.join(', ')}` : '');
-    quantity = '1 cake';
-  } else if (data.order) {
-    details = `${data.itemType}`;
-    quantity = data.order.quantity || 'N/A';
-  }
-  
   const contact = data.contact || {};
   
-  const row = [
-    timestamp,
-    contact.name || '',
-    contact.email || '',
-    contact.phone || '',
-    data.deliveryMethod || 'Pickup', // Default to pickup if not specified
-    contact.targetDate || '',
-    data.targetTime || '',
-    data.itemType || '',
-    details,
-    quantity,
-    data.budget || '',
-    contact.notes || '',
-    data.referralSource || '',
-    'New' // Status column
+  // Initialize all columns with empty values
+  let row = {
+    timestamp: timestamp,
+    status: 'New',
+    itemType: data.itemType || '',
+    name: contact.name || '',
+    email: contact.email || '',
+    phone: contact.phone || '',
+    deliveryMethod: contact.deliveryMethod || 'pickup',
+    targetDate: contact.targetDate || '',
+    budget: contact.budget || '',
+    notes: contact.notes || '',
+    referralSource: contact.referralSource || '',
+    size: '',
+    quantity: '',
+    flavors: '',
+    fillings: '',
+    frostingType: '',
+    smbcFlavor: '',
+    theme: '',
+    colors: ''
+  };
+  
+  // Fill in item-specific details
+  if (data.itemType === 'cake' && data.config) {
+    const config = data.config;
+    row.size = config.size || '';
+    row.quantity = '1 cake';
+    row.flavors = config.flavor || '';
+    row.fillings = config.filling || '';
+    row.frostingType = config.frostingType || '';
+    row.smbcFlavor = config.smbcFlavor || '';
+    row.theme = config.theme || '';
+    row.colors = (config.colors && config.colors.length > 0) ? config.colors.join(', ') : '';
+    
+  } else if (data.itemType === 'cupcakes' && data.config) {
+    const config = data.config;
+    row.size = 'N/A';
+    row.quantity = config.quantity || '';
+    row.flavors = (config.flavors && config.flavors.length > 0) ? config.flavors.join(', ') : '';
+    row.fillings = (config.fillings && config.fillings.length > 0) ? config.fillings.join(', ') : '';
+    row.frostingType = 'SMBC';
+    row.smbcFlavor = config.smbcFlavor || '';
+    row.theme = config.theme || '';
+    row.colors = (config.colors && config.colors.length > 0) ? config.colors.join(', ') : '';
+    
+  } else if (data.order) {
+    // Brownies, cookies, scones
+    row.size = 'N/A';
+    row.quantity = data.order.quantity || '';
+    row.flavors = 'N/A';
+    row.fillings = 'N/A';
+    row.frostingType = 'N/A';
+    row.smbcFlavor = 'N/A';
+    row.theme = 'N/A';
+    row.colors = 'N/A';
+  }
+  
+  // Convert row object to array in the correct column order
+  const rowArray = [
+    row.timestamp,
+    row.status,
+    row.itemType,
+    row.name,
+    row.email,
+    row.phone,
+    row.deliveryMethod,
+    row.targetDate,
+    row.budget,
+    row.notes,
+    row.referralSource,
+    row.size,
+    row.quantity,
+    row.flavors,
+    row.fillings,
+    row.frostingType,
+    row.smbcFlavor,
+    row.theme,
+    row.colors
   ];
   
-  sheet.appendRow(row);
+  sheet.appendRow(rowArray);
   
   // Auto-resize columns after adding data
   const lastRow = sheet.getLastRow();
-  for (let i = 1; i <= row.length; i++) {
+  for (let i = 1; i <= rowArray.length; i++) {
     sheet.autoResizeColumn(i);
   }
   
   // Add alternating row colors
   if (lastRow > 1) {
-    const dataRange = sheet.getRange(lastRow, 1, 1, row.length);
+    const dataRange = sheet.getRange(lastRow, 1, 1, rowArray.length);
     if (lastRow % 2 === 0) {
-      dataRange.setBackground('#fde7ee');
+      dataRange.setBackground('#fff5f7');
     }
   }
 }
@@ -206,4 +257,3 @@ function testSetup() {
     Logger.log('⚠️ Token is NOT configured! Add it in Project Settings > Script Properties');
   }
 }
-

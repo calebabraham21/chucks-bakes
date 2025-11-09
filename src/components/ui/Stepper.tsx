@@ -28,8 +28,8 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                   className={classNames(
                     'w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-smooth',
                     isComplete && 'bg-[#ff6b9d] text-white',
-                    isCurrent && 'bg-[#3b1f1e] text-white ring-4 ring-[#ffd1dc]',
-                    isUpcoming && 'bg-[#ffd1dc] text-[#7d4f45]'
+                    isCurrent && 'bg-[#000000] text-white ring-4 ring-[#ffd1dc]',
+                    isUpcoming && 'bg-[#ffd1dc] text-[#525252]'
                   )}
                   aria-current={isCurrent ? 'step' : undefined}
                 >
@@ -44,8 +44,8 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                 <span
                   className={classNames(
                     'mt-2 text-xs sm:text-sm font-medium text-center transition-smooth',
-                    isCurrent && 'text-[#3b1f1e]',
-                    (isComplete || isUpcoming) && 'text-[#7d4f45]'
+                    isCurrent && 'text-[#000000]',
+                    (isComplete || isUpcoming) && 'text-[#525252]'
                   )}
                 >
                   {step.label}

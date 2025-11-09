@@ -15,14 +15,19 @@ export function ChooseItem({ onSelect }: ChooseItemProps) {
       color: 'text-bakery-pink-500',
     },
     {
+      type: ITEMS.CUPCAKES,
+      icon: Cake,
+      color: 'text-bakery-pink-400',
+    },
+    {
       type: ITEMS.BROWNIES,
       icon: Cookie,
-      color: 'text-bakery-brown-500',
+      color: 'text-gray-700',
     },
     {
       type: ITEMS.COOKIES,
       icon: Cookie,
-      color: 'text-bakery-brown-600',
+      color: 'text-gray-800',
     },
     {
       type: ITEMS.SEASONAL,
@@ -33,10 +38,10 @@ export function ChooseItem({ onSelect }: ChooseItemProps) {
   
   return (
     <div>
-      <h2 id="step-heading" className="text-2xl font-semibold text-bakery-cocoa mb-2" tabIndex={-1}>
+      <h2 id="step-heading" className="text-2xl font-semibold text-black mb-2" tabIndex={-1}>
         Choose Your Item
       </h2>
-      <p className="text-bakery-brown-600 mb-6">
+      <p className="text-gray-600 mb-6">
         Select what you'd like to order
       </p>
       
@@ -64,10 +69,10 @@ export function ChooseItem({ onSelect }: ChooseItemProps) {
                 <div className={`p-4 rounded-2xl bg-bakery-cream mb-4 group-hover:scale-110 transition-smooth ${item.color}`}>
                   <Icon className="w-8 h-8" aria-hidden="true" />
                 </div>
-                <h3 className="text-lg font-semibold text-bakery-cocoa mb-2">
+                <h3 className="text-lg font-semibold text-black mb-2">
                   {ITEM_LABELS[item.type]}
                 </h3>
-                <p className="text-sm text-bakery-brown-600">
+                <p className="text-sm text-gray-600">
                   {ITEM_DESCRIPTIONS[item.type]}
                 </p>
               </div>
