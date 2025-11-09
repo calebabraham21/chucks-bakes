@@ -35,7 +35,6 @@ export function ConfigureCupcakes({ defaultValues, onSubmit }: ConfigureCupcakes
   const fillings = watch('fillings') || [];
   const colors = watch('colors') || [];
   const quantity = watch('quantity');
-  const selectedUnits = Math.floor(quantity / unitInfo.perUnit);
   
   const handleFlavorToggle = (flavorValue: string) => {
     const currentFlavors = flavors || [];

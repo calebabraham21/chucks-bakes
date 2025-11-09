@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ITEMS, TREAT_MINIMUMS, MAX_COLOR_CHIPS, MAX_THEME_LENGTH, MAX_CUPCAKE_FLAVORS, MAX_CUPCAKE_FILLINGS } from './constants';
+import { ITEMS, MAX_COLOR_CHIPS, MAX_THEME_LENGTH, MAX_CUPCAKE_FLAVORS, MAX_CUPCAKE_FILLINGS } from './constants';
 
 // Cake configuration schema
 export const cakeConfigSchema = z.object({
