@@ -3,13 +3,14 @@ import { Header } from './components/Header';
 import { Home } from './pages/Home';
 import { Order } from './pages/Order';
 import { Recipes } from './pages/Recipes';
+import { RecipePost } from './pages/RecipePost';
 import { Merch } from './pages/Merch';
 import { Success } from './pages/Success';
 import { ComingSoon } from './pages/ComingSoon';
 
 // 🚧 Toggle this to show/hide the coming soon page
 // Set to false when you're ready to launch the full site!
-const COMING_SOON_MODE = false;
+const COMING_SOON_MODE = true;
 
 function AppContent() {
   const location = useLocation();
@@ -28,6 +29,7 @@ function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/order" element={<Order />} />
           <Route path="/recipes" element={<Recipes />} />
+          <Route path="/recipes/:slug" element={<RecipePost />} />
           <Route path="/merch" element={<Merch />} />
           <Route path="/success" element={<Success />} />
         </Routes>

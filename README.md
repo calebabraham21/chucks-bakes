@@ -10,6 +10,7 @@ A polished, production-ready front-end application for a bakery order system. Bu
 - **Persistent State**: Orders saved to localStorage with Zustand state management
 - **Request List**: Add multiple items before sending
 - **Email Integration**: Generate mailto links with formatted order summaries
+- **Content Management**: Sanity CMS integration for recipes and blog posts
 - **Accessibility First**: WCAG compliant with keyboard navigation and screen reader support
 - **Responsive Design**: Mobile-first approach with beautiful UI across all devices
 - **Modern Aesthetics**: Cozy bakery theme with soft colors, smooth animations, and delightful micro-interactions
@@ -24,6 +25,7 @@ A polished, production-ready front-end application for a bakery order system. Bu
 - **React Hook Form** - Performant form handling
 - **Zod** - Schema validation
 - **Lucide React** - Beautiful icons
+- **Sanity CMS** - Headless content management
 
 ## Getting Started
 
@@ -40,11 +42,24 @@ npm install
 
 ### Development
 
+Start the main app:
+
 ```bash
 npm run dev
 ```
 
 The app will be available at `http://localhost:5173`
+
+To manage content (recipes, blog posts), start Sanity Studio:
+
+```bash
+cd studio-chucks-bakes
+npm run dev
+```
+
+Studio will be available at `http://localhost:3333`
+
+📖 See [SANITY-SETUP.md](./SANITY-SETUP.md) for detailed Sanity CMS setup instructions.
 
 ### Build
 
