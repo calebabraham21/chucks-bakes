@@ -110,42 +110,35 @@ export function Header() {
   return (
     <>
       <header className="bg-[#fff5f7] border-b border-[#ffc1d4] sticky top-0 z-40 safe-top">
-        <div className="container mx-auto">
-          {/* Mobile-first: compact header */}
-          <div className="flex items-center justify-between h-14 sm:h-16">
-            {/* Hamburger Menu - Mobile only */}
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="md:hidden p-3 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] focus:ring-offset-2 touch-target active:scale-95"
-              aria-label="Open navigation menu"
-            >
-              <Menu className="w-6 h-6 text-[#000000]" strokeWidth={2.5} />
-            </button>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Mobile-first: header layout */}
+          <div className="flex items-center justify-between h-16 sm:h-20 relative">
             
-            {/* Logo - Compact on mobile */}
-            <Link to="/" className="flex items-center hover:opacity-80 transition-smooth touch-target">
-              <img 
-                src="/ChucksBakesLogo.png" 
-                alt="Chuck's Bakes" 
-                className="h-10 w-auto sm:h-12"
-                loading="eager"
-                width="120"
-                height="48"
-              />
-            </Link>
-            
-            {/* Desktop Navigation - Hidden on mobile */}
-            <nav className="hidden md:flex items-center gap-6 lg:gap-10">
-              {navLinks.map((link) => {
+            {/* Mobile: Hamburger (Left) */}
+            <div className="flex md:hidden flex-1 justify-start">
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="p-2 -ml-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] focus:ring-offset-2 touch-target active:scale-95"
+                aria-label="Open navigation menu"
+              >
+                <Menu className="w-6 h-6 text-[#000000]" strokeWidth={2.5} />
+              </button>
+            </div>
+
+            {/* Desktop: Left Navigation */}
+            <nav className="hidden md:flex flex-1 items-center justify-end pr-8 lg:pr-10 xl:pr-18">
+              {navLinks.slice(0, 2).map((link) => {
                 const isActive = location.pathname === link.path;
-                
                 return (
                   <Link
                     key={link.path}
                     to={link.path}
                     className={classNames(
-                      'text-base lg:text-lg font-bold uppercase tracking-wide transition-smooth hover:text-[#000000] touch-target px-2',
-                      isActive ? 'text-[#000000]' : 'text-[#525252]'
+                      'relative text-base lg:text-lg font-bold uppercase tracking-wide transition-smooth hover:text-[#000000] py-2 px-4 lg:px-5',
+                      'after:content-[""] after:absolute after:bottom-1 after:left-4 lg:after:left-5 after:right-4 lg:after:right-5 after:h-0.5 after:bg-[#ff6b9d] after:transition-transform after:duration-300 after:ease-out',
+                      isActive 
+                        ? 'text-[#000000] after:scale-x-100' 
+                        : 'text-[#525252] after:scale-x-0 hover:after:scale-x-100'
                     )}
                   >
                     {link.label}
@@ -154,19 +147,72 @@ export function Header() {
               })}
             </nav>
             
-            {/* Cart Button - Bigger touch target */}
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="relative p-3 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] focus:ring-offset-2 touch-target active:scale-95"
-              aria-label={`View request (${requestList.length} items)`}
-            >
-              <ShoppingBag className="w-6 h-6 sm:w-7 sm:h-7 text-[#000000]" strokeWidth={2.5} />
-              {requestList.length > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[24px] h-6 px-1.5 bg-[#ff6b9d] text-white text-xs font-bold rounded-full flex items-center justify-center">
-                  {requestList.length}
-                </span>
-              )}
-            </button>
+            {/* Center Logo (Absolute on desktop to ensure perfect center, relative on mobile) */}
+            <div className="flex-shrink-0 md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-10">
+              <Link to="/" className="flex items-center hover:opacity-90 transition-smooth touch-target transform active:scale-95">
+                <img 
+                  src="/ChucksBakesLogo.png" 
+                  alt="Chuck's Bakes" 
+                  className="h-12 w-auto sm:h-14 md:h-16"
+                  loading="eager"
+                />
+              </Link>
+            </div>
+            
+            {/* Desktop: Right Navigation */}
+            <nav className="hidden md:flex flex-1 items-center justify-start pl-8 lg:pl-10 xl:pl-18">
+                {navLinks.slice(2).map((link) => {
+                  const isActive = location.pathname === link.path;
+                  return (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      className={classNames(
+                        'relative text-base lg:text-lg font-bold uppercase tracking-wide transition-smooth hover:text-[#000000] py-2 px-4 lg:px-5',
+                        'after:content-[""] after:absolute after:bottom-1 after:left-4 lg:after:left-5 after:right-4 lg:after:right-5 after:h-0.5 after:bg-[#ff6b9d] after:transition-transform after:duration-300 after:ease-out',
+                        isActive 
+                          ? 'text-[#000000] after:scale-x-100' 
+                          : 'text-[#525252] after:scale-x-0 hover:after:scale-x-100'
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
+            </nav>
+
+            {/* Desktop Cart Button (Absolute Right) */}
+            <div className="hidden md:flex absolute right-0 items-center pr-4 sm:pr-6 lg:pr-8 h-full top-0">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="relative p-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] focus:ring-offset-2 touch-target active:scale-95"
+                aria-label={`View request (${requestList.length} items)`}
+              >
+                <ShoppingBag className="w-6 h-6 text-[#000000]" strokeWidth={2.5} />
+                {requestList.length > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-[#ff6b9d] text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-[#fff5f7]">
+                    {requestList.length}
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {/* Mobile: Cart (Right) */}
+            <div className="flex md:hidden flex-1 justify-end">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="relative p-2 -mr-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] focus:ring-offset-2 touch-target active:scale-95"
+                aria-label={`View request (${requestList.length} items)`}
+              >
+                <ShoppingBag className="w-6 h-6 text-[#000000]" strokeWidth={2.5} />
+                {requestList.length > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-[#ff6b9d] text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-[#fff5f7]">
+                    {requestList.length}
+                  </span>
+                )}
+              </button>
+            </div>
+
           </div>
         </div>
       </header>
@@ -236,16 +282,20 @@ export function Header() {
         size="lg"
       >
         {requestList.length === 0 ? (
-          <div className="text-center py-8">
-            <ShoppingBag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-black mb-2">
+          <div className="flex flex-col items-center justify-center py-12 px-4">
+            <ShoppingBag className="w-20 h-20 text-gray-300 mb-6" strokeWidth={1.5} />
+            <h3 className="text-xl font-bold text-black mb-3">
               Your request is empty
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-base text-gray-600 mb-8 max-w-md text-center leading-relaxed">
               Add items using the Order Wizard to build your request.
             </p>
-            <Link to="/order" onClick={() => setIsModalOpen(false)}>
-              <Button variant="primary">
+            <Link 
+              to="/order" 
+              onClick={() => setIsModalOpen(false)}
+              className="inline-block"
+            >
+              <Button variant="primary" size="lg" className="active:scale-100 hover:scale-105 transition-transform">
                 Start an Order
               </Button>
             </Link>
@@ -255,33 +305,33 @@ export function Header() {
             {requestList.map((item: any, index: number) => (
               <div
                 key={index}
-                className="p-4 bg-bakery-cream rounded-xl border border-gray-200"
+                className="p-5 bg-bakery-cream rounded-xl border border-gray-200"
               >
-                <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-semibold text-black">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-bold text-base text-black">
                     Item {index + 1}
                   </h4>
                   <button
                     onClick={() => removeRequestItem(index)}
-                    className="p-1 rounded-lg hover:bg-gray-100 transition-smooth focus:outline-none focus:ring-2 focus:ring-bakery-pink-400"
+                    className="p-1.5 rounded-lg hover:bg-gray-100 transition-smooth focus:outline-none focus:ring-2 focus:ring-bakery-pink-400 active:scale-95"
                     aria-label={`Remove item ${index + 1}`}
                   >
                     <X className="w-4 h-4 text-gray-600" />
                   </button>
                 </div>
-                <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans">
+                <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans leading-relaxed">
                   {makeCombinedPlainTextSummary([item])}
                 </pre>
               </div>
             ))}
             
-            <div className="flex flex-col gap-3 pt-4 border-t border-gray-200">
+            <div className="flex flex-col gap-3 pt-6 border-t border-gray-200 mt-2">
               <Button
                 variant="primary"
                 size="lg"
                 onClick={handleSubmitOrder}
                 disabled={isSubmitting}
-                className="flex items-center justify-center gap-2"
+                className="w-full flex items-center justify-center gap-2 font-semibold"
               >
                 <Send className="w-5 h-5" aria-hidden="true" />
                 {isSubmitting ? 'Submitting...' : 'Submit Order Request'}
@@ -292,7 +342,7 @@ export function Header() {
                   variant="secondary"
                   size="sm"
                   onClick={handleCopySummary}
-                  className="flex-1 flex items-center justify-center gap-2"
+                  className="flex-1 justify-center gap-2 font-medium"
                   disabled={isSubmitting}
                 >
                   <Copy className="w-4 h-4" aria-hidden="true" />
@@ -303,7 +353,7 @@ export function Header() {
                   variant="secondary"
                   size="sm"
                   onClick={handleSendEmail}
-                  className="flex-1 flex items-center justify-center gap-2"
+                  className="flex-1 justify-center gap-2 font-medium"
                   disabled={isSubmitting}
                 >
                   Email
@@ -313,7 +363,7 @@ export function Header() {
                   variant="ghost"
                   size="sm"
                   onClick={handleClearAll}
-                  className="flex-1 flex items-center justify-center gap-2 text-red-600 hover:bg-red-50"
+                  className="flex-1 justify-center gap-2 text-red-600 hover:bg-red-50 font-medium"
                   disabled={isSubmitting}
                 >
                   <Trash2 className="w-4 h-4" aria-hidden="true" />

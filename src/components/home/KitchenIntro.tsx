@@ -4,13 +4,13 @@ export function KitchenIntro() {
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center">
             {/* Image/Portrait - Top on mobile, left on desktop */}
-            <div className="order-1 md:order-1">
-              <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-[#ffc1d4] to-[#ffddeb] border-4 border-white shadow-lg">
+            <div className="order-1 md:order-1 flex justify-center md:justify-start">
+              <div className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-2xl overflow-hidden bg-gradient-to-br from-[#ffc1d4] to-[#ffddeb] border-4 border-white shadow-lg">
                 {/* Placeholder for Cristina's photo */}
                 <div className="w-full h-full flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <span className="text-6xl sm:text-7xl md:text-8xl">👩‍🍳</span>
-                    <p className="mt-4 text-[#000000] font-semibold text-sm">
+                  <div className="text-center p-6">
+                    <span className="text-5xl sm:text-6xl">👩‍🍳</span>
+                    <p className="mt-3 text-[#000000] font-semibold text-xs">
                       Photo coming soon
                     </p>
                   </div>
