@@ -90,7 +90,7 @@ export function Recipes() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
-              <Card key={post._id} padding="none" className="overflow-hidden group cursor-pointer">
+              <Card key={post._id} className="overflow-hidden group cursor-pointer p-0">
                 {post.image && (
                   <div className="aspect-[16/10] bg-gradient-to-br from-[#e47d9d] to-[#ffddeb] overflow-hidden">
                     <img
