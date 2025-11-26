@@ -78,6 +78,28 @@ export interface SanityHomepage {
   footerCtaTitle?: string;
   footerCtaDescription?: string;
   footerCtaButtonText?: string;
+  welcomeDescription?: string;
+  galleryPhotos?: Array<{
+    asset: {
+      _ref: string;
+      _type: 'reference';
+    };
+    alt?: string;
+    caption?: string;
+  }>;
+}
+
+export interface SanityOrderItem {
+  itemType: string;
+  label: string;
+  description?: string;
+  image: {
+    asset: {
+      _ref: string;
+      _type: 'reference';
+    };
+  };
+  enabled?: boolean;
 }
 
 export interface SanityOrderPage {
@@ -85,15 +107,6 @@ export interface SanityOrderPage {
   _type: 'orderPage';
   chooseItemTitle?: string;
   chooseItemSubtitle?: string;
-  cakeLabel?: string;
-  cakeDescription?: string;
-  cupcakesLabel?: string;
-  cupcakesDescription?: string;
-  browniesLabel?: string;
-  browniesDescription?: string;
-  cookiesLabel?: string;
-  cookiesDescription?: string;
-  seasonalLabel?: string;
-  seasonalDescription?: string;
+  items?: SanityOrderItem[];
 }
 

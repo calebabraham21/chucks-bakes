@@ -80,10 +80,10 @@ export function Recipes() {
           </Card>
         ) : posts.length === 0 ? (
           <Card padding="lg" className="text-center">
-            <p className="text-gray-600 mb-4">
+            <p className="text-black mb-4">
               No recipes published yet. Check back soon!
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-black">
               📖 We're working on adding delicious recipes and baking tips!
             </p>
           </Card>

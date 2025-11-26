@@ -112,6 +112,44 @@ export const homepageType = defineType({
       title: 'Footer CTA Button Text',
       type: 'string',
     }),
+
+    // Gallery Section
+    defineField({
+      name: 'welcomeDescription',
+      title: 'Welcome Description',
+      type: 'text',
+      description: 'The text displayed below the logo on the homepage',
+      rows: 3,
+    }),
+    defineField({
+      name: 'galleryPhotos',
+      title: 'Gallery Photos',
+      type: 'array',
+      description: 'Photos for the infinite scrolling gallery on the homepage',
+      of: [
+        {
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
+          fields: [
+            {
+              name: 'alt',
+              type: 'string',
+              title: 'Alternative Text',
+              description: 'Important for SEO and accessibility',
+            },
+            {
+              name: 'caption',
+              type: 'string',
+              title: 'Caption',
+              description: 'Optional caption for the photo',
+            },
+          ],
+        },
+      ],
+      validation: (Rule) => Rule.min(1).warning('Add at least one photo for the gallery'),
+    }),
   ],
   preview: {
     prepare() {

@@ -212,3 +212,30 @@
 .page-transition {
   animation: fadeIn 0.3s ease-in-out;
 }
+
+/* Step transition animations for order wizard */
+@keyframes stepSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.step-content {
+  animation: stepSlideIn 0.25s ease-out;
+}
+
+.step-entering {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.step-entered {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+}

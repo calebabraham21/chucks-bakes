@@ -1,7 +1,5 @@
-import { Cake, Cookie, Cherry } from 'lucide-react';
-import { Card } from '../ui/Card';
-import { ITEMS, ITEM_LABELS, ITEM_DESCRIPTIONS } from '../../lib/constants';
 import { useOrderPage } from '../../lib/useOrderPage';
+import { urlFor } from '../../lib/sanity';
 import type { ItemType } from '../../lib/constants';
 
 interface ChooseItemProps {
@@ -9,108 +7,70 @@ interface ChooseItemProps {
 }
 
 export function ChooseItem({ onSelect }: ChooseItemProps) {
-  const { orderPage } = useOrderPage();
+  const { orderPage, loading } = useOrderPage();
 
-  const items = [
-    {
-      type: ITEMS.CAKE,
-      icon: Cake,
-      color: 'text-bakery-pink-500',
-    },
-    {
-      type: ITEMS.CUPCAKES,
-      icon: Cake,
-      color: 'text-bakery-pink-400',
-    },
-    {
-      type: ITEMS.BROWNIES,
-      icon: Cookie,
-      color: 'text-gray-700',
-    },
-    {
-      type: ITEMS.COOKIES,
-      icon: Cookie,
-      color: 'text-gray-800',
-    },
-    {
-      type: ITEMS.SEASONAL,
-      icon: Cherry,
-      color: 'text-bakery-pink-600',
-    },
-  ];
-
-  // Get labels and descriptions from Sanity or fallback to constants
-  const getLabel = (itemType: ItemType) => {
-    if (!orderPage) return ITEM_LABELS[itemType];
-    switch (itemType) {
-      case ITEMS.CAKE: return orderPage.cakeLabel || ITEM_LABELS[itemType];
-      case ITEMS.CUPCAKES: return orderPage.cupcakesLabel || ITEM_LABELS[itemType];
-      case ITEMS.BROWNIES: return orderPage.browniesLabel || ITEM_LABELS[itemType];
-      case ITEMS.COOKIES: return orderPage.cookiesLabel || ITEM_LABELS[itemType];
-      case ITEMS.SEASONAL: return orderPage.seasonalLabel || ITEM_LABELS[itemType];
-      default: return ITEM_LABELS[itemType];
-    }
-  };
-
-  const getDescription = (itemType: ItemType) => {
-    if (!orderPage) return ITEM_DESCRIPTIONS[itemType];
-    switch (itemType) {
-      case ITEMS.CAKE: return orderPage.cakeDescription || ITEM_DESCRIPTIONS[itemType];
-      case ITEMS.CUPCAKES: return orderPage.cupcakesDescription || ITEM_DESCRIPTIONS[itemType];
-      case ITEMS.BROWNIES: return orderPage.browniesDescription || ITEM_DESCRIPTIONS[itemType];
-      case ITEMS.COOKIES: return orderPage.cookiesDescription || ITEM_DESCRIPTIONS[itemType];
-      case ITEMS.SEASONAL: return orderPage.seasonalDescription || ITEM_DESCRIPTIONS[itemType];
-      default: return ITEM_DESCRIPTIONS[itemType];
-    }
-  };
-
-  const title = orderPage?.chooseItemTitle || 'Choose Your Item';
-  const subtitle = orderPage?.chooseItemSubtitle || "Select what you'd like to order";
+  // Get items from Sanity (enabled items only)
+  const items = orderPage?.items?.filter(item => item.enabled !== false) || [];
   
   return (
     <div>
-      <h2 id="step-heading" className="text-2xl font-semibold text-black mb-2" tabIndex={-1}>
-        {title}
-      </h2>
-      <p className="text-gray-600 mb-6">
-        {subtitle}
-      </p>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {items.map((item) => {
-          const Icon = item.icon;
-          
-          return (
-            <Card
-              key={item.type}
-              hoverable
-              onClick={() => onSelect(item.type)}
-              className="cursor-pointer group"
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  onSelect(item.type);
-                }
-              }}
-              aria-label={`Select ${getLabel(item.type)}`}
-            >
-              <div className="flex flex-col items-center text-center py-4">
-                <div className={`p-4 rounded-2xl bg-bakery-cream mb-4 group-hover:scale-110 transition-smooth ${item.color}`}>
-                  <Icon className="w-8 h-8" aria-hidden="true" />
+      {loading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="rounded-xl shadow-soft overflow-hidden h-32 bg-gray-300 animate-pulse">
+            </div>
+          ))}
+        </div>
+      ) : items.length === 0 ? (
+        <div className="text-center py-12 px-4">
+          <p className="text-lg text-black mb-2">No items are currently available for order.</p>
+          <p className="text-sm text-black">Please check back later or contact us directly.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {items.map((item) => {
+            const imageUrl = item.image ? urlFor(item.image.asset).width(800).height(400).url() : null;
+            
+            return (
+              <div
+                key={item.itemType}
+                onClick={() => onSelect(item.itemType as ItemType)}
+                className="cursor-pointer group rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden h-32 relative"
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onSelect(item.itemType as ItemType);
+                  }
+                }}
+                aria-label={`Select ${item.label}`}
+              >
+                {/* Background Image */}
+                {imageUrl ? (
+                  <img 
+                    src={imageUrl} 
+                    alt={item.label}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#ffd1dc] to-[#ffc1d4]"></div>
+                )}
+                
+                {/* Gradient overlay - fades to dark at bottom */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/70 group-hover:from-black/30 group-hover:via-black/40 group-hover:to-black/80 transition-all"></div>
+                
+                {/* Text content */}
+                <div className="relative h-full flex items-end justify-start p-4">
+                  <h3 className="relative text-2xl md:text-3xl font-bold text-white drop-shadow-lg after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-white after:transition-transform after:duration-300 after:ease-out after:scale-x-0 group-hover:after:scale-x-100">
+                    {item.label}
+                  </h3>
                 </div>
-                <h3 className="text-lg font-semibold text-black mb-2">
-                  {getLabel(item.type)}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {getDescription(item.type)}
-                </p>
               </div>
-            </Card>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

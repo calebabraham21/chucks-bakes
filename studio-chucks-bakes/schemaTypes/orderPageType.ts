@@ -20,65 +20,88 @@ export const orderPageType = defineType({
       description: 'Text below the heading',
     }),
 
-    // Product Items
+    // Product Items Array
     defineField({
-      name: 'cakeLabel',
-      title: 'Cake - Label',
-      type: 'string',
-    }),
-    defineField({
-      name: 'cakeDescription',
-      title: 'Cake - Description',
-      type: 'text',
-      rows: 2,
-    }),
-
-    defineField({
-      name: 'cupcakesLabel',
-      title: 'Cupcakes - Label',
-      type: 'string',
-    }),
-    defineField({
-      name: 'cupcakesDescription',
-      title: 'Cupcakes - Description',
-      type: 'text',
-      rows: 2,
-    }),
-
-    defineField({
-      name: 'browniesLabel',
-      title: 'Brownies - Label',
-      type: 'string',
-    }),
-    defineField({
-      name: 'browniesDescription',
-      title: 'Brownies - Description',
-      type: 'text',
-      rows: 2,
-    }),
-
-    defineField({
-      name: 'cookiesLabel',
-      title: 'Cookies - Label',
-      type: 'string',
-    }),
-    defineField({
-      name: 'cookiesDescription',
-      title: 'Cookies - Description',
-      type: 'text',
-      rows: 2,
-    }),
-
-    defineField({
-      name: 'seasonalLabel',
-      title: 'Seasonal Item - Label',
-      type: 'string',
-    }),
-    defineField({
-      name: 'seasonalDescription',
-      title: 'Seasonal Item - Description',
-      type: 'text',
-      rows: 2,
+      name: 'items',
+      title: 'Order Items',
+      type: 'array',
+      description: 'Add or remove items that customers can order. Drag to reorder.',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'itemType',
+              title: 'Item Type',
+              type: 'string',
+              description: '⚠️ MUST be exactly: "cake", "cupcakes", "brownies", "cookies", or "seasonal" (all lowercase)',
+              validation: (Rule) => Rule.required().custom((value) => {
+                const validTypes = ['cake', 'cupcakes', 'brownies', 'cookies', 'seasonal'];
+                if (value && !validTypes.includes(value)) {
+                  return `Must be one of: ${validTypes.join(', ')}`;
+                }
+                return true;
+              }),
+              options: {
+                list: [
+                  {title: 'Cake (full configuration form)', value: 'cake'},
+                  {title: 'Cupcakes (full configuration form)', value: 'cupcakes'},
+                  {title: 'Brownies (simple quantity form)', value: 'brownies'},
+                  {title: 'Cookies (simple quantity form)', value: 'cookies'},
+                  {title: 'Seasonal (simple quantity form)', value: 'seasonal'},
+                ]
+              }
+            },
+            {
+              name: 'label',
+              title: 'Display Name',
+              type: 'string',
+              description: 'Name shown to customers',
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: 'description',
+              title: 'Description',
+              type: 'text',
+              rows: 2,
+              description: 'Short description of the item',
+            },
+            {
+              name: 'image',
+              title: 'Image',
+              type: 'image',
+              description: 'Image to display for this item',
+              options: {
+                hotspot: true,
+              },
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: 'enabled',
+              title: 'Enabled',
+              type: 'boolean',
+              description: 'Uncheck to temporarily hide this item from customers',
+              initialValue: true,
+            },
+          ],
+          preview: {
+            select: {
+              title: 'label',
+              subtitle: 'itemType',
+              media: 'image',
+              enabled: 'enabled',
+            },
+            prepare({title, subtitle, media, enabled}) {
+              return {
+                title: enabled ? title : `${title} (Disabled)`,
+                subtitle: subtitle,
+                media: media,
+              }
+            },
+          },
+        },
+      ],
+      validation: (Rule) => Rule.min(1).warning('Add at least one item for customers to order'),
     }),
   ],
   preview: {

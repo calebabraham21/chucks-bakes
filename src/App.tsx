@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Header } from './components/Header';
+import { Footer } from './components/Footer';
 import { Home } from './pages/Home';
 import { Order } from './pages/Order';
 import { Recipes } from './pages/Recipes';
@@ -22,9 +23,9 @@ function AppContent() {
 
   // Normal site
   return (
-    <div className="min-h-screen bg-[#fde7ee]">
+    <div className="min-h-screen bg-[#fde7ee] flex flex-col">
       <Header />
-      <main key={location.pathname} className="page-transition">
+      <main key={location.pathname} className="page-transition flex-1">
         <Routes location={location}>
           <Route path="/" element={<Home />} />
           <Route path="/order" element={<Order />} />
@@ -34,6 +35,7 @@ function AppContent() {
           <Route path="/success" element={<Success />} />
         </Routes>
       </main>
+      <Footer />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Stepper } from '../components/ui/Stepper';
@@ -8,8 +8,8 @@ import { ConfigureCupcakes } from '../components/order/ConfigureCupcakes';
 import { ConfigureTreats } from '../components/order/ConfigureTreats';
 import { ContactForm } from '../components/order/ContactForm';
 import { ReviewAndSend } from '../components/order/ReviewAndSend';
-import { SummarySidebar } from '../components/order/SummarySidebar';
 import { useOrderStore } from '../lib/state';
+import { useOrderPage } from '../lib/useOrderPage';
 import { ITEMS, TREAT_UNITS } from '../lib/constants';
 import type { ItemType } from '../lib/constants';
 import type { CakeConfig, CupcakeConfig, TreatOrder, ContactInfo } from '../lib/validation';
@@ -26,16 +26,27 @@ export function Order() {
   const currentStep = useOrderStore((state: any) => state.currentStep);
   const setOrderDraft = useOrderStore((state: any) => state.setOrderDraft);
   const setCurrentStep = useOrderStore((state: any) => state.setCurrentStep);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const { orderPage } = useOrderPage();
   
-  // Focus on step heading when step changes
+  // Handle step transitions with animation
   useEffect(() => {
+    setIsTransitioning(true);
+    const timer = setTimeout(() => setIsTransitioning(false), 50);
+    
     const heading = document.getElementById('step-heading');
     if (heading) {
       heading.focus();
     }
+    
+    return () => clearTimeout(timer);
   }, [currentStep]);
   
   const handleItemSelect = (itemType: ItemType) => {
+    console.log('Selected item type:', itemType);
+    console.log('Expected CAKE:', ITEMS.CAKE);
+    console.log('Expected CUPCAKES:', ITEMS.CUPCAKES);
+    
     if (itemType === ITEMS.CAKE) {
       setOrderDraft({
         itemType: ITEMS.CAKE,
@@ -140,49 +151,19 @@ export function Order() {
         
         <Stepper steps={STEPS} currentStep={currentStep} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5 mt-4">
+        <div className="mt-4 max-w-2xl mx-auto">
           {/* Main content */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-soft p-3 sm:p-5">
-              {currentStep === 1 && (
-                <ChooseItem onSelect={handleItemSelect} />
-              )}
-              
-              {currentStep === 2 && orderDraft && (
-                <>
-                  {orderDraft.itemType === ITEMS.CAKE ? (
-                    <ConfigureCake
-                      defaultValues={'config' in orderDraft ? orderDraft.config : undefined}
-                      onSubmit={handleCakeConfig}
-                    />
-                  ) : orderDraft.itemType === ITEMS.CUPCAKES ? (
-                    <ConfigureCupcakes
-                      defaultValues={'config' in orderDraft ? orderDraft.config : undefined}
-                      onSubmit={handleCupcakeConfig}
-                    />
-                  ) : (
-                    <ConfigureTreats
-                      itemType={orderDraft.itemType}
-                      defaultValues={'order' in orderDraft ? orderDraft.order : undefined}
-                      onSubmit={handleTreatConfig}
-                    />
-                  )}
-                </>
-              )}
-              
-              {currentStep === 3 && orderDraft && (
-                <ContactForm
-                  defaultValues={'contact' in orderDraft ? orderDraft.contact : undefined}
-                  onSubmit={handleContact}
-                />
-              )}
-              
-              {currentStep === 4 && orderDraft && (
-                <ReviewAndSend draft={orderDraft} />
-              )}
-              
-              {/* Navigation buttons - desktop only */}
-              <div className="hidden sm:flex gap-3 mt-5 pt-5 border-t border-[#ffd1dc]">
+          <div>
+            {/* Title for step 1 - outside white box */}
+            {currentStep === 1 && (
+              <h2 id="step-heading" className="text-2xl font-bold text-black mb-3" tabIndex={-1}>
+                {orderPage?.chooseItemTitle || 'Choose Your Item'}
+              </h2>
+            )}
+            
+            <div className="bg-white rounded-xl shadow-soft p-4">
+              {/* Navigation buttons - desktop only - at TOP */}
+              <div className="hidden sm:flex gap-3 mb-5 pb-5 border-b border-[#ffd1dc]">
                 {canGoBack && (
                   <Button
                     variant="secondary"
@@ -205,12 +186,57 @@ export function Order() {
                   </Button>
                 )}
               </div>
+              
+              <div 
+                key={currentStep}
+                className={`step-content ${isTransitioning ? 'step-entering' : 'step-entered'}`}
+              >
+                {currentStep === 1 && (
+                  <ChooseItem onSelect={handleItemSelect} />
+                )}
+                
+                {currentStep === 2 && orderDraft && (
+                  <>
+                    {orderDraft.itemType === ITEMS.CAKE ? (
+                      <ConfigureCake
+                        defaultValues={'config' in orderDraft ? orderDraft.config : undefined}
+                        onSubmit={handleCakeConfig}
+                      />
+                    ) : orderDraft.itemType === ITEMS.CUPCAKES ? (
+                      <ConfigureCupcakes
+                        defaultValues={'config' in orderDraft ? orderDraft.config : undefined}
+                        onSubmit={handleCupcakeConfig}
+                      />
+                    ) : orderDraft.itemType === ITEMS.BROWNIES || 
+                       orderDraft.itemType === ITEMS.COOKIES || 
+                       orderDraft.itemType === ITEMS.SEASONAL ? (
+                      <ConfigureTreats
+                        itemType={orderDraft.itemType}
+                        defaultValues={'order' in orderDraft ? orderDraft.order : undefined}
+                        onSubmit={handleTreatConfig}
+                      />
+                    ) : (
+                      <div className="text-center py-12">
+                        <p className="text-lg text-red-600 mb-2">Configuration Error</p>
+                        <p className="text-sm text-gray-600">Item type "{orderDraft.itemType}" is not recognized.</p>
+                        <p className="text-xs text-gray-500 mt-2">Please ensure the item type in CMS is exactly: "cake", "cupcakes", "brownies", "cookies", or "seasonal"</p>
+                      </div>
+                    )}
+                  </>
+                )}
+                
+                {currentStep === 3 && orderDraft && (
+                  <ContactForm
+                    defaultValues={'contact' in orderDraft ? orderDraft.contact : undefined}
+                    onSubmit={handleContact}
+                  />
+                )}
+                
+                {currentStep === 4 && orderDraft && (
+                  <ReviewAndSend draft={orderDraft} />
+                )}
+              </div>
             </div>
-          </div>
-          
-          {/* Summary sidebar */}
-          <div className="lg:col-span-1">
-            <SummarySidebar draft={orderDraft} currentStep={currentStep} />
           </div>
         </div>
       </div>

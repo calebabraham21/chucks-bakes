@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5178,
-    strictPort: true, // Exit with error if port is already in use
+    port: 5173, // Default Vite port
+    strictPort: false, // Automatically use next available port if this one is taken
   },
 })

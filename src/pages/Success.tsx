@@ -16,7 +16,7 @@ export function Success() {
             Order Request Sent!
           </h1>
           
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="text-lg text-black mb-8">
             Thank you for your order request! We've received your details and 
             will get back to you shortly to confirm and discuss next steps.
           </p>

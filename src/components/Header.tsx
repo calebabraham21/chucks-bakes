@@ -109,33 +109,34 @@ export function Header() {
   
   return (
     <>
-      <header className="bg-[#fff5f7] border-b border-[#ffc1d4] sticky top-0 z-40 safe-top">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Mobile-first: header layout */}
-          <div className="flex items-center justify-between h-16 sm:h-20 relative">
+      {/* Spacer to prevent content from going under the navbar */}
+      <div className="h-20 md:h-20" aria-hidden="true"></div>
+      
+      <header className="fixed top-0 left-0 right-0 z-40 backdrop-blur-md bg-gradient-to-b from-[#fde7ee]/95 via-[#fde7ee]/80 to-transparent pb-6 pt-4">
+        <div className="flex items-center justify-center gap-3 md:gap-4">
             
             {/* Mobile: Hamburger (Left) */}
-            <div className="flex md:hidden flex-1 justify-start">
+            <div className="flex md:hidden">
               <button
                 onClick={() => setIsSidebarOpen(true)}
-                className="p-2 -ml-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] focus:ring-offset-2 touch-target active:scale-95"
+                className="p-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] focus:ring-offset-2 touch-target active:scale-95"
                 aria-label="Open navigation menu"
               >
                 <Menu className="w-6 h-6 text-[#000000]" strokeWidth={2.5} />
               </button>
             </div>
-
-            {/* Desktop: Left Navigation */}
-            <nav className="hidden md:flex flex-1 items-center justify-end pr-8 lg:pr-10 xl:pr-18">
-              {navLinks.slice(0, 2).map((link) => {
+            
+            {/* Desktop: All Navigation Links */}
+            <nav className="hidden md:flex items-center gap-2">
+              {navLinks.map((link) => {
                 const isActive = location.pathname === link.path;
                 return (
                   <Link
                     key={link.path}
                     to={link.path}
                     className={classNames(
-                      'relative text-base lg:text-lg font-bold uppercase tracking-wide transition-smooth hover:text-[#000000] py-2 px-4 lg:px-5',
-                      'after:content-[""] after:absolute after:bottom-1 after:left-4 lg:after:left-5 after:right-4 lg:after:right-5 after:h-0.5 after:bg-[#ff6b9d] after:transition-transform after:duration-300 after:ease-out',
+                      'relative text-sm lg:text-base font-bold uppercase tracking-wide transition-smooth hover:text-[#000000] py-1 px-4 lg:px-6',
+                      'after:content-[""] after:absolute after:bottom-0 after:left-4 lg:after:left-6 after:right-4 lg:after:right-6 after:h-0.5 after:bg-[#ff6b9d] after:transition-transform after:duration-300 after:ease-out',
                       isActive 
                         ? 'text-[#000000] after:scale-x-100' 
                         : 'text-[#525252] after:scale-x-0 hover:after:scale-x-100'
@@ -146,51 +147,17 @@ export function Header() {
                 );
               })}
             </nav>
-            
-            {/* Center Logo (Absolute on desktop to ensure perfect center, relative on mobile) */}
-            <div className="flex-shrink-0 md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 z-10">
-              <Link to="/" className="flex items-center hover:opacity-90 transition-smooth touch-target transform active:scale-95">
-                <img 
-                  src="/ChucksBakesLogo.png" 
-                  alt="Chuck's Bakes" 
-                  className="h-12 w-auto sm:h-14 md:h-16"
-                  loading="eager"
-                />
-              </Link>
-            </div>
-            
-            {/* Desktop: Right Navigation */}
-            <nav className="hidden md:flex flex-1 items-center justify-start pl-8 lg:pl-10 xl:pl-18">
-                {navLinks.slice(2).map((link) => {
-                  const isActive = location.pathname === link.path;
-                  return (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      className={classNames(
-                        'relative text-base lg:text-lg font-bold uppercase tracking-wide transition-smooth hover:text-[#000000] py-2 px-4 lg:px-5',
-                        'after:content-[""] after:absolute after:bottom-1 after:left-4 lg:after:left-5 after:right-4 lg:after:right-5 after:h-0.5 after:bg-[#ff6b9d] after:transition-transform after:duration-300 after:ease-out',
-                        isActive 
-                          ? 'text-[#000000] after:scale-x-100' 
-                          : 'text-[#525252] after:scale-x-0 hover:after:scale-x-100'
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  );
-                })}
-            </nav>
 
-            {/* Desktop Cart Button (Absolute Right) */}
-            <div className="hidden md:flex absolute right-0 items-center pr-4 sm:pr-6 lg:pr-8 h-full top-0">
+            {/* Desktop Cart Button */}
+            <div className="hidden md:flex items-center">
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="relative p-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] focus:ring-offset-2 touch-target active:scale-95"
+                className="relative p-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] active:scale-95"
                 aria-label={`View request (${requestList.length} items)`}
               >
-                <ShoppingBag className="w-6 h-6 text-[#000000]" strokeWidth={2.5} />
+                <ShoppingBag className="w-5 h-5 text-[#000000]" strokeWidth={2.5} />
                 {requestList.length > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-[#ff6b9d] text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-[#fff5f7]">
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[#ff6b9d] text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white/70">
                     {requestList.length}
                   </span>
                 )}
@@ -198,22 +165,21 @@ export function Header() {
             </div>
 
             {/* Mobile: Cart (Right) */}
-            <div className="flex md:hidden flex-1 justify-end">
+            <div className="flex md:hidden ml-auto">
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="relative p-2 -mr-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] focus:ring-offset-2 touch-target active:scale-95"
+                className="relative p-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] active:scale-95"
                 aria-label={`View request (${requestList.length} items)`}
               >
                 <ShoppingBag className="w-6 h-6 text-[#000000]" strokeWidth={2.5} />
                 {requestList.length > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-[#ff6b9d] text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-[#fff5f7]">
+                  <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-[#ff6b9d] text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-white/70">
                     {requestList.length}
                   </span>
                 )}
               </button>
             </div>
 
-          </div>
         </div>
       </header>
       
@@ -287,7 +253,7 @@ export function Header() {
             <h3 className="text-xl font-bold text-black mb-3">
               Your request is empty
             </h3>
-            <p className="text-base text-gray-600 mb-8 max-w-md text-center leading-relaxed">
+            <p className="text-base text-black mb-8 max-w-md text-center leading-relaxed">
               Add items using the Order Wizard to build your request.
             </p>
             <Link 
@@ -319,7 +285,7 @@ export function Header() {
                     <X className="w-4 h-4 text-gray-600" />
                   </button>
                 </div>
-                <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans leading-relaxed">
+                <pre className="whitespace-pre-wrap text-sm text-black font-sans leading-relaxed">
                   {makeCombinedPlainTextSummary([item])}
                 </pre>
               </div>

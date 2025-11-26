@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { sanityClient, urlFor, type SanityPost } from '../lib/sanity';
 import { Calendar, ArrowLeft } from 'lucide-react';
 import { Card } from '../components/ui/Card';
+import { PortableText } from '@portabletext/react';
 
 export function RecipePost() {
   const { slug } = useParams<{ slug: string }>();
@@ -48,20 +49,76 @@ export function RecipePost() {
     });
   };
 
-  const renderBody = (body?: SanityPost['body']) => {
-    if (!body || body.length === 0) return null;
-
-    return body.map((block, index) => {
-      const text = block.children.map((child) => child.text).join('');
-      
-      if (!text.trim()) return null;
-
-      return (
-        <p key={index} className="text-gray-700 leading-relaxed mb-3">
-          {text}
-        </p>
-      );
-    });
+  // Custom components for Portable Text rendering
+  const portableTextComponents = {
+    block: {
+      // Paragraphs
+      normal: ({ children }: any) => (
+        <p className="text-black leading-relaxed mb-4 first:mt-0">{children}</p>
+      ),
+      // Headings
+      h1: ({ children }: any) => (
+        <h1 className="text-3xl font-bold text-black mt-6 mb-4 first:mt-0">{children}</h1>
+      ),
+      h2: ({ children }: any) => (
+        <h2 className="text-2xl font-bold text-black mt-6 mb-3 first:mt-0">{children}</h2>
+      ),
+      h3: ({ children }: any) => (
+        <h3 className="text-xl font-semibold text-black mt-5 mb-3 first:mt-0">{children}</h3>
+      ),
+      h4: ({ children }: any) => (
+        <h4 className="text-lg font-semibold text-black mt-4 mb-2 first:mt-0">{children}</h4>
+      ),
+      // Blockquote
+      blockquote: ({ children }: any) => (
+        <blockquote className="border-l-4 border-[#ff6b9d] pl-4 italic text-black my-4">
+          {children}
+        </blockquote>
+      ),
+    },
+    list: {
+      // Bullet list
+      bullet: ({ children }: any) => (
+        <ul className="list-disc list-inside space-y-2 mb-4 ml-4 text-black">
+          {children}
+        </ul>
+      ),
+      // Numbered list
+      number: ({ children }: any) => (
+        <ol className="list-decimal list-inside space-y-2 mb-4 ml-4 text-black">
+          {children}
+        </ol>
+      ),
+    },
+    listItem: {
+      bullet: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
+      number: ({ children }: any) => <li className="leading-relaxed">{children}</li>,
+    },
+    marks: {
+      // Bold
+      strong: ({ children }: any) => (
+        <strong className="font-bold text-black">{children}</strong>
+      ),
+      // Italic
+      em: ({ children }: any) => <em className="italic">{children}</em>,
+      // Code
+      code: ({ children }: any) => (
+        <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-[#ff6b9d]">
+          {children}
+        </code>
+      ),
+      // Links
+      link: ({ children, value }: any) => (
+        <a
+          href={value?.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#ff6b9d] hover:text-[#ed5a8a] underline transition-colors"
+        >
+          {children}
+        </a>
+      ),
+    },
   };
 
   if (loading) {
@@ -126,7 +183,7 @@ export function RecipePost() {
               {post.title}
             </h1>
             
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-black">
               <Calendar className="w-4 h-4" />
               <time dateTime={post.publishedAt}>
                 {formatDate(post.publishedAt)}
@@ -136,9 +193,9 @@ export function RecipePost() {
 
           {/* Body content */}
           <Card padding="md" className="max-w-none">
-            <div className="text-sm md:text-base">
+            <div className="text-sm md:text-base prose prose-gray max-w-none">
               {post.body && post.body.length > 0 ? (
-                renderBody(post.body)
+                <PortableText value={post.body} components={portableTextComponents} />
               ) : (
                 <p className="text-gray-500 italic text-sm">No recipe content available yet.</p>
               )}

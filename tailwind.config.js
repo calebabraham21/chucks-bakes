@@ -74,15 +74,15 @@ export default {
         'bakery-soft-pink': '#ffddeb',
       },
       fontFamily: {
-        sans: ['PT Serif', 'Georgia', 'serif'],
-        serif: ['Roboto Serif', 'Georgia', 'serif'],
+        sans: ['Crimson Text', 'Georgia', 'serif'],
+        serif: ['Crimson Text', 'Georgia', 'serif'],
       },
       fontWeight: {
-        normal: '600',
-        medium: '700',
-        semibold: '800',
-        bold: '900',
-        black: '900',
+        normal: '400',
+        medium: '600',
+        semibold: '600',
+        bold: '700',
+        extrabold: '700',
       },
       borderRadius: {
         '2xl': '1rem',
