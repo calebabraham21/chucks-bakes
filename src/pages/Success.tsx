@@ -1,14 +1,25 @@
 import { Link } from 'react-router-dom';
-import { Home, ShoppingBag, Sparkles } from 'lucide-react';
+import { Home, ShoppingBag, Sparkles, Copy, Check } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useOrderStore } from '../lib/state';
 
 export function Success() {
   const [showConfetti, setShowConfetti] = useState(true);
+  const [copied, setCopied] = useState(false);
+  const lastOrderId = useOrderStore((state: any) => state.lastOrderId);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowConfetti(false), 3000);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleCopyOrderId = () => {
+    if (lastOrderId) {
+      navigator.clipboard.writeText(lastOrderId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#fde7ee] via-[#fff5f7] to-[#fde7ee] flex items-center justify-center relative overflow-hidden">
@@ -75,9 +86,33 @@ export function Success() {
               Order Sent! 🎉
             </h1>
             
-            <p className="text-lg text-[#333] mb-6 leading-relaxed">
+            <p className="text-lg text-[#333] mb-4 leading-relaxed">
               Thank you for choosing <span className="font-bold text-[#ff6b9d]">Chuck's Bakes</span>! 
             </p>
+
+            {/* Order ID Display */}
+            {lastOrderId && (
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-md mb-6 border border-[#ffc1d4]/50 inline-block">
+                <p className="text-sm text-gray-600 mb-1">Your Order ID</p>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-2xl font-bold text-[#ff6b9d] font-mono tracking-wider">
+                    {lastOrderId}
+                  </span>
+                  <button
+                    onClick={handleCopyOrderId}
+                    className="p-1.5 rounded-lg hover:bg-[#ffd1dc] transition-all active:scale-95"
+                    aria-label="Copy order ID"
+                  >
+                    {copied ? (
+                      <Check className="w-5 h-5 text-green-500" />
+                    ) : (
+                      <Copy className="w-5 h-5 text-gray-500" />
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Save this for your records</p>
+              </div>
+            )}
 
             {/* What happens next card */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg mb-6 border border-[#ffc1d4]/30">

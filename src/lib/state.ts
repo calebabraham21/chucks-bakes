@@ -5,6 +5,7 @@ import { safeLocalStorageGet, safeLocalStorageSet, safeLocalStorageRemove } from
 const ORDER_DRAFT_KEY = 'chucks-bakes-order-draft';
 const REQUEST_LIST_KEY = 'chucks-bakes-request-list';
 const CURRENT_STEP_KEY = 'chucks-bakes-current-step';
+const LAST_ORDER_ID_KEY = 'chucks-bakes-last-order-id';
 
 interface OrderState {
   // Current order being built
@@ -14,6 +15,9 @@ interface OrderState {
   // List of finalized items ready to send
   requestList: RequestItem[];
   
+  // Last submitted order ID (for success page)
+  lastOrderId: string | null;
+  
   // Actions
   setOrderDraft: (draft: OrderDraft | null) => void;
   setCurrentStep: (step: number) => void;
@@ -21,6 +25,7 @@ interface OrderState {
   removeRequestItem: (index: number) => void;
   clearRequestList: () => void;
   clearDraft: () => void;
+  setLastOrderId: (orderId: string | null) => void;
   
   // Persistence
   loadFromLocalStorage: () => void;
@@ -31,6 +36,7 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   orderDraft: null,
   currentStep: 1,
   requestList: [],
+  lastOrderId: null,
   
   setOrderDraft: (draft: OrderDraft | null) => {
     set({ orderDraft: draft });
@@ -71,15 +77,26 @@ export const useOrderStore = create<OrderState>((set, get) => ({
     safeLocalStorageRemove(CURRENT_STEP_KEY);
   },
   
+  setLastOrderId: (orderId: string | null) => {
+    set({ lastOrderId: orderId });
+    if (orderId) {
+      safeLocalStorageSet(LAST_ORDER_ID_KEY, orderId);
+    } else {
+      safeLocalStorageRemove(LAST_ORDER_ID_KEY);
+    }
+  },
+  
   loadFromLocalStorage: () => {
     const draft = safeLocalStorageGet<OrderDraft | null>(ORDER_DRAFT_KEY, null);
     const step = safeLocalStorageGet<number>(CURRENT_STEP_KEY, 1);
     const requestList = safeLocalStorageGet<RequestItem[]>(REQUEST_LIST_KEY, []);
+    const lastOrderId = safeLocalStorageGet<string | null>(LAST_ORDER_ID_KEY, null);
     
     set({
       orderDraft: draft,
       currentStep: step,
       requestList,
+      lastOrderId,
     });
   },
   

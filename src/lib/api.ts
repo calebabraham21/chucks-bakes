@@ -7,6 +7,7 @@ import type { RequestItem } from './validation';
 export interface SubmitOrderResponse {
   success: boolean;
   message: string;
+  orderId?: string;
 }
 
 /**
@@ -44,6 +45,7 @@ export async function submitOrder(orderData: RequestItem & { website?: string })
     return {
       success: true,
       message: data.message || 'Order submitted successfully',
+      orderId: data.orderId,
     };
   } catch (error) {
     console.error('Error submitting order:', error);
@@ -60,11 +62,17 @@ export async function submitOrder(orderData: RequestItem & { website?: string })
 export async function submitOrderBatch(orders: RequestItem[]): Promise<SubmitOrderResponse> {
   try {
     // Submit each order sequentially to avoid overwhelming the API
-    const results = [];
+    const results: SubmitOrderResponse[] = [];
+    let lastOrderId: string | undefined;
     
     for (const order of orders) {
       const result = await submitOrder(order);
       results.push(result);
+      
+      // Keep track of the last order ID
+      if (result.orderId) {
+        lastOrderId = result.orderId;
+      }
       
       // If any submission fails, stop and report the error
       if (!result.success) {
@@ -80,6 +88,7 @@ export async function submitOrderBatch(orders: RequestItem[]): Promise<SubmitOrd
     return {
       success: true,
       message: `Successfully submitted ${orders.length} order${orders.length > 1 ? 's' : ''}`,
+      orderId: lastOrderId,
     };
   } catch (error) {
     console.error('Error submitting order batch:', error);

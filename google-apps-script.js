@@ -23,6 +23,19 @@
 const TOKEN_PROPERTY = 'API_TOKEN';
 
 /**
+ * Generate a unique order ID in format CB-YYMMDD-XXXX
+ */
+function generateOrderId() {
+  const now = new Date();
+  const year = String(now.getFullYear()).slice(-2); // Last 2 digits of year
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const random = String(Math.floor(1000 + Math.random() * 9000)); // 4-digit random number
+  
+  return `CB-${year}${month}${day}-${random}`;
+}
+
+/**
  * Handle POST requests from the order form
  */
 function doPost(e) {
@@ -51,11 +64,14 @@ function doPost(e) {
       addHeaders(sheet);
     }
     
-    // Add the order data
-    addOrderRow(sheet, data);
+    // Generate order ID
+    const orderId = generateOrderId();
     
-    Logger.log('Order added successfully');
-    return createResponse(200, 'Order received successfully', { success: true });
+    // Add the order data
+    addOrderRow(sheet, data, orderId);
+    
+    Logger.log('Order added successfully with ID: ' + orderId);
+    return createResponse(200, 'Order received successfully', { success: true, orderId: orderId });
     
   } catch (error) {
     Logger.log('Error processing order: ' + error.toString());
@@ -82,6 +98,7 @@ function getOrdersSheet() {
  */
 function addHeaders(sheet) {
   const headers = [
+    'Order ID',
     'Timestamp',
     'Status',
     'Item Type',
@@ -126,12 +143,13 @@ function addHeaders(sheet) {
 /**
  * Add an order row to the sheet with granular data
  */
-function addOrderRow(sheet, data) {
+function addOrderRow(sheet, data, orderId) {
   const timestamp = new Date();
   const contact = data.contact || {};
   
   // Initialize all columns with empty values
   let row = {
+    orderId: orderId,
     timestamp: timestamp,
     status: 'New',
     itemType: data.itemType || '',
@@ -186,6 +204,7 @@ function addOrderRow(sheet, data) {
   
   // Convert row object to array in the correct column order
   const rowArray = [
+    row.orderId,
     row.timestamp,
     row.status,
     row.itemType,

@@ -20,6 +20,7 @@ export function Header() {
   const requestList = useOrderStore((state: any) => state.requestList);
   const removeRequestItem = useOrderStore((state: any) => state.removeRequestItem);
   const clearRequestList = useOrderStore((state: any) => state.clearRequestList);
+  const setLastOrderId = useOrderStore((state: any) => state.setLastOrderId);
   
   const location = useLocation();
   const navigate = useNavigate();
@@ -77,6 +78,10 @@ export function Header() {
       const result = await submitOrderBatch(ordersWithHoneypot);
       
       if (result.success) {
+        // Save the order ID for the success page
+        if (result.orderId) {
+          setLastOrderId(result.orderId);
+        }
         // Clear the request list
         clearRequestList();
         // Close the modal
