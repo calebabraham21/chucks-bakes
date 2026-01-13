@@ -22,16 +22,10 @@ const items: BakeItem[] = [
   },
   {
     title: 'Cookies',
-    description: 'Chewy classics and seasonal specials.',
+    description: 'Classic chocolate chip cookies.',
     image: '/Cookies.PNG',
     color: '#ffc1d4'
   },
-  {
-    title: 'Scones',
-    description: 'Buttery, tender, coffee-ready.',
-    image: '/scones.PNG',
-    color: '#fadadd'
-  }
 ];
 
 export function WhatWeBake() {
@@ -48,7 +42,7 @@ export function WhatWeBake() {
           
         </div>
         
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-3xl mx-auto">
           {items.map((item) => (
             <Link 
               key={item.title}

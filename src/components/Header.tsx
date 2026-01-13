@@ -28,7 +28,6 @@ export function Header() {
     { path: '/', label: 'Home' },
     { path: '/order', label: 'Order' },
     { path: '/recipes', label: 'Recipes' },
-    { path: '/merch', label: 'Merch' },
   ];
   
   // Close sidebar when route changes

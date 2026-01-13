@@ -21,7 +21,7 @@ export function ConfigureTreats({ itemType, defaultValues, onSubmit }: Configure
   } = useForm<TreatOrder>({
     resolver: zodResolver(treatOrderSchema),
     defaultValues: defaultValues || {
-      type: itemType as 'brownies' | 'cookies' | 'seasonal',
+      type: itemType as 'brownies' | 'cookies',
       quantity: unitInfo.perUnit, // Start with 1 unit
     },
   });

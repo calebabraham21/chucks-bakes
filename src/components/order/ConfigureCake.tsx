@@ -1,7 +1,19 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cakeConfigSchema, type CakeConfig } from '../../lib/validation';
-import { CAKE_SIZES, CAKE_FLAVORS, CAKE_FILLINGS, FROSTING_OPTIONS, SMBC_FLAVORS, MAX_COLOR_CHIPS, MAX_THEME_LENGTH, PRESET_COLORS } from '../../lib/constants';
+import { 
+  CAKE_SIZES, 
+  CAKE_FLAVORS, 
+  CAKE_FILLINGS, 
+  SMBC_FLAVORS, 
+  CAKE_TOPPINGS,
+  WRITING_STYLES,
+  MAX_COLOR_CHIPS, 
+  MAX_THEME_LENGTH,
+  MAX_WRITING_LENGTH,
+  MAX_TOPPINGS,
+  PRESET_COLORS 
+} from '../../lib/constants';
 import { Select } from '../ui/Select';
 import { RadioGroup } from '../ui/RadioGroup';
 import { Input } from '../ui/Input';
@@ -24,28 +36,44 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
       size: '',
       flavor: '',
       filling: '',
-      frostingType: undefined,
-      smbcFlavor: '',
+      frostingFlavor: '',
+      toppings: [],
+      writingStyle: '',
+      writingText: '',
       theme: '',
       colors: [],
+      specialRequests: '',
     },
   });
   
-  const frostingType = watch('frostingType');
   const colors = watch('colors') || [];
+  const toppings = watch('toppings') || [];
   const size = watch('size');
+  const writingStyle = watch('writingStyle');
+  const frostingFlavor = watch('frostingFlavor');
   
-  const showSmbcFlavor = frostingType === 'smbc';
-  const frostingHelper = FROSTING_OPTIONS.find(f => f.value === frostingType)?.helper;
+  // Check if chocolate frosting is selected (can't be dyed)
+  const isChocolateFrosting = frostingFlavor === 'chocolate';
+  
+  // Get size note if any
+  const selectedSize = CAKE_SIZES.find(s => s.value === size);
+  const sizeNote = selectedSize && 'note' in selectedSize ? selectedSize.note : undefined;
   
   const handleColorToggle = (colorValue: string) => {
     const currentColors = colors || [];
     if (currentColors.includes(colorValue)) {
-      // Remove color
       setValue('colors', currentColors.filter((c: string) => c !== colorValue), { shouldValidate: true });
     } else if (currentColors.length < MAX_COLOR_CHIPS) {
-      // Add color
       setValue('colors', [...currentColors, colorValue], { shouldValidate: true });
+    }
+  };
+  
+  const handleToppingToggle = (toppingValue: string) => {
+    const currentToppings = toppings || [];
+    if (currentToppings.includes(toppingValue)) {
+      setValue('toppings', currentToppings.filter((t: string) => t !== toppingValue), { shouldValidate: true });
+    } else if (currentToppings.length < MAX_TOPPINGS) {
+      setValue('toppings', [...currentToppings, toppingValue], { shouldValidate: true });
     }
   };
   
@@ -56,128 +84,202 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
           Configure Your Cake
         </h2>
         <p className="text-gray-600 mb-6">
-          Customize your perfect cake
+          All cakes are frosted in Swiss Meringue Buttercream
         </p>
       </div>
       
+      {/* Size */}
       <RadioGroup
         label="Size"
         name="size"
-        options={CAKE_SIZES}
+        options={CAKE_SIZES.map(s => ({ value: s.value, label: s.label }))}
         value={size}
         onChange={(value) => setValue('size', value, { shouldValidate: true })}
         error={errors.size?.message}
         required
       />
       
+      {sizeNote && (
+        <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
+          <p className="text-sm text-amber-800">📝 {sizeNote}</p>
+        </div>
+      )}
+      
+      {/* Flavor */}
       <Select
-        label="Flavor"
-        options={CAKE_FLAVORS}
+        label="Cake Flavor"
+        options={CAKE_FLAVORS.map(f => ({ value: f.value, label: f.label }))}
         placeholder="Select a flavor"
         error={errors.flavor?.message}
         required
         {...register('flavor')}
       />
       
+      {/* Filling */}
       <Select
         label="Filling"
-        options={CAKE_FILLINGS}
+        options={CAKE_FILLINGS.map(f => ({ value: f.value, label: f.label }))}
         placeholder="Select a filling"
         error={errors.filling?.message}
         required
         {...register('filling')}
       />
       
-      <RadioGroup
-        label="Frosting & Decoration"
-        name="frostingType"
-        options={FROSTING_OPTIONS}
-        value={frostingType}
-        onChange={(value) => setValue('frostingType', value as 'smbc' | 'american', { shouldValidate: true })}
-        error={errors.frostingType?.message}
+      {/* Frosting Flavor (SMBC) */}
+      <Select
+        label="Frosting Flavor (Swiss Meringue Buttercream)"
+        options={SMBC_FLAVORS.map(f => ({ value: f.value, label: f.label }))}
+        placeholder="Select frosting flavor"
+        error={errors.frostingFlavor?.message}
         required
+        {...register('frostingFlavor')}
       />
       
-      {showSmbcFlavor && (
-        <Select
-          label="SMBC Flavor"
-          options={SMBC_FLAVORS}
-          placeholder="Select SMBC flavor"
-          error={errors.smbcFlavor?.message}
-          helperText="Flavor for Swiss Meringue Buttercream piping"
-          required
-          {...register('smbcFlavor')}
-        />
-      )}
-      
-      {frostingHelper && (
-        <div className="p-3 bg-bakery-pink-50 rounded-lg border border-bakery-pink-200">
-          <p className="text-sm text-gray-700">{frostingHelper}</p>
+      {isChocolateFrosting && (
+        <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
+          <p className="text-sm text-amber-800">🍫 Chocolate frosted cakes cannot be dyed</p>
         </div>
       )}
       
-      <Input
-        label="Theme (optional)"
-        placeholder="e.g., Birthday, Wedding, Anniversary"
-        maxLength={MAX_THEME_LENGTH}
-        error={errors.theme?.message}
-        helperText={`Up to ${MAX_THEME_LENGTH} characters`}
-        {...register('theme')}
+      {/* Writing Style */}
+      <Select
+        label="Writing Style (optional)"
+        options={WRITING_STYLES.map(w => ({ value: w.value, label: w.label }))}
+        placeholder="Select writing style"
+        error={errors.writingStyle?.message}
+        {...register('writingStyle')}
       />
       
+      {writingStyle && writingStyle !== 'none' && (
+        <Input
+          label="What should the cake say?"
+          placeholder="e.g., Happy Birthday Sarah!"
+          maxLength={MAX_WRITING_LENGTH}
+          error={errors.writingText?.message}
+          helperText={`Up to ${MAX_WRITING_LENGTH} characters`}
+          {...register('writingText')}
+        />
+      )}
+      
+      {/* Toppings */}
       <div>
         <label className="block text-base font-medium text-gray-700 mb-3">
-          Colors (optional)
+          Toppings (optional)
         </label>
         <p className="text-sm text-gray-600 mb-3">
-          Select up to {MAX_COLOR_CHIPS} colors
+          Select up to {MAX_TOPPINGS} toppings
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          {PRESET_COLORS.map((color) => {
-            const isSelected = colors.includes(color.value);
+        <div className="grid grid-cols-2 gap-3">
+          {CAKE_TOPPINGS.map((topping) => {
+            const isSelected = toppings.includes(topping.value);
             return (
               <button
-                key={color.value}
+                key={topping.value}
                 type="button"
-                onClick={() => handleColorToggle(color.value)}
-                disabled={!isSelected && colors.length >= MAX_COLOR_CHIPS}
+                onClick={() => handleToppingToggle(topping.value)}
+                disabled={!isSelected && toppings.length >= MAX_TOPPINGS}
                 className={`
-                  flex items-center gap-2 px-3 py-2.5 rounded-xl border-2 transition-all text-sm font-medium
+                  flex items-center justify-center px-3 py-2.5 rounded-xl border-2 transition-all text-sm font-medium
                   ${isSelected
                     ? 'border-[#ff6b9d] bg-[#fff5f7] text-black'
                     : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
                   }
-                  ${!isSelected && colors.length >= MAX_COLOR_CHIPS
+                  ${!isSelected && toppings.length >= MAX_TOPPINGS
                     ? 'opacity-50 cursor-not-allowed'
                     : 'cursor-pointer active:scale-95'
                   }
                 `}
                 aria-pressed={isSelected}
               >
-                <span
-                  className="w-5 h-5 rounded-full border border-gray-300 flex-shrink-0"
-                  style={{ backgroundColor: color.hex }}
-                  aria-hidden="true"
-                />
-                <span className="truncate">{color.label}</span>
+                {topping.label}
               </button>
             );
           })}
         </div>
-        {colors.length > 0 && (
+        {toppings.length > 0 && (
           <p className="text-sm text-gray-600 mt-2">
-            Selected: {colors.length}/{MAX_COLOR_CHIPS}
+            Selected: {toppings.length}/{MAX_TOPPINGS}
           </p>
         )}
-        {errors.colors && (
-          <div className="mt-2 text-sm text-red-700 bg-red-50 px-3 py-2 rounded-lg border border-red-200" role="alert">
-            <span className="font-medium">⚠️ {errors.colors.message}</span>
+      </div>
+      
+      {/* Theme/Design */}
+      <Input
+        label="Theme/Design (optional)"
+        placeholder="e.g., Birthday, Wedding, Floral, Princess"
+        maxLength={MAX_THEME_LENGTH}
+        error={errors.theme?.message}
+        helperText={`Describe the look you're going for`}
+        {...register('theme')}
+      />
+      
+      {/* Colors - only show if not chocolate frosting */}
+      {!isChocolateFrosting && (
+        <div>
+          <label className="block text-base font-medium text-gray-700 mb-3">
+            Colors (optional)
+          </label>
+          <p className="text-sm text-gray-600 mb-3">
+            Select up to {MAX_COLOR_CHIPS} colors for your cake
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {PRESET_COLORS.map((color) => {
+              const isSelected = colors.includes(color.value);
+              return (
+                <button
+                  key={color.value}
+                  type="button"
+                  onClick={() => handleColorToggle(color.value)}
+                  disabled={!isSelected && colors.length >= MAX_COLOR_CHIPS}
+                  className={`
+                    flex items-center gap-2 px-3 py-2.5 rounded-xl border-2 transition-all text-sm font-medium
+                    ${isSelected
+                      ? 'border-[#ff6b9d] bg-[#fff5f7] text-black'
+                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                    }
+                    ${!isSelected && colors.length >= MAX_COLOR_CHIPS
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'cursor-pointer active:scale-95'
+                    }
+                  `}
+                  aria-pressed={isSelected}
+                >
+                  <span
+                    className="w-5 h-5 rounded-full border border-gray-300 flex-shrink-0"
+                    style={{ backgroundColor: color.hex }}
+                    aria-hidden="true"
+                  />
+                  <span className="truncate">{color.label}</span>
+                </button>
+              );
+            })}
           </div>
-        )}
+          {colors.length > 0 && (
+            <p className="text-sm text-gray-600 mt-2">
+              Selected: {colors.length}/{MAX_COLOR_CHIPS}
+            </p>
+          )}
+        </div>
+      )}
+      
+      {/* Special Requests */}
+      <div>
+        <label htmlFor="specialRequests" className="block text-base font-medium text-gray-700 mb-2">
+          Special Requests (optional)
+        </label>
+        <textarea
+          id="specialRequests"
+          rows={3}
+          placeholder="Any specific toppings not listed above, dietary restrictions, or other requests..."
+          className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:border-[#ff6b9d] focus:ring-2 focus:ring-[#ff6b9d]/20 focus:outline-none transition-colors"
+          {...register('specialRequests')}
+        />
+        <p className="text-sm text-gray-500 mt-1">
+          For specific toppings not listed, I can evaluate if your request can be accommodated
+        </p>
       </div>
       
       <input type="submit" className="hidden" />
     </form>
   );
 }
-

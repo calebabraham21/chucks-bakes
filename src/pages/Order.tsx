@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, CreditCard, MapPin } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Stepper } from '../components/ui/Stepper';
 import { ChooseItem } from '../components/order/ChooseItem';
@@ -8,7 +8,7 @@ import { ConfigureTreats } from '../components/order/ConfigureTreats';
 import { ContactForm } from '../components/order/ContactForm';
 import { ReviewAndSend } from '../components/order/ReviewAndSend';
 import { useOrderStore } from '../lib/state';
-import { ITEMS } from '../lib/constants';
+import { ITEMS, POLICIES } from '../lib/constants';
 import type { ItemType } from '../lib/constants';
 import type { CakeConfig, TreatOrder, ContactInfo } from '../lib/validation';
 
@@ -53,10 +53,13 @@ export function Order() {
           size: '',
           flavor: '',
           filling: '',
-          frostingType: undefined as any,
-          smbcFlavor: '',
+          frostingFlavor: '',
+          toppings: [],
+          writingStyle: '',
+          writingText: '',
           theme: '',
           colors: [],
+          specialRequests: '',
         },
       });
     } else {
@@ -125,6 +128,29 @@ export function Order() {
           Order Wizard
         </h1>
         
+        {/* Policies Banner - only show on step 1 */}
+        {currentStep === 1 && (
+          <div className="max-w-2xl mx-auto mb-4">
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-[#ffc1d4]/50 shadow-sm">
+              <h3 className="font-semibold text-[#000] mb-3 text-sm">📋 Before you order:</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div className="flex items-start gap-2">
+                  <Clock className="w-4 h-4 text-[#ff6b9d] flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">{POLICIES.advanceNotice}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CreditCard className="w-4 h-4 text-[#ff6b9d] flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">{POLICIES.payment}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <MapPin className="w-4 h-4 text-[#ff6b9d] flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700">{POLICIES.pickup}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <Stepper steps={STEPS} currentStep={currentStep} />
         
         <div className="mt-4 max-w-2xl mx-auto">
@@ -179,8 +205,7 @@ export function Order() {
                         onSubmit={handleCakeConfig}
                       />
                     ) : orderDraft.itemType === ITEMS.BROWNIES || 
-                       orderDraft.itemType === ITEMS.COOKIES || 
-                       orderDraft.itemType === ITEMS.SEASONAL ? (
+                       orderDraft.itemType === ITEMS.COOKIES ? (
                       <ConfigureTreats
                         itemType={orderDraft.itemType}
                         defaultValues={'order' in orderDraft ? orderDraft.order : undefined}
@@ -190,7 +215,7 @@ export function Order() {
                       <div className="text-center py-12">
                         <p className="text-lg text-red-600 mb-2">Configuration Error</p>
                         <p className="text-sm text-gray-600">Item type "{orderDraft.itemType}" is not recognized.</p>
-                        <p className="text-xs text-gray-500 mt-2">Please ensure the item type is exactly: "cake", "brownies", "cookies", or "seasonal"</p>
+                        <p className="text-xs text-gray-500 mt-2">Please ensure the item type is exactly: "cake", "brownies", or "cookies"</p>
                       </div>
                     )}
                   </>

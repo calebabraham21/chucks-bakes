@@ -73,8 +73,14 @@ export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
                 {draft.config.filling && (
                   <p>Filling: {draft.config.filling}</p>
                 )}
-                {draft.config.frostingType && (
-                  <p>Frosting: {draft.config.frostingType}</p>
+                {draft.config.frostingFlavor && (
+                  <p>Frosting: {draft.config.frostingFlavor}</p>
+                )}
+                {draft.config.writingStyle && draft.config.writingStyle !== 'none' && (
+                  <p>Writing: {draft.config.writingText || draft.config.writingStyle}</p>
+                )}
+                {draft.config.toppings && draft.config.toppings.length > 0 && (
+                  <p>Toppings: {draft.config.toppings.join(', ')}</p>
                 )}
                 {draft.config.theme && (
                   <p>Theme: {draft.config.theme}</p>

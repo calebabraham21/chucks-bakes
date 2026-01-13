@@ -5,7 +5,6 @@ import { Home } from './pages/Home';
 import { Order } from './pages/Order';
 import { Recipes } from './pages/Recipes';
 import { RecipePost } from './pages/RecipePost';
-import { Merch } from './pages/Merch';
 import { Success } from './pages/Success';
 import { ComingSoon } from './pages/ComingSoon';
 
@@ -31,7 +30,6 @@ function AppContent() {
           <Route path="/order" element={<Order />} />
           <Route path="/recipes" element={<Recipes />} />
           <Route path="/recipes/:slug" element={<RecipePost />} />
-          <Route path="/merch" element={<Merch />} />
           <Route path="/success" element={<Success />} />
         </Routes>
       </main>

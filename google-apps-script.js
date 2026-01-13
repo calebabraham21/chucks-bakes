@@ -91,18 +91,19 @@ function addHeaders(sheet) {
     'Phone',
     'Delivery Method',
     'Target Date',
-    'Budget',
     'Notes',
-    'Referral Source',
     // Cake Config
     'Size',
     'Quantity',
-    'Flavor(s)',
-    'Filling(s)',
-    'Frosting Type',
-    'SMBC Flavor',
+    'Flavor',
+    'Filling',
+    'Frosting Flavor',
+    'Toppings',
+    'Writing Style',
+    'Writing Text',
     'Theme',
-    'Colors'
+    'Colors',
+    'Special Requests'
   ];
   
   sheet.appendRow(headers);
@@ -139,17 +140,18 @@ function addOrderRow(sheet, data) {
     phone: contact.phone || '',
     deliveryMethod: contact.deliveryMethod || 'pickup',
     targetDate: contact.targetDate || '',
-    budget: contact.budget || '',
     notes: contact.notes || '',
-    referralSource: contact.referralSource || '',
     size: '',
     quantity: '',
-    flavors: '',
-    fillings: '',
-    frostingType: '',
-    smbcFlavor: '',
+    flavor: '',
+    filling: '',
+    frostingFlavor: '',
+    toppings: '',
+    writingStyle: '',
+    writingText: '',
     theme: '',
-    colors: ''
+    colors: '',
+    specialRequests: ''
   };
   
   // Fill in item-specific details
@@ -157,23 +159,29 @@ function addOrderRow(sheet, data) {
     const config = data.config;
     row.size = config.size || '';
     row.quantity = '1 cake';
-    row.flavors = config.flavor || '';
-    row.fillings = config.filling || '';
-    row.frostingType = config.frostingType || '';
-    row.smbcFlavor = config.smbcFlavor || '';
+    row.flavor = config.flavor || '';
+    row.filling = config.filling || '';
+    row.frostingFlavor = config.frostingFlavor || '';
+    row.toppings = (config.toppings && config.toppings.length > 0) ? config.toppings.join(', ') : '';
+    row.writingStyle = config.writingStyle || '';
+    row.writingText = config.writingText || '';
     row.theme = config.theme || '';
     row.colors = (config.colors && config.colors.length > 0) ? config.colors.join(', ') : '';
+    row.specialRequests = config.specialRequests || '';
     
   } else if (data.order) {
-    // Brownies, cookies, scones
+    // Brownies, cookies
     row.size = 'N/A';
     row.quantity = data.order.quantity || '';
-    row.flavors = 'N/A';
-    row.fillings = 'N/A';
-    row.frostingType = 'N/A';
-    row.smbcFlavor = 'N/A';
+    row.flavor = 'N/A';
+    row.filling = 'N/A';
+    row.frostingFlavor = 'N/A';
+    row.toppings = 'N/A';
+    row.writingStyle = 'N/A';
+    row.writingText = 'N/A';
     row.theme = 'N/A';
     row.colors = 'N/A';
+    row.specialRequests = 'N/A';
   }
   
   // Convert row object to array in the correct column order
@@ -186,17 +194,18 @@ function addOrderRow(sheet, data) {
     row.phone,
     row.deliveryMethod,
     row.targetDate,
-    row.budget,
     row.notes,
-    row.referralSource,
     row.size,
     row.quantity,
-    row.flavors,
-    row.fillings,
-    row.frostingType,
-    row.smbcFlavor,
+    row.flavor,
+    row.filling,
+    row.frostingFlavor,
+    row.toppings,
+    row.writingStyle,
+    row.writingText,
     row.theme,
-    row.colors
+    row.colors,
+    row.specialRequests
   ];
   
   sheet.appendRow(rowArray);

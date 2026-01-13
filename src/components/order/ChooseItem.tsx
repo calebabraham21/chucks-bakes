@@ -22,11 +22,6 @@ const ORDER_ITEMS = [
     label: ITEM_LABELS[ITEMS.COOKIES],
     image: '/Cookies.PNG',
   },
-  {
-    itemType: ITEMS.SEASONAL,
-    label: ITEM_LABELS[ITEMS.SEASONAL],
-    image: '/scones.PNG',
-  },
 ];
 
 export function ChooseItem({ onSelect }: ChooseItemProps) {

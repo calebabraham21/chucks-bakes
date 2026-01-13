@@ -1,31 +1,47 @@
 import type { OrderDraft, RequestItem, CakeConfig, TreatOrder } from './validation';
-import { ITEMS, ITEM_LABELS, CAKE_SIZES, CAKE_FLAVORS, CAKE_FILLINGS, FROSTING_OPTIONS, SMBC_FLAVORS } from './constants';
+import { ITEMS, ITEM_LABELS, CAKE_SIZES, CAKE_FLAVORS, CAKE_FILLINGS, SMBC_FLAVORS, CAKE_TOPPINGS, WRITING_STYLES } from './constants';
 
 // Generate human-readable summary for cake configuration
 function summarizeCakeConfig(config: CakeConfig): string {
   const size = CAKE_SIZES.find(s => s.value === config.size)?.label || config.size;
   const flavor = CAKE_FLAVORS.find(f => f.value === config.flavor)?.label || config.flavor;
   const filling = CAKE_FILLINGS.find(f => f.value === config.filling)?.label || config.filling;
-  const frosting = FROSTING_OPTIONS.find(f => f.value === config.frostingType)?.label || config.frostingType;
+  const frostingFlavor = SMBC_FLAVORS.find(f => f.value === config.frostingFlavor)?.label || config.frostingFlavor;
   
   let lines = [
     `Size: ${size}`,
-    `Flavor: ${flavor}`,
+    `Cake Flavor: ${flavor}`,
     `Filling: ${filling}`,
-    `Frosting: ${frosting}`,
+    `Frosting: Swiss Meringue Buttercream - ${frostingFlavor}`,
   ];
   
-  if (config.frostingType === 'smbc' && config.smbcFlavor) {
-    const smbcFlavor = SMBC_FLAVORS.find(f => f.value === config.smbcFlavor)?.label || config.smbcFlavor;
-    lines.push(`SMBC Flavor: ${smbcFlavor}`);
+  // Toppings
+  if (config.toppings && config.toppings.length > 0) {
+    const toppingLabels = config.toppings.map(t => 
+      CAKE_TOPPINGS.find(topping => topping.value === t)?.label || t
+    );
+    lines.push(`Toppings: ${toppingLabels.join(', ')}`);
+  }
+  
+  // Writing
+  if (config.writingStyle && config.writingStyle !== 'none') {
+    const writingStyleLabel = WRITING_STYLES.find(w => w.value === config.writingStyle)?.label || config.writingStyle;
+    lines.push(`Writing Style: ${writingStyleLabel}`);
+    if (config.writingText) {
+      lines.push(`Writing Text: "${config.writingText}"`);
+    }
   }
   
   if (config.theme) {
-    lines.push(`Theme: ${config.theme}`);
+    lines.push(`Theme/Design: ${config.theme}`);
   }
   
   if (config.colors && config.colors.length > 0) {
     lines.push(`Colors: ${config.colors.join(', ')}`);
+  }
+  
+  if (config.specialRequests) {
+    lines.push(`Special Requests: ${config.specialRequests}`);
   }
   
   return lines.join('\n');
@@ -62,8 +78,10 @@ export function makePlainTextSummary(item: OrderDraft | RequestItem): string {
       lines.push(`Phone: ${item.contact.phone}`);
     }
     
+    lines.push(`Delivery Method: ${item.contact.deliveryMethod === 'pickup' ? 'Pickup in Arlington, VA' : 'Delivery (for larger orders)'}`);
+    
     if (item.contact.targetDate) {
-      lines.push(`Target Pickup Date: ${item.contact.targetDate}`);
+      lines.push(`Target Date: ${item.contact.targetDate}`);
     }
     
     if (item.contact.notes) {
@@ -102,4 +120,3 @@ export function makeMailtoLink(items: RequestItem[]): string {
   const body = encodeURIComponent(makeCombinedPlainTextSummary(items));
   return `mailto:orders@chucksbakes.com?subject=${subject}&body=${body}`;
 }
-

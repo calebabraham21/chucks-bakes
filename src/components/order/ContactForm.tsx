@@ -3,17 +3,28 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { contactInfoSchema, type ContactInfo } from '../../lib/validation';
 import { Input } from '../ui/Input';
 import { RadioGroup } from '../ui/RadioGroup';
+import { POLICIES } from '../../lib/constants';
 
 interface ContactFormProps {
   defaultValues?: Partial<ContactInfo>;
   onSubmit: (data: ContactInfo) => void;
 }
 
+// Get minimum date (10 days from now)
+function getMinDate(): string {
+  const date = new Date();
+  date.setDate(date.getDate() + 10);
+  return date.toISOString().split('T')[0];
+}
+
 export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
+  const minDate = getMinDate();
+  
   const {
     register,
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<ContactInfo>({
     resolver: zodResolver(contactInfoSchema),
@@ -23,11 +34,11 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
       phone: '',
       deliveryMethod: 'pickup',
       targetDate: '',
-      budget: '',
       notes: '',
-      referralSource: '',
     },
   });
+  
+  const deliveryMethod = watch('deliveryMethod');
   
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -63,7 +74,7 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
       />
       
       <Input
-        label="Phone"
+        label="Phone (optional)"
         type="tel"
         inputMode="tel"
         autoComplete="tel"
@@ -80,8 +91,8 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
           <RadioGroup
             label="Fulfillment Method"
             options={[
-              { value: 'pickup', label: 'Pickup' },
-              { value: 'delivery', label: 'Delivery' },
+              { value: 'pickup', label: 'Pickup (Arlington, VA)' },
+              { value: 'delivery', label: 'Delivery (larger orders only)' },
             ]}
             error={errors.deliveryMethod?.message}
             name={field.name}
@@ -91,37 +102,39 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
         )}
       />
       
-      <Input
-        label="Preferred Date"
-        type="date"
-        autoComplete="off"
-        error={errors.targetDate?.message}
-        helperText="When do you need it?"
-        {...register('targetDate')}
-      />
+      {deliveryMethod === 'delivery' && (
+        <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
+          <p className="text-sm text-amber-800">📦 {POLICIES.delivery}</p>
+        </div>
+      )}
       
-      <Input
-        label="Budget (optional)"
-        type="text"
-        inputMode="text"
-        placeholder="e.g., $50-100"
-        error={errors.budget?.message}
-        helperText="Helps us suggest options"
-        {...register('budget')}
-      />
+      <div>
+        <Input
+          label="Preferred Pickup/Delivery Date"
+          type="date"
+          autoComplete="off"
+          min={minDate}
+          error={errors.targetDate?.message}
+          required
+          {...register('targetDate')}
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          ⏰ {POLICIES.advanceNotice}
+        </p>
+      </div>
       
       <div className="w-full">
         <label 
           htmlFor="notes"
           className="block text-base font-medium text-gray-700 mb-2"
         >
-          Special Notes (optional)
+          Additional Notes (optional)
         </label>
         <textarea
           id="notes"
-          rows={4}
-          placeholder="Any special requests or dietary restrictions?"
-          className="w-full px-3 py-3 rounded-xl border-2 border-gray-200 transition-smooth bg-white text-black text-base placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-bakery-pink-400 touch-manipulation resize-y min-h-[100px]"
+          rows={3}
+          placeholder="Any special requests or things we should know?"
+          className="w-full px-3 py-3 rounded-xl border-2 border-gray-200 transition-smooth bg-white text-black text-base placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-bakery-pink-400 touch-manipulation resize-y min-h-[80px]"
           {...register('notes')}
         />
         {errors.notes && (
@@ -131,17 +144,16 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
         )}
       </div>
       
-      <Input
-        label="How did you hear about us? (optional)"
-        type="text"
-        inputMode="text"
-        placeholder="Instagram, friend, Google, etc."
-        error={errors.referralSource?.message}
-        {...register('referralSource')}
-      />
+      {/* Policy reminder */}
+      <div className="p-4 bg-[#fff5f7] rounded-xl border border-[#ffc1d4]">
+        <h3 className="font-medium text-black mb-2">📋 Reminder</h3>
+        <ul className="text-sm text-gray-700 space-y-1">
+          <li>• {POLICIES.payment}</li>
+          <li>• {POLICIES.cancellationFee}</li>
+        </ul>
+      </div>
       
       <input type="submit" className="hidden" />
     </form>
   );
 }
-

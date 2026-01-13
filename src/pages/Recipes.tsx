@@ -51,11 +51,11 @@ export function Recipes() {
         </div>
 
         {posts.length === 0 ? (
-          <Card padding="lg" className="text-center">
-            <p className="text-black mb-4">
+          <Card padding="lg" className="max-w-md mx-auto">
+            <p className="text-black mb-4 text-center">
               No recipes published yet. Check back soon!
             </p>
-            <p className="text-sm text-black">
+            <p className="text-sm text-black text-center">
               📖 We're working on adding delicious recipes and baking tips!
             </p>
           </Card>

@@ -4,7 +4,6 @@ export const ITEMS = {
   CAKE: 'cake',
   BROWNIES: 'brownies',
   COOKIES: 'cookies',
-  SEASONAL: 'seasonal',
 } as const;
 
 export type ItemType = typeof ITEMS[keyof typeof ITEMS];
@@ -13,66 +12,99 @@ export const ITEM_LABELS = {
   [ITEMS.CAKE]: 'Custom Cake',
   [ITEMS.BROWNIES]: 'Brownies',
   [ITEMS.COOKIES]: 'Chocolate Chip Cookies',
-  [ITEMS.SEASONAL]: 'Seasonal: Apple Pie Almond Scones',
 } as const;
 
 export const ITEM_DESCRIPTIONS = {
   [ITEMS.CAKE]: 'Custom designed cake with your choice of flavors and decorations',
-  [ITEMS.BROWNIES]: 'Rich, fudgy brownies (minimum 16)',
-  [ITEMS.COOKIES]: 'Classic chocolate chip cookies (minimum 12)',
-  [ITEMS.SEASONAL]: 'Apple Pie Almond Scones (through November, minimum 6)',
+  [ITEMS.BROWNIES]: 'Rich, fudgy brownies',
+  [ITEMS.COOKIES]: 'Classic chocolate chip cookies',
 } as const;
 
-// Cake configurations
+// ========================================
+// POLICIES
+// ========================================
+export const POLICIES = {
+  advanceNotice: 'Orders must be placed at least 10 days in advance',
+  cancellationFee: 'Cancellation fee is half of total once the order is confirmed',
+  payment: 'Full payment required to secure order (invoice sent once order details are finalized)',
+  pickup: 'Pickup is in Arlington, VA',
+  delivery: 'Personal delivery available for larger orders only',
+} as const;
+
+// ========================================
+// CAKE CONFIGURATIONS
+// ========================================
+
+// Cake sizes with pricing
 export const CAKE_SIZES = [
-  { value: '8-round', label: '8" round (serves 20–24)' },
-  { value: '18x12-sheet', label: '18x12 sheet (serves 36–48)' },
+  { value: '6in-2layer', label: '6" 2 Layer (serves 5)', price: null },
+  { value: '6in-3layer', label: '6" 3 Layer (serves 12-15) - starting at $110', price: 110, note: 'Writing on board if exceeding 7 characters' },
+  { value: '8in-3layer', label: '8" 3 Layer (serves 20-25) - starting at $160', price: 160 },
+  { value: '2tier-medium', label: 'Medium 2 Tier (serves 40-45)', price: null, note: 'Please inquire for pricing' },
+  { value: 'quarter-sheet', label: '¼ Sheet Cake (serves 20-25) - $200', price: 200 },
+  { value: 'half-sheet', label: '½ Sheet Cake (serves 30-35) - $250', price: 250 },
 ] as const;
 
+// Cake flavors
 export const CAKE_FLAVORS = [
   { value: 'vanilla', label: 'Vanilla' },
   { value: 'chocolate', label: 'Chocolate' },
-  { value: 'orange-olive-oil', label: 'Orange Olive Oil' },
-  { value: 'spice', label: 'Spice' },
   { value: 'funfetti', label: 'Funfetti' },
+  { value: 'spice', label: 'Spice' },
+  { value: 'orange-olive-oil', label: 'Orange Olive Oil (+$10)', upcharge: 10 },
+  { value: 'gf-chocolate', label: 'Gluten Free Chocolate' },
+  { value: 'gf-vanilla', label: 'Gluten Free Vanilla' },
 ] as const;
 
+// Cake fillings (+$5 base for most)
 export const CAKE_FILLINGS = [
-  { value: 'raspberry-jam', label: 'Raspberry Jam' },
-  { value: 'cream-cheese', label: 'Cream Cheese Frosting' },
-  { value: 'dark-chocolate', label: 'Dark Chocolate Ganache' },
-  { value: 'caramel', label: 'Caramel' },
+  { value: 'none', label: 'None - filled with Swiss Meringue Buttercream (same as outside)', upcharge: 0 },
+  { value: 'raspberry-jam', label: 'Raspberry Jam (+$10)', upcharge: 10 },
+  { value: 'cookies-and-cream', label: 'Cookies and Cream (+$5)', upcharge: 5 },
+  { value: 'chocolate-buttercream', label: 'Chocolate Buttercream (+$5)', upcharge: 5 },
+  { value: 'chocolate-ganache', label: 'Chocolate Ganache (+$10)', upcharge: 10 },
+  { value: 'cream-cheese', label: 'Cream Cheese Frosting (+$5)', upcharge: 5 },
+  { value: 'coconut-cream-cheese', label: 'Coconut Cream Cheese (+$5)', upcharge: 5 },
 ] as const;
 
-export const FROSTING_TYPES = {
-  SMBC: 'smbc',
-  AMERICAN: 'american',
-} as const;
-
-export const FROSTING_OPTIONS = [
-  { 
-    value: FROSTING_TYPES.SMBC, 
-    label: 'Swiss Meringue Buttercream (SMBC)',
-    helper: 'Piping decoration and writing will be Swiss Meringue Buttercream.',
-  },
-  { 
-    value: FROSTING_TYPES.AMERICAN, 
-    label: 'American Buttercream',
-    helper: 'Natural frost; no piping or writing.',
-  },
-] as const;
-
+// All cakes are frosted in Swiss Meringue Buttercream
 export const SMBC_FLAVORS = [
   { value: 'vanilla', label: 'Vanilla' },
-  { value: 'almond', label: 'Almond' },
-  { value: 'coconut', label: 'Coconut' },
+  { value: 'almond', label: 'Almond (+$3)', upcharge: 3 },
+  { value: 'coconut', label: 'Coconut (+$3)', upcharge: 3 },
+  { value: 'chocolate', label: 'Chocolate Buttercream', note: 'Cannot be dyed' },
 ] as const;
+
+// Toppings
+export const CAKE_TOPPINGS = [
+  { value: 'sprinkles', label: 'Sprinkles' },
+  { value: 'pearls', label: 'Pearls (+$10)', upcharge: 10 },
+  { value: 'cherries', label: 'Cherries (+$5)', upcharge: 5 },
+  { value: 'edible-glitter', label: 'Edible Glitter (+$10)', upcharge: 10 },
+] as const;
+
+// Writing styles
+export const WRITING_STYLES = [
+  { value: 'none', label: 'No Writing' },
+  { value: 'classic-script', label: 'Classic Script' },
+  { value: 'block', label: 'Block' },
+  { value: 'fondant', label: 'Fondant' },
+  { value: 'chucks-choice', label: "Chuck's Choice (I'll pick what fits best!)" },
+] as const;
+
+// Legacy - keeping for backwards compatibility
+export const FROSTING_TYPES = {
+  SMBC: 'smbc',
+} as const;
+
+// ========================================
+// TREAT CONFIGURATIONS
+// ========================================
 
 // Treat minimums
 export const TREAT_MINIMUMS = {
   [ITEMS.BROWNIES]: 16,
   [ITEMS.COOKIES]: 12,
-  [ITEMS.SEASONAL]: 6,
 } as const;
 
 // Treat batch/unit information
@@ -81,27 +113,26 @@ export const TREAT_UNITS = {
     singular: 'pan',
     plural: 'pans',
     perUnit: 16,
-    maxUnits: 6, // Allow up to 6 pans
+    maxUnits: 6,
   },
   [ITEMS.COOKIES]: {
     singular: 'dozen',
     plural: 'dozen',
     perUnit: 12,
-    maxUnits: 10, // Allow up to 10 dozen
-  },
-  [ITEMS.SEASONAL]: {
-    singular: 'batch',
-    plural: 'batches',
-    perUnit: 6,
-    maxUnits: 8, // Allow up to 8 batches
+    maxUnits: 10,
   },
 } as const;
 
-// Contact & order
+// ========================================
+// GENERAL
+// ========================================
+
 export const ORDER_EMAIL = 'orders@chucksbakes.com';
 
 export const MAX_COLOR_CHIPS = 3;
-export const MAX_THEME_LENGTH = 60;
+export const MAX_THEME_LENGTH = 100;
+export const MAX_WRITING_LENGTH = 50;
+export const MAX_TOPPINGS = 3;
 
 // Preset color options for cakes
 export const PRESET_COLORS = [
@@ -118,7 +149,3 @@ export const PRESET_COLORS = [
   { value: 'rose-gold', label: 'Rose Gold', hex: '#b76e79' },
   { value: 'white', label: 'White', hex: '#ffffff' },
 ] as const;
-
-// Seasonal availability
-export const SEASONAL_AVAILABILITY = 'through November';
-
