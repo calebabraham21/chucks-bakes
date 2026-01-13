@@ -1,21 +1,23 @@
 import { Link } from 'react-router-dom';
-import { useHomepage } from '../../lib/useHomepage';
-import { urlFor } from '../../lib/sanity';
+
+// Hardcoded hero data
+const HERO_TITLE = 'Made fresh in Arlington — small-batch cakes, brownies, and scones.';
+const HERO_SUBTITLE = 'Every order is baked by Cristina with locally sourced ingredients and a whole lot of love.';
+const HERO_BUTTON_TEXT = 'Start Your Order';
+const HERO_IMAGE: string | undefined = undefined; // Add image path if needed
 
 export function Hero() {
-  const { homepage } = useHomepage();
-
-  const title = homepage?.heroTitle || 'Made fresh in Arlington — small-batch cakes, brownies, and scones.';
-  const subtitle = homepage?.heroSubtitle || 'Every order is baked by Cristina with locally sourced ingredients and a whole lot of love.';
-  const buttonText = homepage?.heroButtonText || 'Start Your Order';
+  const title = HERO_TITLE;
+  const subtitle = HERO_SUBTITLE;
+  const buttonText = HERO_BUTTON_TEXT;
 
   return (
     <section className="relative py-8 sm:py-12 flex items-center justify-center overflow-hidden">
       {/* Background pattern or image */}
-      {homepage?.heroImage ? (
+      {HERO_IMAGE ? (
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-90"
-          style={{ backgroundImage: `url(${urlFor(homepage.heroImage).width(1920).url()})` }}
+          style={{ backgroundImage: `url(${HERO_IMAGE})` }}
           aria-hidden="true"
         />
       ) : (

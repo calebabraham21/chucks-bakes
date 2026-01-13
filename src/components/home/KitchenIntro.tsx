@@ -1,12 +1,13 @@
-import { useHomepage } from '../../lib/useHomepage';
-import { urlFor } from '../../lib/sanity';
+// Hardcoded kitchen intro data
+const KITCHEN_TITLE = "From Cristina's kitchen";
+const KITCHEN_DESCRIPTION = "Hi, I'm Cristina. I bake every order from scratch in my Arlington kitchen. No shelves, no shortcuts — just fresh, small-batch bakes for your celebrations.";
+const KITCHEN_LINK_TEXT = "Learn more about my kitchen";
+const KITCHEN_IMAGE: string | undefined = undefined; // Add image path if needed
 
 export function KitchenIntro() {
-  const { homepage } = useHomepage();
-
-  const title = homepage?.kitchenTitle || "From Cristina's kitchen";
-  const description = homepage?.kitchenDescription || "Hi, I'm Cristina. I bake every order from scratch in my Arlington kitchen. No shelves, no shortcuts — just fresh, small-batch bakes for your celebrations.";
-  const linkText = homepage?.kitchenLinkText || "Learn more about my kitchen";
+  const title = KITCHEN_TITLE;
+  const description = KITCHEN_DESCRIPTION;
+  const linkText = KITCHEN_LINK_TEXT;
 
   return (
     <section className="py-8 sm:py-10 md:py-12 bg-[#fff5f7]">
@@ -15,9 +16,9 @@ export function KitchenIntro() {
             {/* Image/Portrait - Top on mobile, left on desktop */}
             <div className="order-1 md:order-1 flex justify-center md:justify-start">
               <div className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 rounded-2xl overflow-hidden bg-gradient-to-br from-[#ffc1d4] to-[#ffddeb] border-4 border-white shadow-lg">
-                {homepage?.kitchenImage ? (
+                {KITCHEN_IMAGE ? (
                   <img 
-                    src={urlFor(homepage.kitchenImage).width(500).height(500).url()}
+                    src={KITCHEN_IMAGE}
                     alt={title}
                     loading="lazy"
                     className="w-full h-full object-cover"

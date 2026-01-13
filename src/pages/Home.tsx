@@ -1,53 +1,23 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { sanityClient, urlFor, type SanityHomepage } from '../lib/sanity';
+
+// Hardcoded homepage data
+const WELCOME_DESCRIPTION = "Welcome to Chuck's Bakes! We create custom cakes, cupcakes, and treats made with love. Browse our offerings below to get started.";
+
+// Hardcoded gallery photos using existing images in public folder
+const GALLERY_PHOTOS = [
+  { url: '/Cake1.PNG', alt: 'Custom Cake' },
+  { url: '/cupcakes.PNG', alt: 'Cupcakes' },
+  { url: '/Cookies.PNG', alt: 'Cookies' },
+  { url: '/brownies.PNG', alt: 'Brownies' },
+  { url: '/scones.PNG', alt: 'Scones' },
+];
 
 export function Home() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [homepage, setHomepage] = useState<SanityHomepage | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  // Fetch homepage data from Sanity
-  useEffect(() => {
-    const fetchHomepage = async () => {
-      try {
-        const query = `*[_type == "homepage"][0]{
-          _id,
-          welcomeDescription,
-          galleryPhotos[]{
-            asset,
-            alt,
-            caption
-          }
-        }`;
-        
-        const data = await sanityClient.fetch<SanityHomepage>(query);
-        console.log('Homepage data from Sanity:', data);
-        console.log('Gallery photos:', data?.galleryPhotos);
-        setHomepage(data);
-      } catch (error) {
-        console.error('Error fetching homepage data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHomepage();
-  }, []);
-
-  // Get gallery photos from Sanity or use placeholders
-  const photos = homepage?.galleryPhotos?.length 
-    ? homepage.galleryPhotos.map((photo) => ({
-        url: urlFor(photo.asset).width(800).height(800).url(),
-        alt: photo.alt || 'Baked goods',
-        caption: photo.caption,
-      }))
-    : [
-        { url: '/placeholder1.jpg', alt: 'Placeholder 1' },
-        { url: '/placeholder2.jpg', alt: 'Placeholder 2' },
-        { url: '/placeholder3.jpg', alt: 'Placeholder 3' },
-        { url: '/placeholder4.jpg', alt: 'Placeholder 4' },
-      ];
+  // Get gallery photos
+  const photos = GALLERY_PHOTOS;
 
   // Duplicate photos for seamless infinite scroll
   const duplicatedPhotos = [...photos, ...photos, ...photos];
@@ -103,18 +73,9 @@ export function Home() {
 
         {/* Description */}
         <div className="text-center mb-4 max-w-2xl mx-auto">
-          {loading ? (
-            <div className="animate-pulse">
-              <div className="h-6 bg-gray-300 rounded w-3/4 mx-auto mb-3"></div>
-              <div className="h-6 bg-gray-300 rounded w-full mx-auto"></div>
-            </div>
-          ) : (
-            <p className="text-lg sm:text-xl md:text-2xl text-black-700 leading-relaxed font-semibold">
-              {homepage?.welcomeDescription || 
-                "Welcome to Chuck's Bakes! We create custom cakes, cupcakes, and treats made with love. Browse our offerings below to get started."
-              }
-            </p>
-          )}
+          <p className="text-lg sm:text-xl md:text-2xl text-black-700 leading-relaxed font-semibold">
+            {WELCOME_DESCRIPTION}
+          </p>
         </div>
 
         {/* Mobile Order Button */}
@@ -138,35 +99,25 @@ export function Home() {
             className="flex gap-6 overflow-x-hidden py-4"
             style={{ scrollBehavior: 'auto' }}
           >
-            {loading ? (
-              // Loading skeleton
-              Array.from({ length: 6 }).map((_, index) => (
-                <div 
-                  key={`skeleton-${index}`}
-                  className="flex-shrink-0 w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-2xl bg-gray-300 animate-pulse"
+            {duplicatedPhotos.map((photo, index) => (
+              <div 
+                key={`${photo.url}-${index}`}
+                className="flex-shrink-0 w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
+              >
+                <img 
+                  src={photo.url} 
+                  alt={photo.alt || `Baked goods ${index + 1}`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Fallback to a gradient if image doesn't exist
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    target.parentElement!.style.background = 
+                      `linear-gradient(135deg, #ff6b9d ${index * 10}%, #ffa3ca ${index * 15}%, #ffc1d4 ${index * 20}%)`;
+                  }}
                 />
-              ))
-            ) : (
-              duplicatedPhotos.map((photo, index) => (
-                <div 
-                  key={`${photo.url}-${index}`}
-                  className="flex-shrink-0 w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
-                >
-                  <img 
-                    src={photo.url} 
-                    alt={photo.alt || `Baked goods ${index + 1}`}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      // Fallback to a gradient if image doesn't exist
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      target.parentElement!.style.background = 
-                        `linear-gradient(135deg, #ff6b9d ${index * 10}%, #ffa3ca ${index * 15}%, #ffc1d4 ${index * 20}%)`;
-                    }}
-                  />
-                </div>
-              ))
-            )}
+              </div>
+            ))}
           </div>
           
           

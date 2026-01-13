@@ -9,7 +9,6 @@ import { ConfigureTreats } from '../components/order/ConfigureTreats';
 import { ContactForm } from '../components/order/ContactForm';
 import { ReviewAndSend } from '../components/order/ReviewAndSend';
 import { useOrderStore } from '../lib/state';
-import { useOrderPage } from '../lib/useOrderPage';
 import { ITEMS, TREAT_UNITS } from '../lib/constants';
 import type { ItemType } from '../lib/constants';
 import type { CakeConfig, CupcakeConfig, TreatOrder, ContactInfo } from '../lib/validation';
@@ -27,7 +26,9 @@ export function Order() {
   const setOrderDraft = useOrderStore((state: any) => state.setOrderDraft);
   const setCurrentStep = useOrderStore((state: any) => state.setCurrentStep);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const { orderPage } = useOrderPage();
+  
+  // Hardcoded order page title
+  const chooseItemTitle = 'Choose Your Item';
   
   // Handle step transitions with animation
   useEffect(() => {
@@ -157,7 +158,7 @@ export function Order() {
             {/* Title for step 1 - outside white box */}
             {currentStep === 1 && (
               <h2 id="step-heading" className="text-2xl font-bold text-black mb-3" tabIndex={-1}>
-                {orderPage?.chooseItemTitle || 'Choose Your Item'}
+                {chooseItemTitle}
               </h2>
             )}
             

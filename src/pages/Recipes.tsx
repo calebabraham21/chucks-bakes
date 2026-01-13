@@ -1,52 +1,33 @@
-import { useState, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
-import { sanityClient, urlFor, type SanityPost } from '../lib/sanity';
 import { Calendar } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+// Hardcoded recipe/post interface
+interface Recipe {
+  id: string;
+  title: string;
+  slug: string;
+  publishedAt: string;
+  image?: string;
+  excerpt: string;
+}
+
+// Hardcoded recipes data
+const RECIPES: Recipe[] = [
+  // Add your recipes here
+  // Example:
+  // {
+  //   id: '1',
+  //   title: 'Classic Vanilla Cake',
+  //   slug: 'classic-vanilla-cake',
+  //   publishedAt: '2024-01-15',
+  //   image: '/Cake1.PNG',
+  //   excerpt: 'A delicious classic vanilla cake recipe that never fails to impress...',
+  // },
+];
 
 export function Recipes() {
-  const [posts, setPosts] = useState<SanityPost[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Fetch posts from Sanity
-    console.log('Fetching posts from Sanity...');
-    sanityClient
-      .fetch<SanityPost[]>(
-        `*[_type == "post"] | order(publishedAt desc) {
-          _id,
-          title,
-          slug,
-          publishedAt,
-          image,
-          body
-        }`
-      )
-      .then((data) => {
-        console.log('Sanity posts fetched:', data);
-        setPosts(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Detailed error fetching posts:', err);
-        console.error('Error message:', err.message);
-        console.error('Error details:', err.details);
-        setError(`Failed to load recipes: ${err.message || 'Please try again later.'}`);
-        setLoading(false);
-      });
-  }, []);
-
-  // Extract text preview from body blocks
-  const getExcerpt = (body?: SanityPost['body']) => {
-    if (!body || body.length === 0) return 'No description available.';
-    
-    const firstBlock = body[0];
-    const text = firstBlock.children
-      .map((child) => child.text)
-      .join(' ');
-    
-    return text.length > 150 ? text.substring(0, 150) + '...' : text;
-  };
+  const posts = RECIPES;
 
   // Format date
   const formatDate = (dateString: string) => {
@@ -69,16 +50,7 @@ export function Recipes() {
           </p>
         </div>
 
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#ff6b9d]"></div>
-            <p className="mt-4 text-gray-600">Loading recipes...</p>
-          </div>
-        ) : error ? (
-          <Card padding="lg" className="text-center">
-            <p className="text-red-600">{error}</p>
-          </Card>
-        ) : posts.length === 0 ? (
+        {posts.length === 0 ? (
           <Card padding="lg" className="text-center">
             <p className="text-black mb-4">
               No recipes published yet. Check back soon!
@@ -90,11 +62,11 @@ export function Recipes() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
-              <Card key={post._id} className="overflow-hidden group cursor-pointer p-0">
+              <Card key={post.id} className="overflow-hidden group cursor-pointer p-0">
                 {post.image && (
                   <div className="aspect-[16/10] bg-gradient-to-br from-[#e47d9d] to-[#ffddeb] overflow-hidden">
                     <img
-                      src={urlFor(post.image).width(600).height(400).url()}
+                      src={post.image}
                       alt={post.title}
                       className="w-full h-full object-cover"
                       loading="lazy"
@@ -120,11 +92,11 @@ export function Recipes() {
                   </h2>
                   
                   <p className="text-gray-600 group-hover:text-white text-sm leading-relaxed line-clamp-3 mb-4 transition-colors duration-300">
-                    {getExcerpt(post.body)}
+                    {post.excerpt}
                   </p>
                   
-                  <a
-                    href={`/recipes/${post.slug.current}`}
+                  <Link
+                    to={`/recipes/${post.slug}`}
                     className="inline-flex items-center gap-2 text-[#ff6b9d] group-hover:text-white font-semibold text-sm transition-colors duration-300"
                   >
                     Read more
@@ -137,7 +109,7 @@ export function Recipes() {
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
-                  </a>
+                  </Link>
                 </div>
               </Card>
             ))}
