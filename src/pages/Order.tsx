@@ -151,7 +151,9 @@ export function Order() {
           </div>
         )}
         
-        <Stepper steps={STEPS} currentStep={currentStep} />
+        <div className="max-w-2xl mx-auto">
+          <Stepper steps={STEPS} currentStep={currentStep} />
+        </div>
         
         <div className="mt-4 max-w-2xl mx-auto">
           {/* Main content */}
