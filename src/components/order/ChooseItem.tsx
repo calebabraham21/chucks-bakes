@@ -13,11 +13,6 @@ const ORDER_ITEMS = [
     image: '/Cake1.PNG',
   },
   {
-    itemType: ITEMS.CUPCAKES,
-    label: ITEM_LABELS[ITEMS.CUPCAKES],
-    image: '/cupcakes.PNG',
-  },
-  {
     itemType: ITEMS.BROWNIES,
     label: ITEM_LABELS[ITEMS.BROWNIES],
     image: '/brownies.PNG',

@@ -15,12 +15,6 @@ const items: BakeItem[] = [
     color: '#ffddeb'
   },
   {
-    title: 'Cupcakes',
-    description: 'Customizable flavors and frostings.',
-    image: '/cupcakes.PNG',
-    color: '#ffe5f0'
-  },
-  {
     title: 'Brownies',
     description: 'Fudgy, rich, and shareable.',
     image: '/brownies.PNG',
@@ -54,7 +48,7 @@ export function WhatWeBake() {
           
         </div>
         
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {items.map((item) => (
             <Link 
               key={item.title}

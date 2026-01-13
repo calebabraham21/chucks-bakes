@@ -94,7 +94,7 @@ function addHeaders(sheet) {
     'Budget',
     'Notes',
     'Referral Source',
-    // Cake/Cupcake Config
+    // Cake Config
     'Size',
     'Quantity',
     'Flavor(s)',
@@ -160,17 +160,6 @@ function addOrderRow(sheet, data) {
     row.flavors = config.flavor || '';
     row.fillings = config.filling || '';
     row.frostingType = config.frostingType || '';
-    row.smbcFlavor = config.smbcFlavor || '';
-    row.theme = config.theme || '';
-    row.colors = (config.colors && config.colors.length > 0) ? config.colors.join(', ') : '';
-    
-  } else if (data.itemType === 'cupcakes' && data.config) {
-    const config = data.config;
-    row.size = 'N/A';
-    row.quantity = config.quantity || '';
-    row.flavors = (config.flavors && config.flavors.length > 0) ? config.flavors.join(', ') : '';
-    row.fillings = (config.fillings && config.fillings.length > 0) ? config.fillings.join(', ') : '';
-    row.frostingType = 'SMBC';
     row.smbcFlavor = config.smbcFlavor || '';
     row.theme = config.theme || '';
     row.colors = (config.colors && config.colors.length > 0) ? config.colors.join(', ') : '';

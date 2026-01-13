@@ -2,12 +2,11 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 // Hardcoded homepage data
-const WELCOME_DESCRIPTION = "Welcome to Chuck's Bakes! We create custom cakes, cupcakes, and treats made with love. Browse our offerings below to get started.";
+const WELCOME_DESCRIPTION = "Welcome to Chuck's Bakes! We create custom cakes, cookies, brownies, and treats made with love. Browse our offerings below to get started.";
 
 // Hardcoded gallery photos using existing images in public folder
 const GALLERY_PHOTOS = [
   { url: '/Cake1.PNG', alt: 'Custom Cake' },
-  { url: '/cupcakes.PNG', alt: 'Cupcakes' },
   { url: '/Cookies.PNG', alt: 'Cookies' },
   { url: '/brownies.PNG', alt: 'Brownies' },
   { url: '/scones.PNG', alt: 'Scones' },

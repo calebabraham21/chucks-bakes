@@ -14,10 +14,10 @@ export function Success() {
     <div className="min-h-screen bg-gradient-to-b from-[#fde7ee] via-[#fff5f7] to-[#fde7ee] flex items-center justify-center relative overflow-hidden">
       {/* Animated background decorations */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Floating cupcakes/treats */}
-        <div className="absolute top-10 left-10 text-4xl animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}>🧁</div>
-        <div className="absolute top-20 right-16 text-3xl animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '2.5s' }}>🍰</div>
-        <div className="absolute bottom-32 left-20 text-3xl animate-bounce" style={{ animationDelay: '1s', animationDuration: '3.5s' }}>🍪</div>
+        {/* Floating treats */}
+        <div className="absolute top-10 left-10 text-4xl animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}>🍰</div>
+        <div className="absolute top-20 right-16 text-3xl animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '2.5s' }}>🍪</div>
+        <div className="absolute bottom-32 left-20 text-3xl animate-bounce" style={{ animationDelay: '1s', animationDuration: '3.5s' }}>🥧</div>
         <div className="absolute bottom-20 right-10 text-4xl animate-bounce" style={{ animationDelay: '0.3s', animationDuration: '2.8s' }}>🎂</div>
         <div className="absolute top-1/3 left-5 text-2xl animate-bounce" style={{ animationDelay: '0.7s', animationDuration: '3.2s' }}>✨</div>
         <div className="absolute top-1/4 right-8 text-2xl animate-bounce" style={{ animationDelay: '1.2s', animationDuration: '2.7s' }}>💕</div>
@@ -72,12 +72,11 @@ export function Success() {
           {/* Main content */}
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl font-black text-[#000000] mb-3">
-              Yay! Order Sent! 🎉
+              Order Sent! 🎉
             </h1>
             
             <p className="text-lg text-[#333] mb-6 leading-relaxed">
               Thank you for choosing <span className="font-bold text-[#ff6b9d]">Chuck's Bakes</span>! 
-              We're so excited to create something delicious for you.
             </p>
 
             {/* What happens next card */}

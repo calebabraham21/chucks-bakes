@@ -4,14 +4,13 @@ import { Button } from '../components/ui/Button';
 import { Stepper } from '../components/ui/Stepper';
 import { ChooseItem } from '../components/order/ChooseItem';
 import { ConfigureCake } from '../components/order/ConfigureCake';
-import { ConfigureCupcakes } from '../components/order/ConfigureCupcakes';
 import { ConfigureTreats } from '../components/order/ConfigureTreats';
 import { ContactForm } from '../components/order/ContactForm';
 import { ReviewAndSend } from '../components/order/ReviewAndSend';
 import { useOrderStore } from '../lib/state';
-import { ITEMS, TREAT_UNITS } from '../lib/constants';
+import { ITEMS } from '../lib/constants';
 import type { ItemType } from '../lib/constants';
-import type { CakeConfig, CupcakeConfig, TreatOrder, ContactInfo } from '../lib/validation';
+import type { CakeConfig, TreatOrder, ContactInfo } from '../lib/validation';
 
 const STEPS = [
   { id: 1, label: 'Choose Item' },
@@ -46,7 +45,6 @@ export function Order() {
   const handleItemSelect = (itemType: ItemType) => {
     console.log('Selected item type:', itemType);
     console.log('Expected CAKE:', ITEMS.CAKE);
-    console.log('Expected CUPCAKES:', ITEMS.CUPCAKES);
     
     if (itemType === ITEMS.CAKE) {
       setOrderDraft({
@@ -56,19 +54,6 @@ export function Order() {
           flavor: '',
           filling: '',
           frostingType: undefined as any,
-          smbcFlavor: '',
-          theme: '',
-          colors: [],
-        },
-      });
-    } else if (itemType === ITEMS.CUPCAKES) {
-      const unitInfo = TREAT_UNITS[ITEMS.CUPCAKES];
-      setOrderDraft({
-        itemType: ITEMS.CUPCAKES,
-        config: {
-          quantity: unitInfo.perUnit,
-          flavors: [],
-          fillings: [],
           smbcFlavor: '',
           theme: '',
           colors: [],
@@ -96,18 +81,8 @@ export function Order() {
     }
   };
   
-  const handleCupcakeConfig = (config: CupcakeConfig) => {
-    if (orderDraft?.itemType === ITEMS.CUPCAKES) {
-      setOrderDraft({
-        ...orderDraft,
-        config,
-      });
-      setCurrentStep(3);
-    }
-  };
-  
   const handleTreatConfig = (order: TreatOrder) => {
-    if (orderDraft && orderDraft.itemType !== ITEMS.CAKE && orderDraft.itemType !== ITEMS.CUPCAKES) {
+    if (orderDraft && orderDraft.itemType !== ITEMS.CAKE) {
       setOrderDraft({
         ...orderDraft,
         order,
@@ -203,11 +178,6 @@ export function Order() {
                         defaultValues={'config' in orderDraft ? orderDraft.config : undefined}
                         onSubmit={handleCakeConfig}
                       />
-                    ) : orderDraft.itemType === ITEMS.CUPCAKES ? (
-                      <ConfigureCupcakes
-                        defaultValues={'config' in orderDraft ? orderDraft.config : undefined}
-                        onSubmit={handleCupcakeConfig}
-                      />
                     ) : orderDraft.itemType === ITEMS.BROWNIES || 
                        orderDraft.itemType === ITEMS.COOKIES || 
                        orderDraft.itemType === ITEMS.SEASONAL ? (
@@ -220,7 +190,7 @@ export function Order() {
                       <div className="text-center py-12">
                         <p className="text-lg text-red-600 mb-2">Configuration Error</p>
                         <p className="text-sm text-gray-600">Item type "{orderDraft.itemType}" is not recognized.</p>
-                        <p className="text-xs text-gray-500 mt-2">Please ensure the item type in CMS is exactly: "cake", "cupcakes", "brownies", "cookies", or "seasonal"</p>
+                        <p className="text-xs text-gray-500 mt-2">Please ensure the item type is exactly: "cake", "brownies", "cookies", or "seasonal"</p>
                       </div>
                     )}
                   </>

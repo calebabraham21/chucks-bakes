@@ -2,7 +2,6 @@
 
 export const ITEMS = {
   CAKE: 'cake',
-  CUPCAKES: 'cupcakes',
   BROWNIES: 'brownies',
   COOKIES: 'cookies',
   SEASONAL: 'seasonal',
@@ -12,7 +11,6 @@ export type ItemType = typeof ITEMS[keyof typeof ITEMS];
 
 export const ITEM_LABELS = {
   [ITEMS.CAKE]: 'Custom Cake',
-  [ITEMS.CUPCAKES]: 'Cupcakes',
   [ITEMS.BROWNIES]: 'Brownies',
   [ITEMS.COOKIES]: 'Chocolate Chip Cookies',
   [ITEMS.SEASONAL]: 'Seasonal: Apple Pie Almond Scones',
@@ -20,7 +18,6 @@ export const ITEM_LABELS = {
 
 export const ITEM_DESCRIPTIONS = {
   [ITEMS.CAKE]: 'Custom designed cake with your choice of flavors and decorations',
-  [ITEMS.CUPCAKES]: 'Custom cupcakes with your choice of flavors and fillings (minimum 12)',
   [ITEMS.BROWNIES]: 'Rich, fudgy brownies (minimum 16)',
   [ITEMS.COOKIES]: 'Classic chocolate chip cookies (minimum 12)',
   [ITEMS.SEASONAL]: 'Apple Pie Almond Scones (through November, minimum 6)',
@@ -71,20 +68,8 @@ export const SMBC_FLAVORS = [
   { value: 'coconut', label: 'Coconut' },
 ] as const;
 
-// Cupcake configurations
-export const CUPCAKE_FLAVORS = [
-  { value: 'vanilla', label: 'Vanilla' },
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'spice', label: 'Spice' },
-  { value: 'funfetti', label: 'Funfetti' },
-] as const;
-
-export const MAX_CUPCAKE_FLAVORS = 2;
-export const MAX_CUPCAKE_FILLINGS = 2;
-
 // Treat minimums
 export const TREAT_MINIMUMS = {
-  [ITEMS.CUPCAKES]: 12,
   [ITEMS.BROWNIES]: 16,
   [ITEMS.COOKIES]: 12,
   [ITEMS.SEASONAL]: 6,
@@ -92,12 +77,6 @@ export const TREAT_MINIMUMS = {
 
 // Treat batch/unit information
 export const TREAT_UNITS = {
-  [ITEMS.CUPCAKES]: {
-    singular: 'dozen',
-    plural: 'dozen',
-    perUnit: 12,
-    maxUnits: 10, // Allow up to 10 dozen
-  },
   [ITEMS.BROWNIES]: {
     singular: 'pan',
     plural: 'pans',

@@ -86,35 +86,7 @@ export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
             </div>
           )}
           
-          {draft.itemType === ITEMS.CUPCAKES && 'config' in draft && currentStep >= 2 && (
-            <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-                Configuration
-              </p>
-              <div className="space-y-1.5 text-sm text-gray-700">
-                {draft.config.quantity && (
-                  <p>Quantity: {draft.config.quantity}</p>
-                )}
-                {draft.config.flavors && draft.config.flavors.length > 0 && (
-                  <p>Flavors: {draft.config.flavors.join(', ')}</p>
-                )}
-                {draft.config.fillings && draft.config.fillings.length > 0 && (
-                  <p>Fillings: {draft.config.fillings.join(', ')}</p>
-                )}
-                {draft.config.smbcFlavor && (
-                  <p>Buttercream: {draft.config.smbcFlavor}</p>
-                )}
-                {draft.config.theme && (
-                  <p>Theme: {draft.config.theme}</p>
-                )}
-                {draft.config.colors && draft.config.colors.length > 0 && (
-                  <p>Colors: {draft.config.colors.join(', ')}</p>
-                )}
-              </div>
-            </div>
-          )}
-          
-          {draft.itemType !== ITEMS.CAKE && draft.itemType !== ITEMS.CUPCAKES && 'order' in draft && currentStep >= 2 && (
+          {draft.itemType !== ITEMS.CAKE && 'order' in draft && currentStep >= 2 && (
             <div>
               <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
                 Quantity

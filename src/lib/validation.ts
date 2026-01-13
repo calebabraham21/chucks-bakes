@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ITEMS, MAX_COLOR_CHIPS, MAX_THEME_LENGTH, MAX_CUPCAKE_FLAVORS, MAX_CUPCAKE_FILLINGS } from './constants';
+import { ITEMS, MAX_COLOR_CHIPS, MAX_THEME_LENGTH } from './constants';
 
 // Cake configuration schema
 export const cakeConfigSchema = z.object({
@@ -27,18 +27,6 @@ export const cakeConfigSchema = z.object({
 );
 
 export type CakeConfig = z.infer<typeof cakeConfigSchema>;
-
-// Cupcake configuration schema
-export const cupcakeConfigSchema = z.object({
-  quantity: z.number().int().positive('Please select a quantity'),
-  flavors: z.array(z.string()).min(1, 'Please select at least one flavor').max(MAX_CUPCAKE_FLAVORS, `You can select up to ${MAX_CUPCAKE_FLAVORS} flavors`),
-  fillings: z.array(z.string()).max(MAX_CUPCAKE_FILLINGS, `You can select up to ${MAX_CUPCAKE_FILLINGS} fillings`).default([]),
-  smbcFlavor: z.string().min(1, 'Please select a buttercream flavor'),
-  theme: z.string().max(MAX_THEME_LENGTH).optional(),
-  colors: z.array(z.string()).max(MAX_COLOR_CHIPS).default([]),
-});
-
-export type CupcakeConfig = z.infer<typeof cupcakeConfigSchema>;
 
 // Treat order schema (brownies, cookies, seasonal)
 export const treatOrderSchema = z.object({
@@ -70,11 +58,6 @@ export const orderDraftSchema = z.discriminatedUnion('itemType', [
     contact: contactInfoSchema.optional(),
   }),
   z.object({
-    itemType: z.literal(ITEMS.CUPCAKES),
-    config: cupcakeConfigSchema,
-    contact: contactInfoSchema.optional(),
-  }),
-  z.object({
     itemType: z.literal(ITEMS.BROWNIES),
     order: treatOrderSchema,
     contact: contactInfoSchema.optional(),
@@ -98,11 +81,6 @@ export const requestItemSchema = z.discriminatedUnion('itemType', [
   z.object({
     itemType: z.literal(ITEMS.CAKE),
     config: cakeConfigSchema,
-    contact: contactInfoSchema,
-  }),
-  z.object({
-    itemType: z.literal(ITEMS.CUPCAKES),
-    config: cupcakeConfigSchema,
     contact: contactInfoSchema,
   }),
   z.object({
