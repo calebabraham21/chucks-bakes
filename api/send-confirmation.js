@@ -239,7 +239,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: "Chuck's Bakes <orders@orders.chucksbakes.com>",
+        from: "Chuck's Bakes <orders@chucksbakes.com>",
         to: [customerEmail],
         reply_to: 'orders@chucksbakes.com',
         subject: `Order Received: ${orderIdDisplay}`,
