@@ -1,9 +1,49 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 import { Card } from '../ui/Card';
-import type { OrderDraft } from '../../lib/validation';
+import type { OrderDraft, CakeConfig, TreatOrder } from '../../lib/validation';
 import { ITEMS, ITEM_LABELS } from '../../lib/constants';
 import { classNames } from '../../lib/utils';
+
+// Helper components to avoid IIFE type inference issues
+function CakeConfigSummary({ config }: { config: CakeConfig }) {
+  return (
+    <div>
+      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+        Configuration
+      </p>
+      <div className="space-y-1.5 text-sm text-gray-700">
+        {config.size && <p>Size: {config.size}</p>}
+        {config.flavor && <p>Flavor: {config.flavor}</p>}
+        {config.filling && <p>Filling: {config.filling}</p>}
+        {config.frostingFlavor && <p>Frosting: {config.frostingFlavor}</p>}
+        {config.writingStyle && config.writingStyle !== 'none' && (
+          <p>Writing: {config.writingText || config.writingStyle}</p>
+        )}
+        {config.toppings && config.toppings.length > 0 && (
+          <p>Toppings: {config.toppings.join(', ')}</p>
+        )}
+        {config.theme && <p>Theme: {config.theme}</p>}
+        {config.colors && config.colors.length > 0 && (
+          <p>Colors: {config.colors.join(', ')}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function TreatOrderSummary({ order }: { order: TreatOrder }) {
+  return (
+    <div>
+      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+        Quantity
+      </p>
+      <p className="text-sm text-gray-700">
+        {order.quantity || '—'}
+      </p>
+    </div>
+  );
+}
 
 interface SummarySidebarProps {
   draft: OrderDraft | null;
@@ -57,70 +97,17 @@ export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
             </p>
           </div>
           
-          {/* Configuration details */}
+          {/* Configuration details - Cake */}
           {draft.itemType === ITEMS.CAKE && 'config' in draft && currentStep >= 2 && (
-            <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-                Configuration
-              </p>
-              <div className="space-y-1.5 text-sm text-gray-700">
-                {draft.config.size && (
-                  <p>Size: {draft.config.size}</p>
-                )}
-                {draft.config.flavor && (
-                  <p>Flavor: {draft.config.flavor}</p>
-                )}
-                {draft.config.filling && (
-                  <p>Filling: {draft.config.filling}</p>
-                )}
-                {draft.config.frostingFlavor && (
-                  <p>Frosting: {draft.config.frostingFlavor}</p>
-                )}
-                {draft.config.writingStyle && draft.config.writingStyle !== 'none' && (
-                  <p>Writing: {draft.config.writingText || draft.config.writingStyle}</p>
-                )}
-                {draft.config.toppings && draft.config.toppings.length > 0 && (
-                  <p>Toppings: {draft.config.toppings.join(', ')}</p>
-                )}
-                {draft.config.theme && (
-                  <p>Theme: {draft.config.theme}</p>
-                )}
-                {draft.config.colors && draft.config.colors.length > 0 && (
-                  <p>Colors: {draft.config.colors.join(', ')}</p>
-                )}
-              </div>
-            </div>
+            <CakeConfigSummary config={(draft as { config: CakeConfig }).config} />
           )}
           
+          {/* Configuration details - Treats */}
           {draft.itemType !== ITEMS.CAKE && 'order' in draft && currentStep >= 2 && (
-            <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-                Quantity
-              </p>
-              <p className="text-sm text-gray-700">
-                {draft.order.quantity || '—'}
-              </p>
-            </div>
+            <TreatOrderSummary order={(draft as { order: TreatOrder }).order} />
           )}
           
-          {/* Contact info */}
-          {'contact' in draft && draft.contact && currentStep >= 3 && (
-            <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-                Contact
-              </p>
-              <div className="space-y-1.5 text-sm text-gray-700">
-                <p>{draft.contact.name}</p>
-                <p>{draft.contact.email}</p>
-                {draft.contact.phone && <p>{draft.contact.phone}</p>}
-                {draft.contact.targetDate && (
-                  <p>Pickup: {draft.contact.targetDate}</p>
-                )}
-              </div>
-            </div>
-          )}
-          
-          {currentStep < 3 && (
+          {currentStep < 2 && (
             <p className="text-xs text-gray-500 italic">
               Continue to see full summary
             </p>
