@@ -7,7 +7,7 @@ import { Toast } from './ui/Toast';
 import { useOrderStore } from '../lib/state';
 import { makeCombinedPlainTextSummary, makeMailtoLink } from '../lib/summary';
 import { classNames } from '../lib/utils';
-import { submitOrderBatch } from '../lib/api';
+import { submitOrderBatch, sendConfirmationEmail } from '../lib/api';
 import type { RequestItem } from '../lib/validation';
 
 export function Header() {
@@ -82,6 +82,22 @@ export function Header() {
         if (result.orderId) {
           setLastOrderId(result.orderId);
         }
+        
+        // Send confirmation email (don't block success flow if this fails)
+        // The email is sent asynchronously - we proceed to success page regardless
+        if (result.orderIds && result.orderIds.length > 0) {
+          sendConfirmationEmail(requestList, result.orderIds)
+            .then((emailResult) => {
+              if (!emailResult.success) {
+                // Log email failure but don't show error to user - order was still successful
+                console.warn('Confirmation email failed to send:', emailResult.message);
+              }
+            })
+            .catch((emailError) => {
+              console.error('Error in confirmation email:', emailError);
+            });
+        }
+        
         // Clear the request list
         clearRequestList();
         // Close the modal
