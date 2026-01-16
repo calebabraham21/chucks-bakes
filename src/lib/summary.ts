@@ -1,4 +1,4 @@
-import type { OrderDraft, RequestItem, CakeConfig, TreatOrder } from './validation';
+import type { OrderDraft, RequestItem, CartItem, CakeConfig, TreatOrder, ContactInfo } from './validation';
 import { ITEMS, ITEM_LABELS, CAKE_SIZES, CAKE_FLAVORS, CAKE_FILLINGS, SMBC_FLAVORS, CAKE_TOPPINGS, WRITING_STYLES } from './constants';
 
 // Generate human-readable summary for cake configuration
@@ -52,8 +52,8 @@ function summarizeTreatOrder(order: TreatOrder): string {
   return `Quantity: ${order.quantity}`;
 }
 
-// Generate plain text summary for a single draft or request item
-export function makePlainTextSummary(item: OrderDraft | RequestItem): string {
+// Generate summary for a cart item (no contact info)
+export function makeItemSummary(item: OrderDraft | CartItem): string {
   let lines: string[] = [];
   
   // Item type
@@ -67,8 +67,40 @@ export function makePlainTextSummary(item: OrderDraft | RequestItem): string {
     lines.push(summarizeTreatOrder(item.order));
   }
   
-  // Contact information (if available)
-  if ('contact' in item && item.contact) {
+  return lines.join('\n');
+}
+
+// Generate summary for cart items (for display in cart)
+export function makeCartSummary(items: CartItem[]): string {
+  if (items.length === 0) {
+    return 'No items in cart.';
+  }
+  
+  const itemSummaries = items.map((item, index) => {
+    const separator = '-'.repeat(40);
+    return `${separator}\nITEM ${index + 1}\n${separator}\n\n${makeItemSummary(item)}`;
+  });
+  
+  return itemSummaries.join('\n\n');
+}
+
+// Generate plain text summary for a single request item (with contact info)
+export function makePlainTextSummary(item: RequestItem): string {
+  let lines: string[] = [];
+  
+  // Item type
+  lines.push(`Item: ${ITEM_LABELS[item.itemType as keyof typeof ITEM_LABELS]}`);
+  lines.push('');
+  
+  // Configuration details
+  if (item.itemType === ITEMS.CAKE && 'config' in item) {
+    lines.push(summarizeCakeConfig(item.config));
+  } else if ('order' in item) {
+    lines.push(summarizeTreatOrder(item.order));
+  }
+  
+  // Contact information
+  if (item.contact) {
     lines.push('');
     lines.push('Contact Information:');
     lines.push(`Name: ${item.contact.name}`);
@@ -92,7 +124,28 @@ export function makePlainTextSummary(item: OrderDraft | RequestItem): string {
   return lines.join('\n');
 }
 
-// Generate plain text summary for multiple items
+// Format contact info for display
+export function formatContactInfo(contact: ContactInfo): string {
+  let lines: string[] = [];
+  
+  lines.push(`Name: ${contact.name}`);
+  lines.push(`Email: ${contact.email}`);
+  
+  if (contact.phone) {
+    lines.push(`Phone: ${contact.phone}`);
+  }
+  
+  lines.push(`Fulfillment: ${contact.deliveryMethod === 'pickup' ? 'Pickup in Arlington, VA' : 'Delivery'}`);
+  lines.push(`Target Date: ${contact.targetDate}`);
+  
+  if (contact.notes) {
+    lines.push(`Notes: ${contact.notes}`);
+  }
+  
+  return lines.join('\n');
+}
+
+// Generate plain text summary for multiple request items (with contact)
 export function makeCombinedPlainTextSummary(items: RequestItem[]): string {
   if (items.length === 0) {
     return 'No items in request.';
@@ -104,6 +157,32 @@ export function makeCombinedPlainTextSummary(items: RequestItem[]): string {
   });
   
   return itemSummaries.join('\n\n');
+}
+
+// Generate full order summary with items and contact (for checkout review)
+export function makeOrderSummary(items: CartItem[], contact: ContactInfo): string {
+  let parts: string[] = [];
+  
+  // Items
+  parts.push('ORDER ITEMS');
+  parts.push('='.repeat(50));
+  items.forEach((item, index) => {
+    parts.push(`\nItem ${index + 1}: ${ITEM_LABELS[item.itemType as keyof typeof ITEM_LABELS]}`);
+    parts.push('-'.repeat(30));
+    if (item.itemType === ITEMS.CAKE && 'config' in item) {
+      parts.push(summarizeCakeConfig(item.config));
+    } else if ('order' in item) {
+      parts.push(summarizeTreatOrder(item.order));
+    }
+  });
+  
+  // Contact
+  parts.push('\n' + '='.repeat(50));
+  parts.push('CONTACT & DELIVERY');
+  parts.push('='.repeat(50));
+  parts.push(formatContactInfo(contact));
+  
+  return parts.join('\n');
 }
 
 // Generate email subject

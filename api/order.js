@@ -104,6 +104,18 @@ export default async function handler(req, res) {
     // Check if Google Apps Script reported success
     if (result.statusCode !== 200) {
       console.error('Google Apps Script returned error:', result);
+      
+      // Handle specific error codes
+      if (result.errorCode === 'ORDER_LIMIT_REACHED') {
+        return res.status(429).json({
+          success: false,
+          message: result.message,
+          errorCode: 'ORDER_LIMIT_REACHED',
+          openOrders: result.openOrders,
+          maxAllowed: result.maxAllowed
+        });
+      }
+      
       throw new Error(result.message || 'Failed to process order');
     }
 

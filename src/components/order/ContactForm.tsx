@@ -74,14 +74,20 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
       />
       
       <Input
-        label="Phone (optional)"
+        label="Phone"
         type="tel"
-        inputMode="tel"
+        inputMode="numeric"
         autoComplete="tel"
-        placeholder="(555) 123-4567"
+        placeholder="5551234567"
         error={errors.phone?.message}
-        helperText="We'll text you for quick updates"
-        {...register('phone')}
+        helperText="Numbers only (no dashes or spaces). We'll text you for quick updates."
+        required
+        {...register('phone', {
+          onChange: (e) => {
+            // Strip non-digits as they type
+            e.target.value = e.target.value.replace(/\D/g, '');
+          }
+        })}
       />
       
       <Controller

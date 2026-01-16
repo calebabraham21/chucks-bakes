@@ -5,18 +5,16 @@ import { Stepper } from '../components/ui/Stepper';
 import { ChooseItem } from '../components/order/ChooseItem';
 import { ConfigureCake } from '../components/order/ConfigureCake';
 import { ConfigureTreats } from '../components/order/ConfigureTreats';
-import { ContactForm } from '../components/order/ContactForm';
-import { ReviewAndSend } from '../components/order/ReviewAndSend';
+import { ReviewAndAdd } from '../components/order/ReviewAndAdd';
 import { useOrderStore } from '../lib/state';
 import { ITEMS, POLICIES } from '../lib/constants';
 import type { ItemType } from '../lib/constants';
-import type { CakeConfig, TreatOrder, ContactInfo } from '../lib/validation';
+import type { CakeConfig, TreatOrder } from '../lib/validation';
 
 const STEPS = [
-  { id: 1, label: 'Choose Item' },
+  { id: 1, label: 'Choose' },
   { id: 2, label: 'Configure' },
-  { id: 3, label: 'Contact' },
-  { id: 4, label: 'Review' },
+  { id: 3, label: 'Add to Cart' },
 ];
 
 export function Order() {
@@ -80,7 +78,7 @@ export function Order() {
         ...orderDraft,
         config,
       });
-      setCurrentStep(3);
+      setCurrentStep(3); // Go to Add to Cart
     }
   };
   
@@ -90,17 +88,7 @@ export function Order() {
         ...orderDraft,
         order,
       });
-      setCurrentStep(3);
-    }
-  };
-  
-  const handleContact = (contact: ContactInfo) => {
-    if (orderDraft) {
-      setOrderDraft({
-        ...orderDraft,
-        contact,
-      });
-      setCurrentStep(4);
+      setCurrentStep(3); // Go to Add to Cart
     }
   };
   
@@ -119,7 +107,7 @@ export function Order() {
   };
   
   const canGoBack = currentStep > 1;
-  const showNextButton = currentStep >= 2 && currentStep < 4;
+  const showNextButton = currentStep === 2; // Only show Next on Configure step
   
   return (
     <div className="bg-[#fde7ee] pb-24 sm:pb-8">
@@ -224,14 +212,7 @@ export function Order() {
                 )}
                 
                 {currentStep === 3 && orderDraft && (
-                  <ContactForm
-                    defaultValues={'contact' in orderDraft ? orderDraft.contact : undefined}
-                    onSubmit={handleContact}
-                  />
-                )}
-                
-                {currentStep === 4 && orderDraft && (
-                  <ReviewAndSend draft={orderDraft} />
+                  <ReviewAndAdd draft={orderDraft} />
                 )}
               </div>
             </div>

@@ -1,25 +1,31 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingBag, X, Copy, Trash2, Send, Menu } from 'lucide-react';
+import { ShoppingBag, X, Trash2, Send, Menu, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Modal } from './ui/Modal';
 import { Toast } from './ui/Toast';
+import { ContactForm } from './order/ContactForm';
 import { useOrderStore } from '../lib/state';
-import { makeCombinedPlainTextSummary, makeMailtoLink } from '../lib/summary';
+import { makeItemSummary, makeOrderSummary } from '../lib/summary';
 import { classNames } from '../lib/utils';
-import { submitOrderBatch, sendConfirmationEmail } from '../lib/api';
-import type { RequestItem } from '../lib/validation';
+import { submitOrderBatch, sendConfirmationEmail, prepareOrdersForSubmission } from '../lib/api';
+import type { CartItem, ContactInfo } from '../lib/validation';
 
 export function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const requestList = useOrderStore((state: any) => state.requestList);
-  const removeRequestItem = useOrderStore((state: any) => state.removeRequestItem);
-  const clearRequestList = useOrderStore((state: any) => state.clearRequestList);
+  // Checkout flow: 1 = cart, 2 = contact form, 3 = review
+  const [checkoutStep, setCheckoutStep] = useState(1);
+  const [checkoutContact, setCheckoutContact] = useState<ContactInfo | null>(null);
+  
+  const cart = useOrderStore((state: any) => state.cart);
+  const removeFromCart = useOrderStore((state: any) => state.removeFromCart);
+  const clearCart = useOrderStore((state: any) => state.clearCart);
   const setLastOrderId = useOrderStore((state: any) => state.setLastOrderId);
   
   const location = useLocation();
@@ -49,28 +55,44 @@ export function Header() {
     };
   }, [isSidebarOpen]);
   
-  const handleCopySummary = () => {
-    const summary = makeCombinedPlainTextSummary(requestList);
-    navigator.clipboard.writeText(summary);
-    setToastMessage('Summary copied to clipboard!');
-    setShowToast(true);
+  // Reset checkout when modal closes
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    // Reset checkout state after modal animation
+    setTimeout(() => {
+      setCheckoutStep(1);
+      setCheckoutContact(null);
+    }, 300);
   };
   
-  const handleSendEmail = () => {
-    if (requestList.length === 0) return;
-    
-    const mailtoLink = makeMailtoLink(requestList);
-    window.location.href = mailtoLink;
+  const handleProceedToContact = () => {
+    setCheckoutStep(2);
+  };
+  
+  const handleContactSubmit = (contact: ContactInfo) => {
+    setCheckoutContact(contact);
+    setCheckoutStep(3);
+  };
+  
+  const handleBackToCart = () => {
+    setCheckoutStep(1);
+  };
+  
+  const handleBackToContact = () => {
+    setCheckoutStep(2);
   };
   
   const handleSubmitOrder = async () => {
-    if (requestList.length === 0) return;
+    if (cart.length === 0 || !checkoutContact) return;
     
     setIsSubmitting(true);
     
     try {
+      // Combine cart items with contact info
+      const orders = prepareOrdersForSubmission(cart, checkoutContact);
+      
       // Add empty honeypot field to each order (for API spam protection)
-      const ordersWithHoneypot = requestList.map((order: RequestItem) => ({
+      const ordersWithHoneypot = orders.map((order) => ({
         ...order,
         website: '' // Honeypot field - should always be empty for legitimate users
       }));
@@ -84,12 +106,10 @@ export function Header() {
         }
         
         // Send confirmation email (don't block success flow if this fails)
-        // The email is sent asynchronously - we proceed to success page regardless
         if (result.orderIds && result.orderIds.length > 0) {
-          sendConfirmationEmail(requestList, result.orderIds)
+          sendConfirmationEmail(orders, result.orderIds)
             .then((emailResult) => {
               if (!emailResult.success) {
-                // Log email failure but don't show error to user - order was still successful
                 console.warn('Confirmation email failed to send:', emailResult.message);
               }
             })
@@ -98,20 +118,28 @@ export function Header() {
             });
         }
         
-        // Clear the request list
-        clearRequestList();
-        // Close the modal
+        // Clear cart and reset checkout
+        clearCart();
+        setCheckoutStep(1);
+        setCheckoutContact(null);
         setIsModalOpen(false);
+        
         // Navigate to success page
         navigate('/success');
       } else {
-        // Show error message
-        setToastMessage(result.message || 'Failed to submit order. Please try again.');
+        // Handle specific error cases
+        if (result.errorCode === 'ORDER_LIMIT_REACHED') {
+          setToastMessage(`You already have ${result.openOrders} pending order(s). Please wait for your current orders to be completed before placing new ones.`);
+        } else {
+          setToastMessage(result.message || 'Failed to submit order. Please try again.');
+        }
+        setToastType('error');
         setShowToast(true);
       }
     } catch (error) {
       console.error('Error submitting order:', error);
       setToastMessage('An error occurred. Please try again or contact us directly.');
+      setToastType('error');
       setShowToast(true);
     } finally {
       setIsSubmitting(false);
@@ -119,11 +147,24 @@ export function Header() {
   };
   
   const handleClearAll = () => {
-    if (window.confirm('Are you sure you want to clear all items from your request?')) {
-      clearRequestList();
+    if (window.confirm('Are you sure you want to clear all items from your cart?')) {
+      clearCart();
+      setCheckoutStep(1);
+      setCheckoutContact(null);
       setIsModalOpen(false);
-      setToastMessage('Request cleared');
+      setToastMessage('Cart cleared');
+      setToastType('success');
       setShowToast(true);
+    }
+  };
+  
+  // Get modal title based on checkout step
+  const getModalTitle = () => {
+    switch (checkoutStep) {
+      case 1: return 'Your Cart';
+      case 2: return 'Contact Information';
+      case 3: return 'Review Order';
+      default: return 'Your Cart';
     }
   };
   
@@ -173,12 +214,12 @@ export function Header() {
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="relative p-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] active:scale-95"
-                aria-label={`View request (${requestList.length} items)`}
+                aria-label={`View cart (${cart.length} items)`}
               >
                 <ShoppingBag className="w-5 h-5 text-[#000000]" strokeWidth={2.5} />
-                {requestList.length > 0 && (
+                {cart.length > 0 && (
                   <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[#ff6b9d] text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white/70">
-                    {requestList.length}
+                    {cart.length}
                   </span>
                 )}
               </button>
@@ -189,12 +230,12 @@ export function Header() {
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="relative p-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] active:scale-95"
-                aria-label={`View request (${requestList.length} items)`}
+                aria-label={`View cart (${cart.length} items)`}
               >
                 <ShoppingBag className="w-6 h-6 text-[#000000]" strokeWidth={2.5} />
-                {requestList.length > 0 && (
+                {cart.length > 0 && (
                   <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-[#ff6b9d] text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-white/70">
-                    {requestList.length}
+                    {cart.length}
                   </span>
                 )}
               </button>
@@ -260,58 +301,147 @@ export function Header() {
         </aside>
       </div>
       
-      {/* Request Modal */}
+      {/* Cart/Checkout Modal */}
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Your Request"
+        onClose={handleCloseModal}
+        title={getModalTitle()}
         size="lg"
       >
-        {requestList.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 px-4">
-            <ShoppingBag className="w-20 h-20 text-gray-300 mb-6" strokeWidth={1.5} />
-            <h3 className="text-xl font-bold text-black mb-3">
-              Your request is empty
-            </h3>
-            <p className="text-base text-black mb-8 max-w-md text-center leading-relaxed">
-              Add items using the Order Wizard to build your request.
-            </p>
-            <Link 
-              to="/order" 
-              onClick={() => setIsModalOpen(false)}
-              className="inline-block"
-            >
-              <Button variant="primary" size="lg" className="active:scale-100 hover:scale-105 transition-transform">
-                Start an Order
-              </Button>
-            </Link>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {requestList.map((item: any, index: number) => (
-              <div
-                key={index}
-                className="p-5 bg-bakery-cream rounded-xl border border-gray-200"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-bold text-base text-black">
-                    Item {index + 1}
-                  </h4>
-                  <button
-                    onClick={() => removeRequestItem(index)}
-                    className="p-1.5 rounded-lg hover:bg-gray-100 transition-smooth focus:outline-none focus:ring-2 focus:ring-bakery-pink-400 active:scale-95"
-                    aria-label={`Remove item ${index + 1}`}
-                  >
-                    <X className="w-4 h-4 text-gray-600" />
-                  </button>
-                </div>
-                <pre className="whitespace-pre-wrap text-sm text-black font-sans leading-relaxed">
-                  {makeCombinedPlainTextSummary([item])}
-                </pre>
+        {/* Step 1: Cart View */}
+        {checkoutStep === 1 && (
+          <>
+            {cart.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 px-4">
+                <ShoppingBag className="w-20 h-20 text-gray-300 mb-6" strokeWidth={1.5} />
+                <h3 className="text-xl font-bold text-black mb-3">
+                  Your cart is empty
+                </h3>
+                <p className="text-base text-black mb-8 max-w-md text-center leading-relaxed">
+                  Add items using the Order page to build your order.
+                </p>
+                <Link 
+                  to="/order" 
+                  onClick={handleCloseModal}
+                  className="inline-block"
+                >
+                  <Button variant="primary" size="lg" className="active:scale-100 hover:scale-105 transition-transform">
+                    Start an Order
+                  </Button>
+                </Link>
               </div>
-            ))}
+            ) : (
+              <div className="space-y-4">
+                {cart.map((item: CartItem, index: number) => (
+                  <div
+                    key={index}
+                    className="p-5 bg-bakery-cream rounded-xl border border-gray-200"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-bold text-base text-black">
+                        Item {index + 1}
+                      </h4>
+                      <button
+                        onClick={() => removeFromCart(index)}
+                        className="p-1.5 rounded-lg hover:bg-gray-100 transition-smooth focus:outline-none focus:ring-2 focus:ring-bakery-pink-400 active:scale-95"
+                        aria-label={`Remove item ${index + 1}`}
+                      >
+                        <X className="w-4 h-4 text-gray-600" />
+                      </button>
+                    </div>
+                    <pre className="whitespace-pre-wrap text-sm text-black font-sans leading-relaxed">
+                      {makeItemSummary(item)}
+                    </pre>
+                  </div>
+                ))}
+                
+                <div className="flex flex-col gap-3 pt-6 border-t border-gray-200 mt-2">
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    onClick={handleProceedToContact}
+                    className="w-full flex items-center justify-center gap-2 font-semibold"
+                  >
+                    Proceed to Checkout
+                    <ArrowRight className="w-5 h-5" aria-hidden="true" />
+                  </Button>
+                  
+                  <div className="flex gap-2">
+                    <Link to="/order" onClick={handleCloseModal} className="flex-1">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        fullWidth
+                        className="justify-center gap-2 font-medium"
+                      >
+                        Add More Items
+                      </Button>
+                    </Link>
+                    
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleClearAll}
+                      className="flex-1 justify-center gap-2 text-red-600 hover:bg-red-50 font-medium"
+                    >
+                      <Trash2 className="w-4 h-4" aria-hidden="true" />
+                      Clear Cart
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+        
+        {/* Step 2: Contact Form */}
+        {checkoutStep === 2 && (
+          <div className="space-y-4">
+            <ContactForm
+              defaultValues={checkoutContact || undefined}
+              onSubmit={handleContactSubmit}
+            />
             
-            <div className="flex flex-col gap-3 pt-6 border-t border-gray-200 mt-2">
+            <div className="flex gap-3 pt-4 border-t border-gray-200">
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={handleBackToCart}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+                Back
+              </Button>
+              
+              <Button
+                variant="primary"
+                size="lg"
+                fullWidth
+                onClick={() => {
+                  // Trigger form submission
+                  const form = document.querySelector('form');
+                  if (form) form.requestSubmit();
+                }}
+                className="flex items-center justify-center gap-2"
+              >
+                Continue to Review
+                <ArrowRight className="w-5 h-5" aria-hidden="true" />
+              </Button>
+            </div>
+          </div>
+        )}
+        
+        {/* Step 3: Review & Submit */}
+        {checkoutStep === 3 && checkoutContact && (
+          <div className="space-y-4">
+            <div className="p-4 bg-bakery-cream rounded-xl border border-gray-200">
+              <h3 className="font-bold text-base text-black mb-3">Order Summary</h3>
+              <pre className="whitespace-pre-wrap text-sm text-black font-sans leading-relaxed">
+                {makeOrderSummary(cart, checkoutContact)}
+              </pre>
+            </div>
+            
+            <div className="flex flex-col gap-3 pt-4 border-t border-gray-200">
               <Button
                 variant="primary"
                 size="lg"
@@ -320,42 +450,19 @@ export function Header() {
                 className="w-full flex items-center justify-center gap-2 font-semibold"
               >
                 <Send className="w-5 h-5" aria-hidden="true" />
-                {isSubmitting ? 'Submitting...' : 'Submit Order Request'}
+                {isSubmitting ? 'Submitting...' : 'Submit Order'}
               </Button>
               
-              <div className="flex gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={handleCopySummary}
-                  className="flex-1 justify-center gap-2 font-medium"
-                  disabled={isSubmitting}
-                >
-                  <Copy className="w-4 h-4" aria-hidden="true" />
-                  Copy
-                </Button>
-                
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={handleSendEmail}
-                  className="flex-1 justify-center gap-2 font-medium"
-                  disabled={isSubmitting}
-                >
-                  Email
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleClearAll}
-                  className="flex-1 justify-center gap-2 text-red-600 hover:bg-red-50 font-medium"
-                  disabled={isSubmitting}
-                >
-                  <Trash2 className="w-4 h-4" aria-hidden="true" />
-                  Clear
-                </Button>
-              </div>
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={handleBackToContact}
+                disabled={isSubmitting}
+                className="flex items-center justify-center gap-2"
+              >
+                <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+                Edit Contact Info
+              </Button>
             </div>
           </div>
         )}
@@ -363,7 +470,7 @@ export function Header() {
       
       <Toast
         message={toastMessage}
-        type="success"
+        type={toastType}
         isVisible={showToast}
         onClose={() => setShowToast(false)}
       />

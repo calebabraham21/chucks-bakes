@@ -29,7 +29,10 @@ export type TreatOrder = z.infer<typeof treatOrderSchema>;
 export const contactInfoSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Please enter a valid email address'),
-  phone: z.string().optional(),
+  phone: z.string()
+    .min(10, 'Please enter a valid phone number (at least 10 digits)')
+    .max(15, 'Phone number is too long')
+    .regex(/^\d+$/, 'Phone number should only contain digits'),
   deliveryMethod: z.enum(['pickup', 'delivery']).default('pickup'),
   targetDate: z.string().min(1, 'Please select a target date'),
   notes: z.string().optional(),
@@ -37,28 +40,30 @@ export const contactInfoSchema = z.object({
 
 export type ContactInfo = z.infer<typeof contactInfoSchema>;
 
-// Order draft - discriminated union
-export const orderDraftSchema = z.discriminatedUnion('itemType', [
+// Cart item - item WITHOUT contact info (used in cart before checkout)
+export const cartItemSchema = z.discriminatedUnion('itemType', [
   z.object({
     itemType: z.literal(ITEMS.CAKE),
     config: cakeConfigSchema,
-    contact: contactInfoSchema.optional(),
   }),
   z.object({
     itemType: z.literal(ITEMS.BROWNIES),
     order: treatOrderSchema,
-    contact: contactInfoSchema.optional(),
   }),
   z.object({
     itemType: z.literal(ITEMS.COOKIES),
     order: treatOrderSchema,
-    contact: contactInfoSchema.optional(),
   }),
 ]);
 
+export type CartItem = z.infer<typeof cartItemSchema>;
+
+// Order draft - same as CartItem (for building an item before adding to cart)
+export const orderDraftSchema = cartItemSchema;
+
 export type OrderDraft = z.infer<typeof orderDraftSchema>;
 
-// Request item (finalized item with contact info)
+// Request item (finalized item WITH contact info - for submission)
 export const requestItemSchema = z.discriminatedUnion('itemType', [
   z.object({
     itemType: z.literal(ITEMS.CAKE),

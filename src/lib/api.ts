@@ -2,13 +2,41 @@
  * API utilities for submitting orders to the backend
  */
 
-import type { RequestItem } from './validation';
+import type { RequestItem, CartItem, ContactInfo } from './validation';
+import { ITEMS } from './constants';
 
 export interface SubmitOrderResponse {
   success: boolean;
   message: string;
   orderId?: string;
   orderIds?: string[];
+  errorCode?: string;
+  openOrders?: number;
+  maxAllowed?: number;
+}
+
+/**
+ * Combine cart items with contact info to create RequestItems ready for submission
+ */
+export function prepareOrdersForSubmission(
+  cart: CartItem[],
+  contact: ContactInfo
+): RequestItem[] {
+  return cart.map((item) => {
+    if (item.itemType === ITEMS.CAKE && 'config' in item) {
+      return {
+        itemType: item.itemType,
+        config: item.config,
+        contact,
+      };
+    } else {
+      return {
+        itemType: item.itemType,
+        order: (item as any).order,
+        contact,
+      };
+    }
+  }) as RequestItem[];
 }
 
 /**
@@ -40,6 +68,16 @@ export async function submitOrder(orderData: RequestItem & { website?: string })
     }
 
     if (!response.ok) {
+      // Return structured error for specific error codes
+      if (data.errorCode === 'ORDER_LIMIT_REACHED') {
+        return {
+          success: false,
+          message: data.message || 'Order limit reached',
+          errorCode: data.errorCode,
+          openOrders: data.openOrders,
+          maxAllowed: data.maxAllowed,
+        };
+      }
       throw new Error(data.message || 'Failed to submit order');
     }
 

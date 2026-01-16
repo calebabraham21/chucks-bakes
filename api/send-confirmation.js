@@ -206,6 +206,16 @@ export default async function handler(req, res) {
       });
     }
 
+    // Limit orders per request (abuse prevention)
+    const MAX_ORDERS_PER_REQUEST = 2;
+    if (orders.length > MAX_ORDERS_PER_REQUEST) {
+      console.warn(`Order limit exceeded: ${orders.length} orders attempted`);
+      return res.status(400).json({ 
+        success: false, 
+        message: `Maximum ${MAX_ORDERS_PER_REQUEST} items per order` 
+      });
+    }
+
     // Get customer info from the first order (should be same across all items)
     const contact = orders[0]?.contact;
     if (!contact || !contact.email || !contact.name) {

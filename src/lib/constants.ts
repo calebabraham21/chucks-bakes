@@ -129,6 +129,9 @@ export const TREAT_UNITS = {
 
 export const ORDER_EMAIL = 'orders@chucksbakes.com';
 
+// Cart limits (for abuse prevention)
+export const MAX_CART_ITEMS = 2;
+
 export const MAX_COLOR_CHIPS = 3;
 export const MAX_THEME_LENGTH = 100;
 export const MAX_WRITING_LENGTH = 50;
