@@ -122,10 +122,10 @@ export function Order() {
   const showNextButton = currentStep >= 2 && currentStep < 4;
   
   return (
-    <div className="min-h-screen bg-[#fde7ee] pb-24">
+    <div className="bg-[#fde7ee] pb-24 sm:pb-8">
       <div className="container mx-auto py-3 sm:py-5">
         <h1 className="font-bold text-[#000000] mb-3 sm:mb-5 text-center">
-          Order Wizard
+          Order Process
         </h1>
         
         {/* Policies Banner - only show on step 1 */}
