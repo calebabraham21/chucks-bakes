@@ -107,11 +107,12 @@ export default async function handler(req, res) {
       throw new Error(result.message || 'Failed to process order');
     }
 
-    // Success!
-    console.log('Order submitted successfully');
+    // Success! Return the order ID from Google Apps Script
+    console.log('Order submitted successfully with ID:', result.orderId);
     return res.status(200).json({ 
       success: true, 
-      message: 'Order submitted successfully' 
+      message: 'Order submitted successfully',
+      orderId: result.orderId
     });
 
   } catch (error) {
