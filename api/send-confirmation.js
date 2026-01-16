@@ -35,7 +35,7 @@ function generateEmailHtml(orderData) {
     if (order.itemType === 'cake' && order.config) {
       const config = order.config;
       detailsHtml = `
-        <ul style="margin: 8px 0 0 0; padding-left: 20px; color: #4a5568;">
+        <ul style="margin: 8px 0 0 0; padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.7;">
           <li><strong>Size:</strong> ${config.size || 'Not specified'}</li>
           <li><strong>Flavor:</strong> ${config.flavor || 'Not specified'}</li>
           <li><strong>Filling:</strong> ${config.filling || 'Not specified'}</li>
@@ -49,15 +49,15 @@ function generateEmailHtml(orderData) {
       `;
     } else if (order.order) {
       detailsHtml = `
-        <ul style="margin: 8px 0 0 0; padding-left: 20px; color: #4a5568;">
+        <ul style="margin: 8px 0 0 0; padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.7;">
           <li><strong>Quantity:</strong> ${order.order.quantity || 'Not specified'}</li>
         </ul>
       `;
     }
     
     return `
-      <div style="background-color: #fff5f7; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
-        <h3 style="margin: 0 0 8px 0; color: #ff6b9d; font-size: 16px;">
+      <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px; margin-bottom: 10px;">
+        <h3 style="margin: 0 0 6px 0; color: #111827; font-size: 15px; font-weight: 600;">
           ${orders.length > 1 ? `Item ${index + 1}: ` : ''}${itemLabel}
         </h3>
         ${detailsHtml}
@@ -72,81 +72,75 @@ function generateEmailHtml(orderData) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Order Confirmation - Chuck's Bakes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #fde7ee;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #fde7ee;">
+<body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f9fafb;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f9fafb;">
     <tr>
       <td align="center" style="padding: 40px 20px;">
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-          
-          <!-- Header -->
-          <tr>
-            <td style="padding: 32px 32px 24px; text-align: center; border-bottom: 2px solid #ffd1dc;">
-              <h1 style="margin: 0; color: #ff6b9d; font-size: 28px; font-weight: bold;">
-                🧁 Chuck's Bakes
-              </h1>
-            </td>
-          </tr>
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb;">
           
           <!-- Main Content -->
           <tr>
             <td style="padding: 32px;">
               <!-- Greeting -->
-              <h2 style="margin: 0 0 16px 0; color: #000000; font-size: 24px;">
-                Order Received! 🎉
-              </h2>
-              <p style="margin: 0 0 24px 0; color: #4a5568; font-size: 16px; line-height: 1.6;">
+              <h1 style="margin: 0 0 16px 0; color: #111827; font-size: 22px; font-weight: 600;">
+                Order Received
+              </h1>
+              <p style="margin: 0 0 24px 0; color: #4b5563; font-size: 15px; line-height: 1.6;">
                 Hi ${customerName},<br><br>
                 Thank you for your order! We've received your request and will be in touch within 24 hours to confirm the details and provide pricing.
               </p>
               
               <!-- Order ID Box -->
-              <div style="background-color: #fff5f7; border: 2px solid #ffc1d4; border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: center;">
-                <p style="margin: 0 0 8px 0; color: #666666; font-size: 14px;">Your Order ID</p>
-                <p style="margin: 0; color: #ff6b9d; font-size: 24px; font-weight: bold; font-family: 'Courier New', monospace; letter-spacing: 2px;">
+              <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px; margin-bottom: 24px; text-align: center;">
+                <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 13px;">Order ID</p>
+                <p style="margin: 0; color: #111827; font-size: 18px; font-weight: 600; font-family: 'Inter', monospace; letter-spacing: 1px;">
                   ${orderIdDisplay}
                 </p>
               </div>
               
               <!-- Fulfillment Info -->
-              <div style="background-color: #f7fafc; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+              <div style="background-color: #f9fafb; border-radius: 6px; padding: 16px; margin-bottom: 24px;">
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
                   <tr>
-                    <td width="50%" style="padding: 8px;">
-                      <p style="margin: 0; color: #666666; font-size: 12px; text-transform: uppercase;">Fulfillment</p>
-                      <p style="margin: 4px 0 0 0; color: #000000; font-size: 16px; font-weight: 600;">${deliveryMethod}</p>
+                    <td width="50%" style="padding: 4px 8px;">
+                      <p style="margin: 0; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Fulfillment</p>
+                      <p style="margin: 4px 0 0 0; color: #111827; font-size: 15px; font-weight: 500;">${deliveryMethod}</p>
                     </td>
-                    <td width="50%" style="padding: 8px;">
-                      <p style="margin: 0; color: #666666; font-size: 12px; text-transform: uppercase;">Target Date</p>
-                      <p style="margin: 4px 0 0 0; color: #000000; font-size: 16px; font-weight: 600;">${targetDate}</p>
+                    <td width="50%" style="padding: 4px 8px;">
+                      <p style="margin: 0; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Target Date</p>
+                      <p style="margin: 4px 0 0 0; color: #111827; font-size: 15px; font-weight: 500;">${targetDate}</p>
                     </td>
                   </tr>
                 </table>
               </div>
               
               <!-- Order Items -->
-              <h3 style="margin: 0 0 16px 0; color: #000000; font-size: 18px;">
-                Your Order
-              </h3>
+              <h2 style="margin: 0 0 16px 0; color: #111827; font-size: 16px; font-weight: 600;">
+                Order Details
+              </h2>
               ${itemsHtml}
               
               ${contact.notes ? `
               <!-- Notes -->
-              <div style="margin-top: 16px; padding: 12px; background-color: #f7fafc; border-radius: 8px;">
-                <p style="margin: 0; color: #666666; font-size: 12px; text-transform: uppercase;">Additional Notes</p>
-                <p style="margin: 8px 0 0 0; color: #4a5568; font-size: 14px;">${contact.notes}</p>
+              <div style="margin-top: 16px; padding: 12px; background-color: #f9fafb; border-radius: 6px;">
+                <p style="margin: 0; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Additional Notes</p>
+                <p style="margin: 8px 0 0 0; color: #4b5563; font-size: 14px;">${contact.notes}</p>
               </div>
               ` : ''}
               
               <!-- What's Next -->
-              <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0;">
-                <h3 style="margin: 0 0 16px 0; color: #000000; font-size: 18px;">
-                  📋 What happens next?
-                </h3>
-                <ol style="margin: 0; padding-left: 20px; color: #4a5568; line-height: 1.8;">
+              <div style="margin-top: 28px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+                <h2 style="margin: 0 0 12px 0; color: #111827; font-size: 16px; font-weight: 600;">
+                  What happens next?
+                </h2>
+                <ol style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.8;">
                   <li>We'll review your order details</li>
                   <li>We'll reach out within 24 hours with pricing and to confirm availability</li>
-                  <li>Once confirmed, we'll let you know when your treats will be ready!</li>
+                  <li>Once confirmed, we'll let you know when your treats will be ready</li>
                 </ol>
               </div>
             </td>
@@ -154,15 +148,12 @@ function generateEmailHtml(orderData) {
           
           <!-- Footer -->
           <tr>
-            <td style="padding: 24px 32px; background-color: #fff5f7; border-radius: 0 0 16px 16px; text-align: center;">
-              <p style="margin: 0 0 8px 0; color: #666666; font-size: 14px;">
+            <td style="padding: 20px 32px; border-top: 1px solid #e5e7eb; text-align: center;">
+              <p style="margin: 0; color: #6b7280; font-size: 13px;">
                 Questions? Reply to this email or contact us at
-              </p>
-              <a href="mailto:orders@chucksbakes.com" style="color: #ff6b9d; font-weight: 600; text-decoration: none;">
-                orders@chucksbakes.com
-              </a>
-              <p style="margin: 16px 0 0 0; color: #999999; font-size: 12px;">
-                © ${new Date().getFullYear()} Chuck's Bakes. Made with 💕
+                <a href="mailto:orders@chucksbakes.com" style="color: #111827; font-weight: 500; text-decoration: none;">
+                  orders@chucksbakes.com
+                </a>
               </p>
             </td>
           </tr>
