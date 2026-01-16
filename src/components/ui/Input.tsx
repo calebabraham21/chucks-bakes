@@ -28,11 +28,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           id={inputId}
           className={classNames(
-            'w-full px-3 py-3 rounded-xl border-2 transition-smooth text-base min-h-[48px]',
+            'w-full max-w-full px-3 py-3 rounded-xl border-2 transition-smooth text-base min-h-[48px]',
             'bg-white text-black',
             'placeholder:text-gray-300',
             'focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-bakery-pink-400',
-            'touch-manipulation',
+            'touch-manipulation box-border',
             error 
               ? 'border-red-500 bg-red-50/30 focus:ring-red-400 focus:border-red-500' 
               : 'border-gray-200',

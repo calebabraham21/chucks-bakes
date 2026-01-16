@@ -173,8 +173,8 @@ export function Header() {
       {/* Spacer to prevent content from going under the navbar */}
       <div className="h-20 md:h-20" aria-hidden="true"></div>
       
-      <header className="fixed top-0 left-0 right-0 z-40 backdrop-blur-md bg-gradient-to-b from-[#fde7ee]/95 via-[#fde7ee]/80 to-transparent pb-6 pt-4">
-        <div className="flex items-center justify-center gap-3 md:gap-4">
+      <header className="fixed top-0 left-0 right-0 z-40 backdrop-blur-md bg-gradient-to-b from-[#fde7ee]/95 via-[#fde7ee]/80 to-transparent pb-6 pt-4 px-4">
+        <div className="flex items-center justify-between md:justify-center gap-3 md:gap-4">
             
             {/* Mobile: Hamburger (Left) */}
             <div className="flex md:hidden">
@@ -226,7 +226,7 @@ export function Header() {
             </div>
 
             {/* Mobile: Cart (Right) */}
-            <div className="flex md:hidden ml-auto">
+            <div className="flex md:hidden">
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="relative p-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] active:scale-95"

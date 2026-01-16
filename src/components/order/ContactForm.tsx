@@ -80,7 +80,7 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
         autoComplete="tel"
         placeholder="5551234567"
         error={errors.phone?.message}
-        helperText="Numbers only (no dashes or spaces). We'll text you for quick updates."
+        helperText="Numbers only (no dashes or spaces)."
         required
         {...register('phone', {
           onChange: (e) => {
