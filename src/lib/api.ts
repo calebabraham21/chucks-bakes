@@ -115,10 +115,13 @@ export async function submitOrderBatch(orders: (RequestItem & { website?: string
   try {
     // Generate ONE order ID for all items
     const orderId = generateOrderId();
+    console.log(`[OrderBatch] Starting batch with ${orders.length} items, Order ID: ${orderId}`);
     
     for (let i = 0; i < orders.length; i++) {
       const order = orders[i];
       const isFirstItem = i === 0;
+      
+      console.log(`[OrderBatch] Submitting item ${i + 1}/${orders.length}, skipLimitCheck: ${!isFirstItem}`);
       
       // Add orderId and skipLimitCheck flag to the request
       const orderWithId = {
@@ -129,17 +132,21 @@ export async function submitOrderBatch(orders: (RequestItem & { website?: string
       
       const result = await submitOrder(orderWithId as any);
       
+      console.log(`[OrderBatch] Item ${i + 1} result:`, result.success ? 'SUCCESS' : `FAILED - ${result.message}`);
+      
       // If any submission fails, stop and report the error
       if (!result.success) {
+        console.error(`[OrderBatch] Item ${i + 1} failed, stopping batch`);
         return result;
       }
       
       // Small delay between requests
       if (orders.length > 1 && i < orders.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
 
+    console.log(`[OrderBatch] All ${orders.length} items submitted successfully`);
     return {
       success: true,
       message: `Successfully submitted ${orders.length} item${orders.length > 1 ? 's' : ''}`,
@@ -147,7 +154,7 @@ export async function submitOrderBatch(orders: (RequestItem & { website?: string
       orderIds: [orderId],
     };
   } catch (error) {
-    console.error('Error submitting order batch:', error);
+    console.error('[OrderBatch] Error:', error);
     return {
       success: false,
       message: error instanceof Error ? error.message : 'An unexpected error occurred',

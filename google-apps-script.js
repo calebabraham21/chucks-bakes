@@ -86,7 +86,8 @@ function doPost(e) {
     
     Logger.log('=== INCOMING ORDER ===');
     Logger.log('Item type: ' + data.itemType);
-    Logger.log('Order ID from frontend: ' + (data.orderId || 'none'));
+    Logger.log('Order ID from frontend: ' + (data.orderId || 'NONE - will generate'));
+    Logger.log('skipLimitCheck: ' + data.skipLimitCheck);
     
     // Verify the token
     const providedToken = data.token;
@@ -117,12 +118,13 @@ function doPost(e) {
     
     const phone = data.contact.phone;
     
-    // Only check order limit on first item (when no orderId passed yet)
-    // Subsequent items in same batch will have orderId and skipLimitCheck=true
-    if (!data.skipLimitCheck) {
+    // Only check order limit if skipLimitCheck is not true
+    if (data.skipLimitCheck === true) {
+      Logger.log('SKIPPING limit check (skipLimitCheck=true)');
+    } else {
       Logger.log('Checking limit for phone: ' + phone);
       const openOrders = countOpenOrdersByPhone(sheet, phone);
-      Logger.log('Open orders: ' + openOrders);
+      Logger.log('Open orders found: ' + openOrders);
       
       if (openOrders >= MAX_OPEN_ORDERS_PER_CUSTOMER) {
         Logger.log('BLOCKED: Order limit reached');
@@ -133,22 +135,21 @@ function doPost(e) {
           maxAllowed: MAX_OPEN_ORDERS_PER_CUSTOMER
         });
       }
-    } else {
-      Logger.log('Skipping limit check (additional item in batch)');
+      Logger.log('Limit check PASSED');
     }
     
     // Use provided orderId or generate new one
     const orderId = data.orderId || generateOrderId();
-    Logger.log('Order ID: ' + orderId);
+    Logger.log('Final Order ID: ' + orderId);
     
     // Add the order row
     addOrderRow(sheet, data, orderId);
     
-    Logger.log('=== SUCCESS ===');
+    Logger.log('=== SUCCESS: Row added ===');
     return createResponse(200, 'Order received successfully', { success: true, orderId: orderId });
     
   } catch (error) {
-    Logger.log('ERROR: ' + error.toString());
+    Logger.log('=== ERROR: ' + error.toString() + ' ===');
     return createResponse(500, 'Error processing order: ' + error.message);
   }
 }
