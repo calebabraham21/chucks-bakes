@@ -96,55 +96,36 @@ export async function submitOrder(orderData: RequestItem & { website?: string })
 }
 
 /**
- * Submit all cart items as a single order batch
- * All items get the same order ID
+ * Submit multiple order requests
+ * Each item is submitted separately but order limit is checked on first submission
  */
 export async function submitOrderBatch(orders: (RequestItem & { website?: string })[]): Promise<SubmitOrderResponse> {
   try {
-    const response = await fetch('/api/order', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        items: orders,
-        contact: orders[0]?.contact, // Contact info is the same for all items
-        website: orders[0]?.website || '', // Honeypot field
-      }),
-    });
-
-    const text = await response.text();
+    const orderIds: string[] = [];
     
-    if (!text) {
-      throw new Error('Empty response from server');
-    }
-    
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch (parseError) {
-      console.error('Failed to parse response:', text);
-      throw new Error('Invalid response from server');
-    }
-
-    if (!response.ok) {
-      if (data.errorCode === 'ORDER_LIMIT_REACHED') {
-        return {
-          success: false,
-          message: data.message || 'Order limit reached',
-          errorCode: data.errorCode,
-          openOrders: data.openOrders,
-          maxAllowed: data.maxAllowed,
-        };
+    for (const order of orders) {
+      const result = await submitOrder(order);
+      
+      if (result.orderId) {
+        orderIds.push(result.orderId);
       }
-      throw new Error(data.message || 'Failed to submit order');
+      
+      // If any submission fails, stop and report the error
+      if (!result.success) {
+        return result;
+      }
+      
+      // Small delay between requests
+      if (orders.length > 1) {
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
     }
 
     return {
       success: true,
-      message: data.message || 'Order submitted successfully',
-      orderId: data.orderId,
-      orderIds: [data.orderId],
+      message: `Successfully submitted ${orders.length} item${orders.length > 1 ? 's' : ''}`,
+      orderId: orderIds[0],
+      orderIds,
     };
   } catch (error) {
     console.error('Error submitting order batch:', error);

@@ -6,13 +6,8 @@
  * 
  * SECURITY:
  * - API_ORDER_TOKEN is kept server-side only (never exposed to client)
- * - CORS headers allow requests only from your domain (configure as needed)
  * - Honeypot field validation prevents basic spam
  * - Request validation ensures required fields are present
- * 
- * ORDER FORMAT:
- * - Accepts batch orders: { items: [...], contact: {...} }
- * - All items in a batch share the same Order ID
  */
 
 export default async function handler(req, res) {
@@ -56,19 +51,9 @@ export default async function handler(req, res) {
       });
     }
 
-    // Validate items array
-    if (!orderData.items || !Array.isArray(orderData.items) || orderData.items.length === 0) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'No items in order' 
-      });
-    }
-
     // HONEYPOT SPAM PROTECTION
-    // If the 'website' field is filled, it's likely a bot
     if (orderData.website && orderData.website.trim() !== '') {
       console.log('Honeypot triggered - potential spam blocked');
-      // Return success to the bot so they don't know they were blocked
       return res.status(200).json({ 
         success: true, 
         message: 'Order received' 
@@ -80,8 +65,7 @@ export default async function handler(req, res) {
 
     // Add the API token to the request
     const dataToSend = {
-      items: orderData.items,
-      contact: orderData.contact,
+      ...orderData,
       token: API_TOKEN
     };
 
@@ -92,33 +76,27 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(dataToSend),
-      redirect: 'follow', // Important: follow redirects from Google
+      redirect: 'follow',
     });
 
-    // Get response text first to handle parsing errors
     const responseText = await response.text();
     
-    // Check if Google Apps Script responded
     if (!response.ok) {
-      console.error('Google Apps Script error:', response.status, response.statusText);
-      console.error('Response body:', responseText);
+      console.error('Google Apps Script error:', response.status, responseText);
       throw new Error('Failed to submit order to Google Sheets');
     }
 
-    // Parse the response
     let result;
     try {
       result = JSON.parse(responseText);
     } catch (parseError) {
-      console.error('Failed to parse Google Apps Script response:', responseText);
+      console.error('Failed to parse response:', responseText);
       throw new Error('Invalid response from Google Sheets');
     }
 
-    // Check if Google Apps Script reported success
     if (result.statusCode !== 200) {
-      console.error('Google Apps Script returned error:', result);
+      console.error('Google Apps Script error:', result);
       
-      // Handle specific error codes
       if (result.errorCode === 'ORDER_LIMIT_REACHED') {
         return res.status(429).json({
           success: false,
@@ -132,8 +110,7 @@ export default async function handler(req, res) {
       throw new Error(result.message || 'Failed to process order');
     }
 
-    // Success! Return the order ID from Google Apps Script
-    console.log('Order submitted successfully with ID:', result.orderId);
+    console.log('Order submitted with ID:', result.orderId);
     return res.status(200).json({ 
       success: true, 
       message: 'Order submitted successfully',
