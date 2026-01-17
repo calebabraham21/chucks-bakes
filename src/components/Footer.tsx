@@ -5,7 +5,7 @@ export function Footer() {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const handleNewsletterSubmit = () => {
     // Don't prevent default - let the form submit to Mailchimp
     if (email) {
       setIsSubmitted(true);
