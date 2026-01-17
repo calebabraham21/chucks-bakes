@@ -179,9 +179,9 @@
 }
 
 @layer components {
-  /* Smooth transitions */
+  /* Smooth transitions - snappy! */
   .transition-smooth {
-    @apply transition-all duration-200 ease-in-out;
+    @apply transition-all duration-100 ease-out;
   }
 
   /* Card base styles */
@@ -197,11 +197,11 @@
   }
 }
 
-/* Page transition animations */
+/* Page transition animations - snappy */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -210,14 +210,14 @@
 }
 
 .page-transition {
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Step transition animations for order wizard */
+/* Step transition animations for order wizard - snappy */
 @keyframes stepSlideIn {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(12px);
   }
   to {
     opacity: 1;
@@ -226,16 +226,43 @@
 }
 
 .step-content {
-  animation: stepSlideIn 0.25s ease-out;
+  animation: stepSlideIn 0.12s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .step-entering {
   opacity: 0;
-  transform: translateX(20px);
+  transform: translateX(12px);
 }
 
 .step-entered {
   opacity: 1;
   transform: translateX(0);
-  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+  transition: opacity 0.12s cubic-bezier(0.16, 1, 0.3, 1), transform 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Modal animations - GPU accelerated */
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-backdrop {
+  animation: modalFadeIn 0.1s ease-out forwards;
+  will-change: opacity;
+}
+
+.modal-content {
+  animation: modalSlideUp 0.12s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
 }

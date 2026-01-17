@@ -60,7 +60,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
   
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm modal-backdrop"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -70,7 +70,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
         ref={modalRef}
         tabIndex={-1}
         className={classNames(
-          'w-full bg-white rounded-2xl shadow-soft-lg animate-in zoom-in-95 duration-200',
+          'w-full bg-white rounded-2xl shadow-soft-lg modal-content',
           sizes[size],
           'max-h-[90vh] overflow-hidden flex flex-col'
         )}

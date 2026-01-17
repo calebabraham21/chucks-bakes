@@ -18,6 +18,7 @@ export function Header() {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   
   // Checkout flow: 1 = cart, 2 = contact form, 3 = review
   const [checkoutStep, setCheckoutStep] = useState(1);
@@ -147,15 +148,18 @@ export function Header() {
   };
   
   const handleClearAll = () => {
-    if (window.confirm('Are you sure you want to clear all items from your cart?')) {
-      clearCart();
-      setCheckoutStep(1);
-      setCheckoutContact(null);
-      setIsModalOpen(false);
-      setToastMessage('Cart cleared');
-      setToastType('success');
-      setShowToast(true);
-    }
+    setShowClearConfirm(true);
+  };
+  
+  const confirmClearCart = () => {
+    clearCart();
+    setCheckoutStep(1);
+    setCheckoutContact(null);
+    setIsModalOpen(false);
+    setShowClearConfirm(false);
+    setToastMessage('Cart cleared');
+    setToastType('success');
+    setShowToast(true);
   };
   
   // Get modal title based on checkout step
@@ -258,9 +262,10 @@ export function Header() {
         {/* Sidebar */}
         <aside
           className={classNames(
-            'fixed top-0 left-0 h-full w-64 bg-[#fff5f7] border-r border-[#ffc1d4] z-50 transform transition-transform duration-300 ease-in-out',
+            'fixed top-0 left-0 h-full w-64 bg-[#fff5f7] border-r border-[#ffc1d4] z-50 transform transition-transform duration-150',
             isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           )}
+          style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
           aria-label="Mobile navigation"
         >
           {/* Sidebar Header */}
@@ -474,6 +479,48 @@ export function Header() {
         isVisible={showToast}
         onClose={() => setShowToast(false)}
       />
+      
+      {/* Clear Cart Confirmation Dialog */}
+      {showClearConfirm && (
+        <div 
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm modal-backdrop"
+          onClick={() => setShowClearConfirm(false)}
+        >
+          <div
+            className="w-full max-w-sm bg-white rounded-2xl shadow-soft-lg modal-content p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-full bg-red-100">
+              <Trash2 className="w-6 h-6 text-red-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-black text-center mb-2">
+              Clear Cart?
+            </h3>
+            <p className="text-sm text-gray-600 text-center mb-6">
+              This will remove all items from your cart. This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="secondary"
+                size="md"
+                fullWidth
+                onClick={() => setShowClearConfirm(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                fullWidth
+                onClick={confirmClearCart}
+                className="bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600"
+              >
+                Clear Cart
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

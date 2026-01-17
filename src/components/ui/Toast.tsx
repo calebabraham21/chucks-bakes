@@ -31,34 +31,38 @@ export function Toast({ message, type = 'success', isVisible, onClose, duration 
     info: Info,
   };
   
-  const styles = {
-    success: 'bg-green-50 text-green-800 border-green-200',
-    error: 'bg-red-50 text-red-800 border-red-200',
-    info: 'bg-blue-50 text-blue-800 border-blue-200',
-  };
   
   const Icon = icons[type];
   
+  const bgColors = {
+    success: '#16a34a',
+    error: '#dc2626', 
+    info: '#2563eb',
+  };
+  
   return (
     <div
-      className="fixed top-4 right-4 z-50 animate-in slide-in-from-top-2 duration-300"
+      className="fixed top-24 left-4 right-4 z-[100]"
       role="alert"
       aria-live="polite"
     >
       <div
-        className={classNames(
-          'flex items-center gap-3 px-4 py-3 rounded-xl border shadow-soft-lg min-w-[300px] max-w-md',
-          styles[type]
-        )}
+        className="flex items-center gap-3 px-5 py-4 rounded-xl max-w-md mx-auto"
+        style={{ 
+          backgroundColor: bgColors[type],
+          color: 'white',
+          boxShadow: '0 10px 40px rgba(0,0,0,0.4)',
+        }}
       >
-        <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-        <p className="flex-1 text-sm font-medium">{message}</p>
+        <Icon className="w-6 h-6 flex-shrink-0" aria-hidden="true" />
+        <p className="flex-1 text-base font-semibold">{message}</p>
         <button
           onClick={onClose}
-          className="p-1 rounded-lg hover:bg-black/5 transition-smooth focus:outline-none focus:ring-2 focus:ring-current"
+          className="p-1.5 rounded-lg hover:bg-white/20 transition-smooth focus:outline-none"
           aria-label="Close notification"
+          style={{ color: 'white' }}
         >
-          <X className="w-4 h-4" />
+          <X className="w-5 h-5" />
         </button>
       </div>
     </div>
