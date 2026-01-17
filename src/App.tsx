@@ -12,7 +12,7 @@ import { useOrderStore } from './lib/state';
 
 // 🚧 Toggle this to show/hide the coming soon page
 // Set to false when you're ready to launch the full site!
-const COMING_SOON_MODE = false;
+const COMING_SOON_MODE = true;
 
 function AppContent() {
   const location = useLocation();
