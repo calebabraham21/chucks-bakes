@@ -6,7 +6,8 @@ import { Modal } from './ui/Modal';
 import { Toast } from './ui/Toast';
 import { ContactForm } from './order/ContactForm';
 import { useOrderStore } from '../lib/state';
-import { makeItemSummary, makeOrderSummary } from '../lib/summary';
+import { makeItemSummary } from '../lib/summary';
+import { ITEM_LABELS, ITEMS } from '../lib/constants';
 import { classNames } from '../lib/utils';
 import { submitOrderBatch, sendConfirmationEmail, prepareOrdersForSubmission } from '../lib/api';
 import type { CartItem, ContactInfo } from '../lib/validation';
@@ -443,14 +444,53 @@ export function Header() {
         {/* Step 3: Review & Submit */}
         {checkoutStep === 3 && checkoutContact && (
           <div className="space-y-4">
-            <div className="p-4 bg-bakery-cream rounded-xl border border-gray-200">
-              <h3 className="font-bold text-base text-black mb-3">Order Summary</h3>
-              <pre className="whitespace-pre-wrap text-sm text-black font-sans leading-relaxed">
-                {makeOrderSummary(cart, checkoutContact)}
-              </pre>
+            {/* Order Items */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                Order Items ({cart.length})
+              </h3>
+              <div className="space-y-2">
+                {cart.map((item: CartItem, index: number) => (
+                  <div key={index} className="bg-white rounded-lg border border-gray-200 p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-black">
+                        {ITEM_LABELS[item.itemType as keyof typeof ITEM_LABELS]}
+                      </span>
+                      <span className="text-xs bg-[#ffd1dc] text-[#333] px-2 py-0.5 rounded-full font-medium">
+                        Item {index + 1}
+                      </span>
+                    </div>
+                    {'order' in item && (
+                      <p className="text-sm text-gray-600 mt-1">Qty: {item.order.quantity}</p>
+                    )}
+                    {item.itemType === ITEMS.CAKE && 'config' in item && (
+                      <p className="text-sm text-gray-600 mt-1">{item.config.size} • {item.config.flavor}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
             
-            <div className="flex flex-col gap-3 pt-4 border-t border-gray-200">
+            {/* Contact Info */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                Delivery Details
+              </h3>
+              <div className="bg-white rounded-lg border border-gray-200 p-3 space-y-1.5">
+                <p className="text-sm"><span className="text-gray-500">Name:</span> <span className="text-black font-medium">{checkoutContact.name}</span></p>
+                <p className="text-sm"><span className="text-gray-500">Email:</span> <span className="text-black font-medium">{checkoutContact.email}</span></p>
+                {checkoutContact.phone && (
+                  <p className="text-sm"><span className="text-gray-500">Phone:</span> <span className="text-black font-medium">{checkoutContact.phone}</span></p>
+                )}
+                <p className="text-sm"><span className="text-gray-500">Pickup:</span> <span className="text-black font-medium">{checkoutContact.deliveryMethod === 'pickup' ? 'Arlington, VA' : 'Delivery'}</span></p>
+                <p className="text-sm"><span className="text-gray-500">Date:</span> <span className="text-black font-medium">{checkoutContact.targetDate}</span></p>
+                {checkoutContact.notes && (
+                  <p className="text-sm"><span className="text-gray-500">Notes:</span> <span className="text-black font-medium">{checkoutContact.notes}</span></p>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex flex-col gap-3 pt-3">
               <Button
                 variant="primary"
                 size="lg"
