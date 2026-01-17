@@ -85,9 +85,10 @@ function doPost(e) {
     const data = JSON.parse(e.postData.contents);
     
     Logger.log('=== INCOMING ORDER ===');
+    Logger.log('Raw data: ' + JSON.stringify(data).substring(0, 500));
     Logger.log('Item type: ' + data.itemType);
-    Logger.log('Order ID from frontend: ' + (data.orderId || 'NONE - will generate'));
-    Logger.log('skipLimitCheck: ' + data.skipLimitCheck);
+    Logger.log('orderId received: "' + data.orderId + '" (type: ' + typeof data.orderId + ')');
+    Logger.log('skipLimitCheck received: "' + data.skipLimitCheck + '" (type: ' + typeof data.skipLimitCheck + ')');
     
     // Verify the token
     const providedToken = data.token;
@@ -118,9 +119,11 @@ function doPost(e) {
     
     const phone = data.contact.phone;
     
-    // Only check order limit if skipLimitCheck is not true
-    if (data.skipLimitCheck === true) {
-      Logger.log('SKIPPING limit check (skipLimitCheck=true)');
+    // Check skipLimitCheck - handle both boolean and string "true"
+    const shouldSkipCheck = data.skipLimitCheck === true || data.skipLimitCheck === 'true';
+    
+    if (shouldSkipCheck) {
+      Logger.log('SKIPPING limit check');
     } else {
       Logger.log('Checking limit for phone: ' + phone);
       const openOrders = countOpenOrdersByPhone(sheet, phone);
@@ -139,7 +142,7 @@ function doPost(e) {
     }
     
     // Use provided orderId or generate new one
-    const orderId = data.orderId || generateOrderId();
+    const orderId = (data.orderId && data.orderId !== 'undefined') ? data.orderId : generateOrderId();
     Logger.log('Final Order ID: ' + orderId);
     
     // Add the order row

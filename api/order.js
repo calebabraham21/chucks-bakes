@@ -42,6 +42,14 @@ export default async function handler(req, res) {
     }
 
     const orderData = req.body;
+    
+    // Log what we received
+    console.log('[Order API] Received:', JSON.stringify({
+      itemType: orderData.itemType,
+      orderId: orderData.orderId,
+      skipLimitCheck: orderData.skipLimitCheck,
+      hasContact: !!orderData.contact,
+    }));
 
     // Basic validation - check required fields
     if (!orderData.contact || !orderData.contact.name || !orderData.contact.email) {
@@ -63,11 +71,17 @@ export default async function handler(req, res) {
     // Remove honeypot field before sending to Google Sheets
     delete orderData.website;
 
-    // Add the API token to the request
+    // Add the API token to the request - KEEP orderId and skipLimitCheck
     const dataToSend = {
       ...orderData,
       token: API_TOKEN
     };
+    
+    console.log('[Order API] Sending to Google:', JSON.stringify({
+      itemType: dataToSend.itemType,
+      orderId: dataToSend.orderId,
+      skipLimitCheck: dataToSend.skipLimitCheck,
+    }));
 
     // Forward the request to Google Apps Script
     const response = await fetch(GOOGLE_SCRIPT_URL, {
