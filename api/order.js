@@ -9,6 +9,10 @@
  * - CORS headers allow requests only from your domain (configure as needed)
  * - Honeypot field validation prevents basic spam
  * - Request validation ensures required fields are present
+ * 
+ * ORDER FORMAT:
+ * - Accepts batch orders: { items: [...], contact: {...} }
+ * - All items in a batch share the same Order ID
  */
 
 export default async function handler(req, res) {
@@ -52,6 +56,14 @@ export default async function handler(req, res) {
       });
     }
 
+    // Validate items array
+    if (!orderData.items || !Array.isArray(orderData.items) || orderData.items.length === 0) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'No items in order' 
+      });
+    }
+
     // HONEYPOT SPAM PROTECTION
     // If the 'website' field is filled, it's likely a bot
     if (orderData.website && orderData.website.trim() !== '') {
@@ -68,7 +80,8 @@ export default async function handler(req, res) {
 
     // Add the API token to the request
     const dataToSend = {
-      ...orderData,
+      items: orderData.items,
+      contact: orderData.contact,
       token: API_TOKEN
     };
 

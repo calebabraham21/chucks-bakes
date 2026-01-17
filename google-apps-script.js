@@ -87,6 +87,8 @@ function countOpenOrdersByCustomer(sheet, email, phone) {
 
 /**
  * Handle POST requests from the order form
+ * Accepts batch orders: { items: [...], contact: {...} }
+ * All items in a batch share the same Order ID
  */
 function doPost(e) {
   try {
@@ -114,9 +116,21 @@ function doPost(e) {
       addHeaders(sheet);
     }
     
+    // Extract contact and items from batch format
+    const contact = data.contact;
+    const items = data.items || [];
+    
+    if (!contact || !contact.email) {
+      return createResponse(400, 'Missing contact information');
+    }
+    
+    if (items.length === 0) {
+      return createResponse(400, 'No items in order');
+    }
+    
     // Check for open order limit by email or phone number
-    const email = data.contact?.email;
-    const phone = data.contact?.phone;
+    const email = contact.email;
+    const phone = contact.phone;
     
     const openOrders = countOpenOrdersByCustomer(sheet, email, phone);
     if (openOrders >= MAX_OPEN_ORDERS_PER_CUSTOMER) {
@@ -129,13 +143,28 @@ function doPost(e) {
       });
     }
     
-    // Generate order ID
+    // Generate ONE order ID for ALL items in this batch
     const orderId = generateOrderId();
     
-    // Add the order data
-    addOrderRow(sheet, data, orderId);
+    // Add each item as a row, all with the same Order ID
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const itemData = {
+        itemType: item.itemType,
+        config: item.config,
+        order: item.order,
+        contact: contact
+      };
+      
+      // Add item number suffix if multiple items (e.g., CB-260117-1234-A, CB-260117-1234-B)
+      const itemOrderId = items.length > 1 
+        ? orderId + '-' + String.fromCharCode(65 + i)  // A, B, C...
+        : orderId;
+      
+      addOrderRow(sheet, itemData, itemOrderId);
+    }
     
-    Logger.log('Order added successfully with ID: ' + orderId);
+    Logger.log('Order added successfully with ID: ' + orderId + ' (' + items.length + ' item(s))');
     return createResponse(200, 'Order received successfully', { success: true, orderId: orderId });
     
   } catch (error) {

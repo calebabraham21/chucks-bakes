@@ -96,40 +96,55 @@ export async function submitOrder(orderData: RequestItem & { website?: string })
 }
 
 /**
- * Submit multiple order requests as a batch
- * Returns all order IDs for email confirmation
+ * Submit all cart items as a single order batch
+ * All items get the same order ID
  */
-export async function submitOrderBatch(orders: RequestItem[]): Promise<SubmitOrderResponse> {
+export async function submitOrderBatch(orders: (RequestItem & { website?: string })[]): Promise<SubmitOrderResponse> {
   try {
-    // Submit each order sequentially to avoid overwhelming the API
-    const results: SubmitOrderResponse[] = [];
-    const orderIds: string[] = [];
+    const response = await fetch('/api/order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        items: orders,
+        contact: orders[0]?.contact, // Contact info is the same for all items
+        website: orders[0]?.website || '', // Honeypot field
+      }),
+    });
+
+    const text = await response.text();
     
-    for (const order of orders) {
-      const result = await submitOrder(order);
-      results.push(result);
-      
-      // Collect all order IDs
-      if (result.orderId) {
-        orderIds.push(result.orderId);
+    if (!text) {
+      throw new Error('Empty response from server');
+    }
+    
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (parseError) {
+      console.error('Failed to parse response:', text);
+      throw new Error('Invalid response from server');
+    }
+
+    if (!response.ok) {
+      if (data.errorCode === 'ORDER_LIMIT_REACHED') {
+        return {
+          success: false,
+          message: data.message || 'Order limit reached',
+          errorCode: data.errorCode,
+          openOrders: data.openOrders,
+          maxAllowed: data.maxAllowed,
+        };
       }
-      
-      // If any submission fails, stop and report the error
-      if (!result.success) {
-        return result;
-      }
-      
-      // Small delay between requests to be nice to Google Sheets API
-      if (orders.length > 1) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
+      throw new Error(data.message || 'Failed to submit order');
     }
 
     return {
       success: true,
-      message: `Successfully submitted ${orders.length} order${orders.length > 1 ? 's' : ''}`,
-      orderId: orderIds[orderIds.length - 1], // Keep last ID for backward compatibility
-      orderIds, // All IDs for email confirmation
+      message: data.message || 'Order submitted successfully',
+      orderId: data.orderId,
+      orderIds: [data.orderId],
     };
   } catch (error) {
     console.error('Error submitting order batch:', error);
