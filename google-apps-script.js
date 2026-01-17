@@ -22,7 +22,7 @@
 // Property key for the API token
 const TOKEN_PROPERTY = 'API_TOKEN';
 
-// Maximum open orders per customer (checked by email OR phone)
+// Maximum open orders per customer (checked by phone number)
 const MAX_OPEN_ORDERS_PER_CUSTOMER = 1;
 
 // Statuses that count as "closed" (not counted against the limit)
@@ -42,42 +42,32 @@ function generateOrderId() {
 }
 
 /**
- * Count open orders for a given customer (by email OR phone)
+ * Count open orders for a given phone number
  * Returns the number of orders where status is NOT in CLOSED_STATUSES
  */
-function countOpenOrdersByCustomer(sheet, email, phone) {
-  if (sheet.getLastRow() <= 1) {
+function countOpenOrdersByPhone(sheet, phone) {
+  if (!phone || sheet.getLastRow() <= 1) {
     return 0;
   }
   
-  // Normalize inputs for comparison
-  const normalizedPhone = phone ? phone.replace(/\D/g, '') : '';
-  const normalizedEmail = email ? email.toLowerCase().trim() : '';
-  
-  // Need at least one identifier
-  if (!normalizedPhone && !normalizedEmail) {
+  // Normalize phone (digits only)
+  const normalizedPhone = phone.replace(/\D/g, '');
+  if (!normalizedPhone) {
     return 0;
   }
   
-  // Get all data (skip header row)
   const data = sheet.getDataRange().getValues();
   let openCount = 0;
   
   // Column indices (0-based)
   const STATUS_COL = 2;  // Column C - Status
-  const EMAIL_COL = 5;   // Column F - Email
   const PHONE_COL = 6;   // Column G - Phone
   
   for (let i = 1; i < data.length; i++) {
-    const rowEmail = String(data[i][EMAIL_COL] || '').toLowerCase().trim();
     const rowPhone = String(data[i][PHONE_COL] || '').replace(/\D/g, '');
     const rowStatus = String(data[i][STATUS_COL] || '').trim();
     
-    // Check if email OR phone matches and status is open
-    const emailMatches = normalizedEmail && rowEmail === normalizedEmail;
-    const phoneMatches = normalizedPhone && rowPhone === normalizedPhone;
-    
-    if ((emailMatches || phoneMatches) && !CLOSED_STATUSES.includes(rowStatus)) {
+    if (rowPhone === normalizedPhone && !CLOSED_STATUSES.includes(rowStatus)) {
       openCount++;
     }
   }
@@ -87,7 +77,7 @@ function countOpenOrdersByCustomer(sheet, email, phone) {
 
 /**
  * Handle POST requests from the order form
- * Single item format: { itemType, config/order, contact }
+ * Format: { itemType, config/order, contact, orderId (optional), skipLimitCheck (optional) }
  */
 function doPost(e) {
   try {
@@ -95,8 +85,8 @@ function doPost(e) {
     const data = JSON.parse(e.postData.contents);
     
     Logger.log('=== INCOMING ORDER ===');
-    Logger.log('Data keys: ' + Object.keys(data).join(', '));
     Logger.log('Item type: ' + data.itemType);
+    Logger.log('Order ID from frontend: ' + (data.orderId || 'none'));
     
     // Verify the token
     const providedToken = data.token;
@@ -120,31 +110,35 @@ function doPost(e) {
     }
     
     // Validate contact info
-    if (!data.contact || !data.contact.email) {
-      Logger.log('ERROR: Missing contact');
+    if (!data.contact || !data.contact.phone) {
+      Logger.log('ERROR: Missing contact/phone');
       return createResponse(400, 'Missing contact information');
     }
     
-    // Check for open order limit by email or phone number
-    const email = data.contact.email;
     const phone = data.contact.phone;
     
-    Logger.log('Checking limit for: ' + email + ' / ' + phone);
-    const openOrders = countOpenOrdersByCustomer(sheet, email, phone);
-    Logger.log('Open orders: ' + openOrders);
-    
-    if (openOrders >= MAX_OPEN_ORDERS_PER_CUSTOMER) {
-      Logger.log('BLOCKED: Order limit reached');
-      return createResponse(429, 'You already have a pending order! Please wait for it to be completed before placing a new one.', { 
-        success: false, 
-        errorCode: 'ORDER_LIMIT_REACHED',
-        openOrders: openOrders,
-        maxAllowed: MAX_OPEN_ORDERS_PER_CUSTOMER
-      });
+    // Only check order limit on first item (when no orderId passed yet)
+    // Subsequent items in same batch will have orderId and skipLimitCheck=true
+    if (!data.skipLimitCheck) {
+      Logger.log('Checking limit for phone: ' + phone);
+      const openOrders = countOpenOrdersByPhone(sheet, phone);
+      Logger.log('Open orders: ' + openOrders);
+      
+      if (openOrders >= MAX_OPEN_ORDERS_PER_CUSTOMER) {
+        Logger.log('BLOCKED: Order limit reached');
+        return createResponse(429, 'You already have a pending order! Please wait for it to be completed before placing a new one.', { 
+          success: false, 
+          errorCode: 'ORDER_LIMIT_REACHED',
+          openOrders: openOrders,
+          maxAllowed: MAX_OPEN_ORDERS_PER_CUSTOMER
+        });
+      }
+    } else {
+      Logger.log('Skipping limit check (additional item in batch)');
     }
     
-    // Generate order ID
-    const orderId = generateOrderId();
+    // Use provided orderId or generate new one
+    const orderId = data.orderId || generateOrderId();
     Logger.log('Order ID: ' + orderId);
     
     // Add the order row
@@ -410,28 +404,45 @@ function testOrderSubmission() {
 
 /**
  * Test the order limit check (run this manually in Apps Script editor)
- * Replace with an actual email/phone from your sheet to test
+ * Uses YOUR phone - edit if needed
  */
 function testOrderLimitCheck() {
   const sheet = getOrdersSheet();
   
-  // Change these to test with real values from your sheet
-  const testEmail = 'test@example.com';
-  const testPhone = '1234567890';
+  // YOUR phone number - change if different
+  const testPhone = '6787619403';
   
-  Logger.log('Testing order limit check...');
-  Logger.log('Email: ' + testEmail);
+  Logger.log('=== ORDER LIMIT CHECK TEST (PHONE ONLY) ===');
   Logger.log('Phone: ' + testPhone);
   Logger.log('Max allowed: ' + MAX_OPEN_ORDERS_PER_CUSTOMER);
-  Logger.log('Closed statuses: ' + CLOSED_STATUSES.join(', '));
+  Logger.log('Closed statuses: ' + JSON.stringify(CLOSED_STATUSES));
   
-  const openOrders = countOpenOrdersByCustomer(sheet, testEmail, testPhone);
+  const data = sheet.getDataRange().getValues();
+  Logger.log('Total rows in sheet: ' + data.length);
+  
+  const normalizedPhone = testPhone.replace(/\D/g, '');
+  Logger.log('Normalized phone: "' + normalizedPhone + '"');
+  
+  // Check each row
+  Logger.log('--- Matching rows ---');
+  for (let i = 1; i < data.length; i++) {
+    const rowPhone = String(data[i][6] || '').replace(/\D/g, '');
+    const rowStatus = String(data[i][2] || '').trim();
+    
+    if (rowPhone === normalizedPhone) {
+      const isClosed = CLOSED_STATUSES.includes(rowStatus);
+      Logger.log('Row ' + (i+1) + ': phone="' + rowPhone + '" status="' + rowStatus + '" isClosed=' + isClosed);
+    }
+  }
+  
+  const openOrders = countOpenOrdersByPhone(sheet, testPhone);
+  Logger.log('--- RESULT ---');
   Logger.log('Open orders found: ' + openOrders);
   
   if (openOrders >= MAX_OPEN_ORDERS_PER_CUSTOMER) {
-    Logger.log('Result: WOULD BE BLOCKED');
+    Logger.log('WOULD BE BLOCKED');
   } else {
-    Logger.log('Result: Would be allowed');
+    Logger.log('Would be ALLOWED');
   }
 }
 

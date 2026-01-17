@@ -96,19 +96,38 @@ export async function submitOrder(orderData: RequestItem & { website?: string })
 }
 
 /**
- * Submit multiple order requests
- * Each item is submitted separately but order limit is checked on first submission
+ * Generate order ID in format CB-YYMMDD-XXXX
+ */
+function generateOrderId(): string {
+  const now = new Date();
+  const year = String(now.getFullYear()).slice(-2);
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const random = String(Math.floor(1000 + Math.random() * 9000));
+  return `CB-${year}${month}${day}-${random}`;
+}
+
+/**
+ * Submit multiple order requests with the SAME Order ID
+ * Order limit is only checked on the first item
  */
 export async function submitOrderBatch(orders: (RequestItem & { website?: string })[]): Promise<SubmitOrderResponse> {
   try {
-    const orderIds: string[] = [];
+    // Generate ONE order ID for all items
+    const orderId = generateOrderId();
     
-    for (const order of orders) {
-      const result = await submitOrder(order);
+    for (let i = 0; i < orders.length; i++) {
+      const order = orders[i];
+      const isFirstItem = i === 0;
       
-      if (result.orderId) {
-        orderIds.push(result.orderId);
-      }
+      // Add orderId and skipLimitCheck flag to the request
+      const orderWithId = {
+        ...order,
+        orderId: orderId,
+        skipLimitCheck: !isFirstItem, // Only check limit on first item
+      };
+      
+      const result = await submitOrder(orderWithId as any);
       
       // If any submission fails, stop and report the error
       if (!result.success) {
@@ -116,7 +135,7 @@ export async function submitOrderBatch(orders: (RequestItem & { website?: string
       }
       
       // Small delay between requests
-      if (orders.length > 1) {
+      if (orders.length > 1 && i < orders.length - 1) {
         await new Promise(resolve => setTimeout(resolve, 300));
       }
     }
@@ -124,8 +143,8 @@ export async function submitOrderBatch(orders: (RequestItem & { website?: string
     return {
       success: true,
       message: `Successfully submitted ${orders.length} item${orders.length > 1 ? 's' : ''}`,
-      orderId: orderIds[0],
-      orderIds,
+      orderId: orderId,
+      orderIds: [orderId],
     };
   } catch (error) {
     console.error('Error submitting order batch:', error);
