@@ -130,7 +130,7 @@ export function Header() {
       } else {
         // Handle specific error cases
         if (result.errorCode === 'ORDER_LIMIT_REACHED') {
-          setToastMessage(`You already have ${result.openOrders} pending order(s). Please wait for your current orders to be completed before placing new ones.`);
+          setToastMessage(`You already have an order pending! Please wait for it to be completed before placing a new one.`);
         } else {
           setToastMessage(result.message || 'Failed to submit order. Please try again.');
         }

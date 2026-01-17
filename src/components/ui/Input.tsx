@@ -47,8 +47,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         />
         
         {error && (
-          <div id={`${inputId}-error`} className="mt-2 text-sm text-red-700 bg-red-50 px-3 py-2 rounded-lg border border-red-200" role="alert">
-            <span className="font-medium">⚠️ {error}</span>
+          <div 
+            id={`${inputId}-error`} 
+            className="mt-2 text-sm px-3 py-2 rounded-lg font-semibold shadow-sm" 
+            style={{ backgroundColor: '#ef4444', color: 'white' }}
+            role="alert"
+          >
+            ⚠️ {error}
           </div>
         )}
         

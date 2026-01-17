@@ -42,7 +42,7 @@ export function ReviewAndAdd({ draft }: ReviewAndAddProps) {
       clearDraft();
     } else {
       // Cart is full
-      setToastMessage(`Cart is full (max ${MAX_CART_ITEMS} items). Please checkout first.`);
+      setToastMessage(`Each order can only have ${MAX_CART_ITEMS} items. Please checkout first!`);
       setToastType('error');
       setShowToast(true);
     }
@@ -61,8 +61,8 @@ export function ReviewAndAdd({ draft }: ReviewAndAddProps) {
           Added to Cart!
         </h2>
         <p className="text-gray-600 mb-6">
-          You now have {cart.length} {cart.length === 1 ? 'item' : 'items'} in your cart.
-          {cartNowFull && ' (Cart is full)'}
+          You now have {cart.length} {cart.length === 1 ? 'item' : 'items'} in your order.
+          {cartNowFull && ' (Maximum reached - ready to checkout!)'}
         </p>
         
         <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
@@ -121,9 +121,9 @@ export function ReviewAndAdd({ draft }: ReviewAndAddProps) {
         <div className="mb-4 p-4 bg-amber-50 rounded-xl border border-amber-200 flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-amber-800">Cart is full</p>
+            <p className="text-sm font-medium text-amber-800">Order limit reached</p>
             <p className="text-sm text-amber-700">
-              You have {MAX_CART_ITEMS} items in your cart. Please checkout before adding more.
+              Each order can have up to {MAX_CART_ITEMS} items. Please complete checkout before starting a new order.
             </p>
           </div>
         </div>
@@ -164,8 +164,8 @@ export function ReviewAndAdd({ draft }: ReviewAndAddProps) {
         
         <p className="text-sm text-gray-600 text-center">
           {cartIsFull 
-            ? 'Complete your current order before adding more items.'
-            : `You can add up to ${MAX_CART_ITEMS} items per order.`
+            ? 'Complete checkout to place your order!'
+            : `You can add up to ${MAX_CART_ITEMS} items per order. One order at a time!`
           }
         </p>
       </div>
