@@ -12,11 +12,10 @@ import { submitOrderBatch, sendConfirmationEmail, prepareOrdersForSubmission } f
 import type { CartItem, ContactInfo } from '../lib/validation';
 
 export function Header() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const [toastType, setToastType] = useState<'success' | 'error'>('success');
+  const [localToastMessage, setLocalToastMessage] = useState('');
+  const [localToastType, setLocalToastType] = useState<'success' | 'error'>('success');
+  const [localShowToast, setLocalShowToast] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   
@@ -28,6 +27,11 @@ export function Header() {
   const removeFromCart = useOrderStore((state: any) => state.removeFromCart);
   const clearCart = useOrderStore((state: any) => state.clearCart);
   const setLastOrderId = useOrderStore((state: any) => state.setLastOrderId);
+  
+  // Global cart modal state
+  const isCartOpen = useOrderStore((state: any) => state.isCartOpen);
+  const openCart = useOrderStore((state: any) => state.openCart);
+  const closeCart = useOrderStore((state: any) => state.closeCart);
   
   const location = useLocation();
   const navigate = useNavigate();
@@ -58,7 +62,7 @@ export function Header() {
   
   // Reset checkout when modal closes
   const handleCloseModal = () => {
-    setIsModalOpen(false);
+    closeCart();
     // Reset checkout state after modal animation
     setTimeout(() => {
       setCheckoutStep(1);
@@ -123,25 +127,25 @@ export function Header() {
         clearCart();
         setCheckoutStep(1);
         setCheckoutContact(null);
-        setIsModalOpen(false);
+        closeCart();
         
         // Navigate to success page
         navigate('/success');
       } else {
         // Handle specific error cases
         if (result.errorCode === 'ORDER_LIMIT_REACHED') {
-          setToastMessage(`You already have an order pending! Please wait for it to be completed before placing a new one.`);
+          setLocalToastMessage(`You already have an order pending! Please wait for it to be completed before placing a new one.`);
         } else {
-          setToastMessage(result.message || 'Failed to submit order. Please try again.');
+          setLocalToastMessage(result.message || 'Failed to submit order. Please try again.');
         }
-        setToastType('error');
-        setShowToast(true);
+        setLocalToastType('error');
+        setLocalShowToast(true);
       }
     } catch (error) {
       console.error('Error submitting order:', error);
-      setToastMessage('An error occurred. Please try again or contact us directly.');
-      setToastType('error');
-      setShowToast(true);
+      setLocalToastMessage('An error occurred. Please try again or contact us directly.');
+      setLocalToastType('error');
+      setLocalShowToast(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -155,11 +159,11 @@ export function Header() {
     clearCart();
     setCheckoutStep(1);
     setCheckoutContact(null);
-    setIsModalOpen(false);
+    closeCart();
     setShowClearConfirm(false);
-    setToastMessage('Cart cleared');
-    setToastType('success');
-    setShowToast(true);
+    setLocalToastMessage('Cart cleared');
+    setLocalToastType('success');
+    setLocalShowToast(true);
   };
   
   // Get modal title based on checkout step
@@ -216,7 +220,7 @@ export function Header() {
             {/* Desktop Cart Button */}
             <div className="hidden md:flex items-center">
               <button
-                onClick={() => setIsModalOpen(true)}
+                onClick={openCart}
                 className="relative p-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] active:scale-95"
                 aria-label={`View cart (${cart.length} items)`}
               >
@@ -232,7 +236,7 @@ export function Header() {
             {/* Mobile: Cart (Right) */}
             <div className="flex md:hidden">
               <button
-                onClick={() => setIsModalOpen(true)}
+                onClick={openCart}
                 className="relative p-2 hover:bg-[#ffd1dc] rounded-xl transition-smooth focus:outline-none focus:ring-2 focus:ring-[#ff8ba7] active:scale-95"
                 aria-label={`View cart (${cart.length} items)`}
               >
@@ -308,7 +312,7 @@ export function Header() {
       
       {/* Cart/Checkout Modal */}
       <Modal
-        isOpen={isModalOpen}
+        isOpen={isCartOpen}
         onClose={handleCloseModal}
         title={getModalTitle()}
         size="lg"
@@ -474,10 +478,10 @@ export function Header() {
       </Modal>
       
       <Toast
-        message={toastMessage}
-        type={toastType}
-        isVisible={showToast}
-        onClose={() => setShowToast(false)}
+        message={localToastMessage}
+        type={localToastType}
+        isVisible={localShowToast}
+        onClose={() => setLocalShowToast(false)}
       />
       
       {/* Clear Cart Confirmation Dialog */}

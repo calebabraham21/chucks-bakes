@@ -24,6 +24,12 @@ interface OrderState {
   // Last submitted order ID (for success page)
   lastOrderId: string | null;
   
+  // Cart modal state
+  isCartOpen: boolean;
+  
+  // Toast state (global)
+  toast: { message: string; type: 'success' | 'error' | 'info'; isVisible: boolean };
+  
   // Order page actions
   setOrderDraft: (draft: OrderDraft | null) => void;
   setCurrentStep: (step: number) => void;
@@ -34,6 +40,14 @@ interface OrderState {
   removeFromCart: (index: number) => void;
   clearCart: () => void;
   isCartFull: () => boolean;
+  
+  // Cart modal actions
+  openCart: () => void;
+  closeCart: () => void;
+  
+  // Toast actions
+  showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
+  hideToast: () => void;
   
   // Checkout actions
   setCheckoutStep: (step: number) => void;
@@ -55,6 +69,8 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   checkoutStep: 1,
   checkoutContact: null,
   lastOrderId: null,
+  isCartOpen: false,
+  toast: { message: '', type: 'success' as const, isVisible: false },
   
   setOrderDraft: (draft: OrderDraft | null) => {
     set({ orderDraft: draft });
@@ -102,6 +118,31 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   
   isCartFull: () => {
     return get().cart.length >= MAX_CART_ITEMS;
+  },
+  
+  openCart: () => {
+    set({ isCartOpen: true });
+  },
+  
+  closeCart: () => {
+    set({ isCartOpen: false });
+  },
+  
+  showToast: (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    set({ toast: { message, type, isVisible: true } });
+    // Auto-hide after 4 seconds
+    setTimeout(() => {
+      set((state: OrderState) => {
+        if (state.toast.message === message) {
+          return { toast: { ...state.toast, isVisible: false } };
+        }
+        return state;
+      });
+    }, 4000);
+  },
+  
+  hideToast: () => {
+    set((state: OrderState) => ({ toast: { ...state.toast, isVisible: false } }));
   },
   
   setCheckoutStep: (step: number) => {
