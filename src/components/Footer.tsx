@@ -30,7 +30,7 @@ export function Footer() {
             </div>
           ) : (
             <form
-              action="https://chucksbakes.us18.list-manage.com/subscribe/post?u=65429164bbd1f17a6b40ffc49&id=0a4bb6a0e4"
+              action="https://chucksbakes.us18.list-manage.com/subscribe/post?u=65429164bbd1f17a6b40ffc49&id=0a4bb6a0e4&f_id=0000ade6f0"
               method="post"
               target="_blank"
               onSubmit={handleNewsletterSubmit}
