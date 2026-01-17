@@ -95,6 +95,10 @@ function doPost(e) {
     // Parse the request
     const data = JSON.parse(e.postData.contents);
     
+    // Log incoming data for debugging
+    Logger.log('=== INCOMING ORDER REQUEST ===');
+    Logger.log('Raw data keys: ' + Object.keys(data).join(', '));
+    
     // Verify the token
     const providedToken = data.token;
     const expectedToken = PropertiesService.getScriptProperties().getProperty(TOKEN_PROPERTY);
@@ -120,11 +124,19 @@ function doPost(e) {
     const contact = data.contact;
     const items = data.items || [];
     
+    Logger.log('Contact: ' + JSON.stringify(contact));
+    Logger.log('Number of items: ' + items.length);
+    if (items.length > 0) {
+      Logger.log('First item: ' + JSON.stringify(items[0]));
+    }
+    
     if (!contact || !contact.email) {
+      Logger.log('ERROR: Missing contact information');
       return createResponse(400, 'Missing contact information');
     }
     
     if (items.length === 0) {
+      Logger.log('ERROR: No items in order');
       return createResponse(400, 'No items in order');
     }
     
@@ -132,9 +144,12 @@ function doPost(e) {
     const email = contact.email;
     const phone = contact.phone;
     
+    Logger.log('Checking order limit for email: ' + email + ', phone: ' + phone);
     const openOrders = countOpenOrdersByCustomer(sheet, email, phone);
+    Logger.log('Found ' + openOrders + ' open orders for this customer');
+    
     if (openOrders >= MAX_OPEN_ORDERS_PER_CUSTOMER) {
-      Logger.log('Order limit reached for customer (email: ' + email + ', phone: ' + phone + ') - has ' + openOrders + ' open order(s)');
+      Logger.log('ORDER BLOCKED: Limit reached for customer (email: ' + email + ', phone: ' + phone + ')');
       return createResponse(429, 'You already have a pending order! Please wait for it to be completed before placing a new one.', { 
         success: false, 
         errorCode: 'ORDER_LIMIT_REACHED',
@@ -145,10 +160,13 @@ function doPost(e) {
     
     // Generate ONE order ID for ALL items in this batch
     const orderId = generateOrderId();
+    Logger.log('Generated Order ID: ' + orderId);
     
     // Add each item as a row, all with the same Order ID
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
+      Logger.log('Processing item ' + (i+1) + ': ' + JSON.stringify(item));
+      
       const itemData = {
         itemType: item.itemType,
         config: item.config,
@@ -161,14 +179,15 @@ function doPost(e) {
         ? orderId + '-' + String.fromCharCode(65 + i)  // A, B, C...
         : orderId;
       
+      Logger.log('Adding row with Order ID: ' + itemOrderId);
       addOrderRow(sheet, itemData, itemOrderId);
     }
     
-    Logger.log('Order added successfully with ID: ' + orderId + ' (' + items.length + ' item(s))');
+    Logger.log('=== ORDER SUCCESS: ' + orderId + ' (' + items.length + ' item(s)) ===');
     return createResponse(200, 'Order received successfully', { success: true, orderId: orderId });
     
   } catch (error) {
-    Logger.log('Error processing order: ' + error.toString());
+    Logger.log('=== ORDER ERROR: ' + error.toString() + ' ===');
     return createResponse(500, 'Error processing order: ' + error.message);
   }
 }
@@ -241,6 +260,10 @@ function addOrderRow(sheet, data, orderId) {
   const timestamp = new Date();
   const contact = data.contact || {};
   
+  Logger.log('addOrderRow called with itemType: ' + data.itemType);
+  Logger.log('Has config: ' + (data.config ? 'YES' : 'NO'));
+  Logger.log('Has order: ' + (data.order ? 'YES' : 'NO'));
+  
   // Initialize all columns with empty values
   let row = {
     orderId: orderId,
@@ -268,6 +291,7 @@ function addOrderRow(sheet, data, orderId) {
   
   // Fill in item-specific details
   if (data.itemType === 'cake' && data.config) {
+    Logger.log('Processing as CAKE');
     const config = data.config;
     row.size = config.size || '';
     row.quantity = '1 cake';
@@ -282,9 +306,11 @@ function addOrderRow(sheet, data, orderId) {
     row.specialRequests = config.specialRequests || '';
     
   } else if (data.order) {
+    Logger.log('Processing as TREAT (brownies/cookies)');
+    Logger.log('Order data: ' + JSON.stringify(data.order));
     // Brownies, cookies
     row.size = 'N/A';
-    row.quantity = data.order.quantity || '';
+    row.quantity = data.order.quantity ? String(data.order.quantity) : '';
     row.flavor = 'N/A';
     row.filling = 'N/A';
     row.frostingFlavor = 'N/A';
@@ -294,7 +320,11 @@ function addOrderRow(sheet, data, orderId) {
     row.theme = 'N/A';
     row.colors = 'N/A';
     row.specialRequests = 'N/A';
+  } else {
+    Logger.log('WARNING: Item has no config or order data!');
   }
+  
+  Logger.log('Row itemType: ' + row.itemType + ', quantity: ' + row.quantity);
   
   // Convert row object to array in the correct column order
   const rowArray = [
@@ -366,5 +396,107 @@ function testSetup() {
     Logger.log('Token is configured ✓');
   } else {
     Logger.log('⚠️ Token is NOT configured! Add it in Project Settings > Script Properties');
+  }
+}
+
+/**
+ * TEST FUNCTION - Simulates an actual order submission
+ * Run this to test without needing to submit from the website
+ */
+function testOrderSubmission() {
+  // Get the real token from properties
+  const token = PropertiesService.getScriptProperties().getProperty(TOKEN_PROPERTY);
+  
+  if (!token) {
+    Logger.log('ERROR: Token not configured!');
+    return;
+  }
+  
+  // Simulate a batch order with 2 items (brownies)
+  const testData = {
+    token: token,
+    contact: {
+      name: 'Test Customer',
+      email: 'test@example.com',
+      phone: '1234567890',
+      deliveryMethod: 'pickup',
+      targetDate: '2026-02-01',
+      notes: 'Test order'
+    },
+    items: [
+      {
+        itemType: 'brownies',
+        order: {
+          type: 'brownies',
+          quantity: 16
+        }
+      }
+    ]
+  };
+  
+  // Create a fake event object like Google sends
+  const fakeEvent = {
+    postData: {
+      contents: JSON.stringify(testData)
+    }
+  };
+  
+  Logger.log('=== RUNNING TEST ORDER ===');
+  Logger.log('Test data: ' + JSON.stringify(testData, null, 2));
+  
+  // Call doPost with the fake event
+  const result = doPost(fakeEvent);
+  
+  // Log the result
+  const resultText = result.getContent();
+  Logger.log('Result: ' + resultText);
+}
+
+/**
+ * Test the order limit check (run this manually in Apps Script editor)
+ * Replace with an actual email/phone from your sheet to test
+ */
+function testOrderLimitCheck() {
+  const sheet = getOrdersSheet();
+  
+  // Change these to test with real values from your sheet
+  const testEmail = 'test@example.com';
+  const testPhone = '1234567890';
+  
+  Logger.log('Testing order limit check...');
+  Logger.log('Email: ' + testEmail);
+  Logger.log('Phone: ' + testPhone);
+  Logger.log('Max allowed: ' + MAX_OPEN_ORDERS_PER_CUSTOMER);
+  Logger.log('Closed statuses: ' + CLOSED_STATUSES.join(', '));
+  
+  const openOrders = countOpenOrdersByCustomer(sheet, testEmail, testPhone);
+  Logger.log('Open orders found: ' + openOrders);
+  
+  if (openOrders >= MAX_OPEN_ORDERS_PER_CUSTOMER) {
+    Logger.log('Result: WOULD BE BLOCKED');
+  } else {
+    Logger.log('Result: Would be allowed');
+  }
+}
+
+/**
+ * List all orders and their statuses (for debugging)
+ */
+function listAllOrders() {
+  const sheet = getOrdersSheet();
+  const data = sheet.getDataRange().getValues();
+  
+  Logger.log('=== ALL ORDERS ===');
+  Logger.log('Total rows: ' + data.length);
+  
+  // Skip header row
+  for (let i = 1; i < data.length; i++) {
+    const orderId = data[i][0];
+    const status = data[i][2];
+    const email = data[i][5];
+    const phone = data[i][6];
+    const isClosed = CLOSED_STATUSES.includes(String(status).trim());
+    
+    Logger.log('Row ' + (i+1) + ': ' + orderId + ' | Status: "' + status + '" | Email: ' + email + ' | Phone: ' + phone + ' | Closed: ' + isClosed);
   }
 }
