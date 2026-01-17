@@ -6,9 +6,11 @@ export function Footer() {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleNewsletterSubmit = () => {
-    // Don't prevent default - let the form submit to Mailchimp
+    // Delay showing success message to let the form actually submit first
     if (email) {
-      setIsSubmitted(true);
+      setTimeout(() => {
+        setIsSubmitted(true);
+      }, 500);
     }
   };
 
