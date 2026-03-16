@@ -62,10 +62,8 @@ export function PrivacyPolicy() {
           <div>
             <h2 className="text-xl font-bold text-black mb-3">Where your data is stored</h2>
             <p className="mb-3">
-              Order submissions are stored in a <strong>Google Sheet</strong> accessible only to the
-              bakery owner. Confirmation emails are sent via a third-party email service. Both
-              Google and our email provider have their own privacy policies governing how data is
-              handled on their infrastructure.
+              Order submissions are stored securely and are only accessible to the bakery owner.
+              Confirmation emails are sent via a third-party email service.
             </p>
             <p>
               Data is retained as long as needed to fulfill and follow up on orders. We don't keep
