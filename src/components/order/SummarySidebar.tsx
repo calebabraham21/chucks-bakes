@@ -1,11 +1,10 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 import { Card } from '../ui/Card';
-import type { OrderDraft, CakeConfig, TreatOrder } from '../../lib/validation';
+import type { OrderDraft, CakeConfig } from '../../lib/validation';
 import { ITEMS, ITEM_LABELS } from '../../lib/constants';
 import { classNames } from '../../lib/utils';
 
-// Helper components to avoid IIFE type inference issues
 function CakeConfigSummary({ config }: { config: CakeConfig }) {
   return (
     <div>
@@ -24,23 +23,8 @@ function CakeConfigSummary({ config }: { config: CakeConfig }) {
           <p>Toppings: {config.toppings.join(', ')}</p>
         )}
         {config.theme && <p>Theme: {config.theme}</p>}
-        {config.colors && config.colors.length > 0 && (
-          <p>Colors: {config.colors.join(', ')}</p>
-        )}
+        {config.colors && <p>Colors: {config.colors}</p>}
       </div>
-    </div>
-  );
-}
-
-function TreatOrderSummary({ order }: { order: TreatOrder }) {
-  return (
-    <div>
-      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-        Quantity
-      </p>
-      <p className="text-sm text-gray-700">
-        {order.quantity || '—'}
-      </p>
     </div>
   );
 }
@@ -52,13 +36,13 @@ interface SummarySidebarProps {
 
 export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  
+
   if (!draft) {
     return null;
   }
-  
+
   const itemLabel = ITEM_LABELS[draft.itemType as keyof typeof ITEM_LABELS];
-  
+
   return (
     <div className="lg:sticky lg:top-4">
       <Card padding="md" className="bg-bakery-pink-50/50">
@@ -79,7 +63,7 @@ export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
             )}
           </span>
         </button>
-        
+
         <div
           id="summary-content"
           className={classNames(
@@ -87,7 +71,6 @@ export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
             isCollapsed && 'hidden lg:block'
           )}
         >
-          {/* Item type */}
           <div>
             <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
               Item
@@ -96,17 +79,11 @@ export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
               {itemLabel}
             </p>
           </div>
-          
-          {/* Configuration details - Cake */}
+
           {draft.itemType === ITEMS.CAKE && 'config' in draft && currentStep >= 2 && (
             <CakeConfigSummary config={(draft as { config: CakeConfig }).config} />
           )}
-          
-          {/* Configuration details - Treats */}
-          {draft.itemType !== ITEMS.CAKE && 'order' in draft && currentStep >= 2 && (
-            <TreatOrderSummary order={(draft as { order: TreatOrder }).order} />
-          )}
-          
+
           {currentStep < 2 && (
             <p className="text-xs text-gray-500 italic">
               Continue to see full summary
@@ -117,4 +94,3 @@ export function SummarySidebar({ draft, currentStep }: SummarySidebarProps) {
     </div>
   );
 }
-

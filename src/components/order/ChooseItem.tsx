@@ -1,6 +1,5 @@
 import type { ItemType } from '../../lib/constants';
 import { ITEMS } from '../../lib/constants';
-import { Button } from '../ui/Button';
 
 interface ChooseItemProps {
   onSelect: (itemType: ItemType) => void;

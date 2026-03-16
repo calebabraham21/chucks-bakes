@@ -474,12 +474,7 @@ export function Header() {
                         Item {index + 1}
                       </span>
                     </div>
-                    {'order' in item && (
-                      <p className="text-sm text-gray-600 mt-1">Qty: {item.order.quantity}</p>
-                    )}
-                    {item.itemType === ITEMS.CAKE && 'config' in item && (
-                      <p className="text-sm text-gray-600 mt-1">{item.config.size} • {item.config.flavor}</p>
-                    )}
+                    <p className="text-sm text-gray-600 mt-1">{item.config.size} • {item.config.flavor}</p>
                   </div>
                 ))}
               </div>

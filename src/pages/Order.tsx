@@ -37,7 +37,7 @@ export function Order() {
     return () => clearTimeout(timer);
   }, [currentStep]);
 
-  const handleItemSelect = (itemType: ItemType) => {
+  const handleItemSelect = (_itemType: ItemType) => {
     setOrderDraft({
       itemType: ITEMS.CAKE,
       config: {
