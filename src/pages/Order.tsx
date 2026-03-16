@@ -4,12 +4,11 @@ import { Button } from '../components/ui/Button';
 import { Stepper } from '../components/ui/Stepper';
 import { ChooseItem } from '../components/order/ChooseItem';
 import { ConfigureCake } from '../components/order/ConfigureCake';
-import { ConfigureTreats } from '../components/order/ConfigureTreats';
 import { ReviewAndAdd } from '../components/order/ReviewAndAdd';
 import { useOrderStore } from '../lib/state';
 import { ITEMS, POLICIES } from '../lib/constants';
 import type { ItemType } from '../lib/constants';
-import type { CakeConfig, TreatOrder } from '../lib/validation';
+import type { CakeConfig } from '../lib/validation';
 
 const STEPS = [
   { id: 1, label: 'Choose' },
@@ -23,136 +22,111 @@ export function Order() {
   const setOrderDraft = useOrderStore((state: any) => state.setOrderDraft);
   const setCurrentStep = useOrderStore((state: any) => state.setCurrentStep);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  
-  // Hardcoded order page title
+
   const chooseItemTitle = 'Choose Your Item';
-  
-  // Handle step transitions with animation
+
   useEffect(() => {
     setIsTransitioning(true);
     const timer = setTimeout(() => setIsTransitioning(false), 50);
-    
+
     const heading = document.getElementById('step-heading');
     if (heading) {
       heading.focus();
     }
-    
+
     return () => clearTimeout(timer);
   }, [currentStep]);
-  
+
   const handleItemSelect = (itemType: ItemType) => {
-    console.log('Selected item type:', itemType);
-    console.log('Expected CAKE:', ITEMS.CAKE);
-    
-    if (itemType === ITEMS.CAKE) {
-      setOrderDraft({
-        itemType: ITEMS.CAKE,
-        config: {
-          size: '',
-          flavor: '',
-          filling: '',
-          frostingFlavor: '',
-          toppings: [],
-          writingStyle: '',
-          writingText: '',
-          theme: '',
-          colors: [],
-          specialRequests: '',
-        },
-      });
-    } else {
-      setOrderDraft({
-        itemType,
-        order: {
-          type: itemType,
-          quantity: 0,
-        },
-      });
-    }
+    setOrderDraft({
+      itemType: ITEMS.CAKE,
+      config: {
+        size: '',
+        flavor: '',
+        filling: '',
+        frostingFlavor: '',
+        toppings: [],
+        writingStyle: '',
+        writingText: '',
+        theme: '',
+        colors: '',
+        specialRequests: '',
+      },
+    });
     setCurrentStep(2);
   };
-  
+
   const handleCakeConfig = (config: CakeConfig) => {
     if (orderDraft?.itemType === ITEMS.CAKE) {
       setOrderDraft({
         ...orderDraft,
         config,
       });
-      setCurrentStep(3); // Go to Add to Cart
+      setCurrentStep(3);
     }
   };
-  
-  const handleTreatConfig = (order: TreatOrder) => {
-    if (orderDraft && orderDraft.itemType !== ITEMS.CAKE) {
-      setOrderDraft({
-        ...orderDraft,
-        order,
-      });
-      setCurrentStep(3); // Go to Add to Cart
-    }
-  };
-  
+
   const handleBack = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
-  
+
   const handleNext = () => {
-    // Trigger form submission
     const form = document.querySelector('form');
     if (form) {
       form.requestSubmit();
     }
   };
-  
+
   const canGoBack = currentStep > 1;
-  const showNextButton = currentStep === 2; // Only show Next on Configure step
-  
+  const showNextButton = currentStep === 2;
+
   return (
     <div className="bg-[#fde7ee] pb-24 sm:pb-8">
       <div className="container mx-auto py-3 sm:py-5">
         <h1 className="font-bold text-[#000000] mb-3 sm:mb-5 text-center">
           Order Process
         </h1>
-        
+
         {/* Policies Banner - only show on step 1 */}
         {currentStep === 1 && (
           <div className="max-w-2xl mx-auto mb-4">
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-[#ffc1d4]/50 shadow-sm">
-              <h3 className="font-semibold text-[#000] mb-3 text-sm">📋 Before you order:</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                <div className="flex items-start gap-2">
-                  <Clock className="w-4 h-4 text-[#ff6b9d] flex-shrink-0 mt-0.5" />
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-[#ffc1d4]/50 shadow-sm">
+              <h3 className="font-bold text-[#000] mb-4 text-lg">📋 Before you order:</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-base">
+                <div className="flex items-start gap-3">
+                  <Clock className="w-6 h-6 text-[#ff6b9d] flex-shrink-0 mt-0.5" />
                   <span className="text-gray-700">{POLICIES.advanceNotice}</span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <CreditCard className="w-4 h-4 text-[#ff6b9d] flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3">
+                  <CreditCard className="w-6 h-6 text-[#ff6b9d] flex-shrink-0 mt-0.5" />
                   <span className="text-gray-700">{POLICIES.payment}</span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 text-[#ff6b9d] flex-shrink-0 mt-0.5" />
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-6 h-6 text-[#ff6b9d] flex-shrink-0 mt-0.5" />
                   <span className="text-gray-700">{POLICIES.pickup}</span>
                 </div>
               </div>
+              <p className="text-sm text-gray-500 mt-4 pt-3 border-t border-[#ffc1d4]/50">
+                ⚠️ {POLICIES.orderDenied}
+              </p>
             </div>
           </div>
         )}
-        
+
         <div className="max-w-2xl mx-auto">
           <Stepper steps={STEPS} currentStep={currentStep} />
         </div>
-        
+
         <div className="mt-4 max-w-2xl mx-auto">
-          {/* Main content */}
           <div>
-            {/* Title for step 1 - outside white box */}
             {currentStep === 1 && (
               <h2 id="step-heading" className="text-2xl font-bold text-black mb-3" tabIndex={-1}>
                 {chooseItemTitle}
               </h2>
             )}
-            
+
             <div className="bg-white rounded-xl shadow-soft p-4">
               {/* Navigation buttons - desktop only - at TOP */}
               <div className="hidden sm:flex gap-3 mb-5 pb-5 border-b border-[#ffd1dc]">
@@ -166,7 +140,7 @@ export function Order() {
                     Back
                   </Button>
                 )}
-                
+
                 {showNextButton && (
                   <Button
                     variant="primary"
@@ -178,39 +152,22 @@ export function Order() {
                   </Button>
                 )}
               </div>
-              
-              <div 
+
+              <div
                 key={currentStep}
                 className={`step-content ${isTransitioning ? 'step-entering' : 'step-entered'}`}
               >
                 {currentStep === 1 && (
                   <ChooseItem onSelect={handleItemSelect} />
                 )}
-                
+
                 {currentStep === 2 && orderDraft && (
-                  <>
-                    {orderDraft.itemType === ITEMS.CAKE ? (
-                      <ConfigureCake
-                        defaultValues={'config' in orderDraft ? orderDraft.config : undefined}
-                        onSubmit={handleCakeConfig}
-                      />
-                    ) : orderDraft.itemType === ITEMS.BROWNIES || 
-                       orderDraft.itemType === ITEMS.COOKIES ? (
-                      <ConfigureTreats
-                        itemType={orderDraft.itemType}
-                        defaultValues={'order' in orderDraft ? orderDraft.order : undefined}
-                        onSubmit={handleTreatConfig}
-                      />
-                    ) : (
-                      <div className="text-center py-12">
-                        <p className="text-lg text-red-600 mb-2">Configuration Error</p>
-                        <p className="text-sm text-gray-600">Item type "{orderDraft.itemType}" is not recognized.</p>
-                        <p className="text-xs text-gray-500 mt-2">Please ensure the item type is exactly: "cake", "brownies", or "cookies"</p>
-                      </div>
-                    )}
-                  </>
+                  <ConfigureCake
+                    defaultValues={'config' in orderDraft ? orderDraft.config : undefined}
+                    onSubmit={handleCakeConfig}
+                  />
                 )}
-                
+
                 {currentStep === 3 && orderDraft && (
                   <ReviewAndAdd draft={orderDraft} />
                 )}
@@ -219,7 +176,7 @@ export function Order() {
           </div>
         </div>
       </div>
-      
+
       {/* Sticky bottom navigation - mobile only */}
       <div className="sm:hidden sticky-cta-bar">
         <div className="mobile-container py-3">
@@ -235,7 +192,7 @@ export function Order() {
                 <span className="sr-only sm:not-sr-only">Back</span>
               </Button>
             )}
-            
+
             {showNextButton && (
               <Button
                 variant="primary"
@@ -254,4 +211,3 @@ export function Order() {
     </div>
   );
 }
-

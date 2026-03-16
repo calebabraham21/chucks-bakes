@@ -1,9 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
-// Hardcoded homepage data
-const WELCOME_DESCRIPTION = "Welcome to Chuck's Bakes! We create custom cakes, cookies, and brownies made with love. Browse our offerings below to get started.";
-
 // Hardcoded gallery photos using existing images in public folder
 const GALLERY_PHOTOS = [
   { url: '/Cake1.PNG', alt: 'Custom Cake' },
@@ -69,20 +66,13 @@ export function Home() {
           />
         </div>
 
-        {/* Description */}
-        <div className="text-center mb-4 max-w-2xl mx-auto text-entrance-delay">
-          <p className="text-lg sm:text-xl md:text-2xl text-black-700 leading-relaxed font-semibold">
-            {WELCOME_DESCRIPTION}
-          </p>
-        </div>
-
-        {/* Mobile Order Button */}
-        <div className="md:hidden flex justify-center mb-4">
+        {/* Order Button */}
+        <div className="flex justify-center mb-4 text-entrance-delay">
           <Link
             to="/order"
             className="bg-white border-2 border-black text-black hover:bg-[#d63f6f] hover:text-white font-bold py-3 px-8 rounded-lg shadow-soft transition-all duration-300 active:scale-95"
           >
-            Order
+            Order Now
           </Link>
         </div>
 

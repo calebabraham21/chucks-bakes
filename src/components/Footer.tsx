@@ -33,7 +33,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="text-center mt-8 text-sm text-gray-500">
-          © {new Date().getFullYear()} Chuck's Bakes. Made with 🩷 in Arlington, VA
+          © {new Date().getFullYear()} Chuck's Bakes
         </div>
       </div>
     </footer>

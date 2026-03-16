@@ -496,7 +496,7 @@ export function Header() {
                 {checkoutContact.phone && (
                   <p className="text-sm"><span className="text-gray-500">Phone:</span> <span className="text-black font-medium">{checkoutContact.phone}</span></p>
                 )}
-                <p className="text-sm"><span className="text-gray-500">Pickup:</span> <span className="text-black font-medium">{checkoutContact.deliveryMethod === 'pickup' ? 'Arlington, VA' : 'Delivery'}</span></p>
+                <p className="text-sm"><span className="text-gray-500">Pickup:</span> <span className="text-black font-medium">Arlington, VA</span></p>
                 <p className="text-sm"><span className="text-gray-500">Date:</span> <span className="text-black font-medium">{checkoutContact.targetDate}</span></p>
                 {checkoutContact.notes && (
                   <p className="text-sm"><span className="text-gray-500">Notes:</span> <span className="text-black font-medium">{checkoutContact.notes}</span></p>

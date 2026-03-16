@@ -14,65 +14,60 @@ interface ModalProps {
 export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
-  
+
   useEffect(() => {
     if (isOpen) {
-      // Store the previously focused element
       previousFocusRef.current = document.activeElement as HTMLElement;
-      
-      // Focus the modal
       modalRef.current?.focus();
-      
-      // Prevent body scroll
       document.body.style.overflow = 'hidden';
     } else {
-      // Restore body scroll
       document.body.style.overflow = '';
-      
-      // Restore focus to previously focused element
       previousFocusRef.current?.focus();
     }
-    
+
     return () => {
       document.body.style.overflow = '';
     };
   }, [isOpen]);
-  
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
+      if (e.key === 'Escape' && isOpen) onClose();
     };
-    
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
-  
-  if (!isOpen) return null;
-  
+
   const sizes = {
     sm: 'max-w-md',
     md: 'max-w-lg',
     lg: 'max-w-2xl',
     xl: 'max-w-4xl',
   };
-  
+
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm modal-backdrop"
+    <div
+      className={classNames(
+        'fixed inset-0 z-50 flex items-center justify-center p-4',
+        'transition-opacity duration-200 ease-out',
+        isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      )}
+      style={{ backgroundColor: 'rgba(17, 24, 39, 0.5)' }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
+      aria-hidden={!isOpen}
     >
       <div
         ref={modalRef}
         tabIndex={-1}
         className={classNames(
-          'w-full bg-white rounded-2xl shadow-soft-lg modal-content',
+          'w-full bg-white rounded-2xl shadow-soft-lg',
+          'max-h-[90vh] overflow-hidden flex flex-col',
+          'transition-[transform,opacity] duration-200 ease-out will-change-[transform,opacity]',
           sizes[size],
-          'max-h-[90vh] overflow-hidden flex flex-col'
+          isOpen ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-4 scale-[0.97] opacity-0'
         )}
         onClick={(e) => e.stopPropagation()}
       >
@@ -89,7 +84,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
             <X className="w-5 h-5 text-gray-600" />
           </button>
         </div>
-        
+
         {/* Content */}
         <div className="px-6 py-4 overflow-y-auto overflow-x-hidden flex-1">
           {children}
@@ -98,4 +93,3 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
     </div>
   );
 }
-

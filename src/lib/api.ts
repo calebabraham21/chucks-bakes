@@ -3,7 +3,6 @@
  */
 
 import type { RequestItem, CartItem, ContactInfo } from './validation';
-import { ITEMS } from './constants';
 
 export interface SubmitOrderResponse {
   success: boolean;
@@ -22,21 +21,11 @@ export function prepareOrdersForSubmission(
   cart: CartItem[],
   contact: ContactInfo
 ): RequestItem[] {
-  return cart.map((item) => {
-    if (item.itemType === ITEMS.CAKE && 'config' in item) {
-      return {
-        itemType: item.itemType,
-        config: item.config,
-        contact,
-      };
-    } else {
-      return {
-        itemType: item.itemType,
-        order: (item as any).order,
-        contact,
-      };
-    }
-  }) as RequestItem[];
+  return cart.map((item) => ({
+    itemType: item.itemType,
+    config: item.config,
+    contact,
+  }));
 }
 
 /**

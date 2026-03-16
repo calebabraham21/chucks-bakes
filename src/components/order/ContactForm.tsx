@@ -1,8 +1,7 @@
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { contactInfoSchema, type ContactInfo } from '../../lib/validation';
 import { Input } from '../ui/Input';
-import { RadioGroup } from '../ui/RadioGroup';
 import { POLICIES } from '../../lib/constants';
 
 interface ContactFormProps {
@@ -19,12 +18,10 @@ function getMinDate(): string {
 
 export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
   const minDate = getMinDate();
-  
+
   const {
     register,
-    control,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<ContactInfo>({
     resolver: zodResolver(contactInfoSchema),
@@ -37,9 +34,7 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
       notes: '',
     },
   });
-  
-  const deliveryMethod = watch('deliveryMethod');
-  
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
@@ -50,7 +45,7 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
           How can we reach you about your order?
         </p>
       </div>
-      
+
       <Input
         label="Name"
         type="text"
@@ -61,7 +56,7 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
         required
         {...register('name')}
       />
-      
+
       <Input
         label="Email"
         type="email"
@@ -72,7 +67,7 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
         required
         {...register('email')}
       />
-      
+
       <Input
         label="Phone"
         type="tel"
@@ -84,39 +79,18 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
         required
         {...register('phone', {
           onChange: (e) => {
-            // Strip non-digits as they type
             e.target.value = e.target.value.replace(/\D/g, '');
           }
         })}
       />
-      
-      <Controller
-        name="deliveryMethod"
-        control={control}
-        render={({ field }) => (
-          <RadioGroup
-            label="Fulfillment Method"
-            options={[
-              { value: 'pickup', label: 'Pickup (Arlington, VA)' },
-              { value: 'delivery', label: 'Delivery (larger orders only)' },
-            ]}
-            error={errors.deliveryMethod?.message}
-            name={field.name}
-            value={field.value}
-            onChange={field.onChange}
-          />
-        )}
-      />
-      
-      {deliveryMethod === 'delivery' && (
-        <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
-          <p className="text-sm text-amber-800">📦 {POLICIES.delivery}</p>
-        </div>
-      )}
-      
+
+      <div className="p-3 bg-[#fff5f7] rounded-xl border border-[#ffc1d4]">
+        <p className="text-sm text-gray-700">📍 {POLICIES.pickup}</p>
+      </div>
+
       <div>
         <Input
-          label="Preferred Pickup/Delivery Date"
+          label="Preferred Pickup Date"
           type="date"
           autoComplete="off"
           min={minDate}
@@ -128,9 +102,9 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
           ⏰ {POLICIES.advanceNotice}
         </p>
       </div>
-      
+
       <div className="w-full">
-        <label 
+        <label
           htmlFor="notes"
           className="block text-base font-medium text-gray-700 mb-2"
         >
@@ -144,8 +118,8 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
           {...register('notes')}
         />
         {errors.notes && (
-          <div 
-            className="mt-2 text-sm px-3 py-2 rounded-lg font-semibold shadow-sm" 
+          <div
+            className="mt-2 text-sm px-3 py-2 rounded-lg font-semibold shadow-sm"
             style={{ backgroundColor: '#ef4444', color: 'white' }}
             role="alert"
           >
@@ -153,16 +127,17 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
           </div>
         )}
       </div>
-      
+
       {/* Policy reminder */}
       <div className="p-4 bg-[#fff5f7] rounded-xl border border-[#ffc1d4]">
         <h3 className="font-medium text-black mb-2">📋 Reminder</h3>
         <ul className="text-sm text-gray-700 space-y-1">
           <li>• {POLICIES.payment}</li>
           <li>• {POLICIES.cancellationFee}</li>
+          <li>• {POLICIES.orderDenied}</li>
         </ul>
       </div>
-      
+
       <input type="submit" className="hidden" />
     </form>
   );

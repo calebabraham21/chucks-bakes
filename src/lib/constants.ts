@@ -2,22 +2,16 @@
 
 export const ITEMS = {
   CAKE: 'cake',
-  BROWNIES: 'brownies',
-  COOKIES: 'cookies',
 } as const;
 
 export type ItemType = typeof ITEMS[keyof typeof ITEMS];
 
 export const ITEM_LABELS = {
   [ITEMS.CAKE]: 'Custom Cake',
-  [ITEMS.BROWNIES]: 'Brownies',
-  [ITEMS.COOKIES]: 'Chocolate Chip Cookies',
 } as const;
 
 export const ITEM_DESCRIPTIONS = {
   [ITEMS.CAKE]: 'Custom designed cake with your choice of flavors and decorations',
-  [ITEMS.BROWNIES]: 'Rich, fudgy brownies',
-  [ITEMS.COOKIES]: 'Classic chocolate chip cookies',
 } as const;
 
 // ========================================
@@ -27,8 +21,8 @@ export const POLICIES = {
   advanceNotice: 'Orders must be placed at least 10 days in advance',
   cancellationFee: 'Cancellation fee is half of total once the order is confirmed',
   payment: 'Full payment required to secure order (invoice sent once order details are finalized)',
-  pickup: 'Pickup is in Arlington, VA',
-  delivery: 'Personal delivery available for larger orders only',
+  pickup: 'All orders are pickup only in Arlington, VA',
+  orderDenied: 'Orders may be denied at my discretion',
 } as const;
 
 // ========================================
@@ -37,12 +31,12 @@ export const POLICIES = {
 
 // Cake sizes with pricing
 export const CAKE_SIZES = [
-  { value: '6in-2layer', label: '6" 2 Layer (serves 5)', price: null },
-  { value: '6in-3layer', label: '6" 3 Layer (serves 12-15) - starting at $110', price: 110, note: 'Writing on board if exceeding 7 characters' },
-  { value: '8in-3layer', label: '8" 3 Layer (serves 20-25) - starting at $160', price: 160 },
-  { value: '2tier-medium', label: 'Medium 2 Tier (serves 40-45)', price: null, note: 'Please inquire for pricing' },
-  { value: 'quarter-sheet', label: '¼ Sheet Cake (serves 20-25) - $200', price: 200 },
-  { value: 'half-sheet', label: '½ Sheet Cake (serves 30-35) - $250', price: 250 },
+  { value: '6in-3layer', label: '6" 3 Layer (serves 10-12) — starting at $110', price: 110, note: 'Writing on board if exceeding 7 characters' },
+  { value: '8in-3layer', label: '8" 3 Layer (serves 20-25) — starting at $160', price: 160 },
+  { value: '2tier', label: '2 Tier (contact for pricing)', price: null, note: 'Please inquire for pricing' },
+  { value: '3tier', label: '3 Tier (serves 50-70) — contact for pricing', price: null, note: 'Please inquire for pricing' },
+  { value: 'quarter-sheet', label: '¼ Sheet Cake (serves 20-30) — starting at $160', price: 160 },
+  { value: 'half-sheet', label: '½ Sheet Cake (serves 40-50) — starting at $280', price: 280 },
 ] as const;
 
 // Cake flavors
@@ -88,40 +82,9 @@ export const WRITING_STYLES = [
   { value: 'none', label: 'No Writing' },
   { value: 'classic-script', label: 'Classic Script' },
   { value: 'block', label: 'Block' },
-  { value: 'fondant', label: 'Fondant' },
+  { value: 'fondant', label: 'Fondant (+$5)' },
   { value: 'chucks-choice', label: "Chuck's Choice (I'll pick what fits best!)" },
 ] as const;
-
-// Legacy - keeping for backwards compatibility
-export const FROSTING_TYPES = {
-  SMBC: 'smbc',
-} as const;
-
-// ========================================
-// TREAT CONFIGURATIONS
-// ========================================
-
-// Treat minimums
-export const TREAT_MINIMUMS = {
-  [ITEMS.BROWNIES]: 16,
-  [ITEMS.COOKIES]: 12,
-} as const;
-
-// Treat batch/unit information
-export const TREAT_UNITS = {
-  [ITEMS.BROWNIES]: {
-    singular: 'pan',
-    plural: 'pans',
-    perUnit: 16,
-    maxUnits: 6,
-  },
-  [ITEMS.COOKIES]: {
-    singular: 'dozen',
-    plural: 'dozen',
-    perUnit: 12,
-    maxUnits: 10,
-  },
-} as const;
 
 // ========================================
 // GENERAL
@@ -129,13 +92,10 @@ export const TREAT_UNITS = {
 
 export const ORDER_EMAIL = 'orders@chucksbakes.com';
 
-// Cart limits (for abuse prevention)
-export const MAX_CART_ITEMS = 2;
-
 export const MAX_COLOR_CHIPS = 3;
 export const MAX_THEME_LENGTH = 100;
 export const MAX_WRITING_LENGTH = 50;
-export const MAX_TOPPINGS = 3;
+export const MAX_TOPPINGS = 4;
 
 // Preset color options for cakes
 export const PRESET_COLORS = [

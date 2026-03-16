@@ -1,4 +1,4 @@
-import type { OrderDraft, RequestItem, CartItem, CakeConfig, TreatOrder, ContactInfo } from './validation';
+import type { OrderDraft, RequestItem, CartItem, CakeConfig, ContactInfo } from './validation';
 import { ITEMS, ITEM_LABELS, CAKE_SIZES, CAKE_FLAVORS, CAKE_FILLINGS, SMBC_FLAVORS, CAKE_TOPPINGS, WRITING_STYLES } from './constants';
 
 // Generate human-readable summary for cake configuration
@@ -7,23 +7,21 @@ function summarizeCakeConfig(config: CakeConfig): string {
   const flavor = CAKE_FLAVORS.find(f => f.value === config.flavor)?.label || config.flavor;
   const filling = CAKE_FILLINGS.find(f => f.value === config.filling)?.label || config.filling;
   const frostingFlavor = SMBC_FLAVORS.find(f => f.value === config.frostingFlavor)?.label || config.frostingFlavor;
-  
+
   let lines = [
     `Size: ${size}`,
     `Cake Flavor: ${flavor}`,
     `Filling: ${filling}`,
     `Frosting: Swiss Meringue Buttercream - ${frostingFlavor}`,
   ];
-  
-  // Toppings
+
   if (config.toppings && config.toppings.length > 0) {
-    const toppingLabels = config.toppings.map(t => 
+    const toppingLabels = config.toppings.map(t =>
       CAKE_TOPPINGS.find(topping => topping.value === t)?.label || t
     );
     lines.push(`Toppings: ${toppingLabels.join(', ')}`);
   }
-  
-  // Writing
+
   if (config.writingStyle && config.writingStyle !== 'none') {
     const writingStyleLabel = WRITING_STYLES.find(w => w.value === config.writingStyle)?.label || config.writingStyle;
     lines.push(`Writing Style: ${writingStyleLabel}`);
@@ -31,42 +29,30 @@ function summarizeCakeConfig(config: CakeConfig): string {
       lines.push(`Writing Text: "${config.writingText}"`);
     }
   }
-  
+
   if (config.theme) {
     lines.push(`Theme/Design: ${config.theme}`);
   }
-  
-  if (config.colors && config.colors.length > 0) {
-    lines.push(`Colors: ${config.colors.join(', ')}`);
+
+  if (config.colors) {
+    lines.push(`Colors: ${config.colors}`);
   }
-  
+
   if (config.specialRequests) {
     lines.push(`Special Requests: ${config.specialRequests}`);
   }
-  
-  return lines.join('\n');
-}
 
-// Generate human-readable summary for treat order
-function summarizeTreatOrder(order: TreatOrder): string {
-  return `Quantity: ${order.quantity}`;
+  return lines.join('\n');
 }
 
 // Generate summary for a cart item (no contact info)
 export function makeItemSummary(item: OrderDraft | CartItem): string {
   let lines: string[] = [];
-  
-  // Item type
   lines.push(`Item: ${ITEM_LABELS[item.itemType as keyof typeof ITEM_LABELS]}`);
   lines.push('');
-  
-  // Configuration details
   if (item.itemType === ITEMS.CAKE && 'config' in item) {
     lines.push(summarizeCakeConfig(item.config));
-  } else if ('order' in item) {
-    lines.push(summarizeTreatOrder(item.order));
   }
-  
   return lines.join('\n');
 }
 
@@ -75,73 +61,59 @@ export function makeCartSummary(items: CartItem[]): string {
   if (items.length === 0) {
     return 'No items in cart.';
   }
-  
+
   const itemSummaries = items.map((item, index) => {
     const separator = '-'.repeat(40);
     return `${separator}\nITEM ${index + 1}\n${separator}\n\n${makeItemSummary(item)}`;
   });
-  
+
   return itemSummaries.join('\n\n');
 }
 
 // Generate plain text summary for a single request item (with contact info)
 export function makePlainTextSummary(item: RequestItem): string {
   let lines: string[] = [];
-  
-  // Item type
+
   lines.push(`Item: ${ITEM_LABELS[item.itemType as keyof typeof ITEM_LABELS]}`);
   lines.push('');
-  
-  // Configuration details
+
   if (item.itemType === ITEMS.CAKE && 'config' in item) {
     lines.push(summarizeCakeConfig(item.config));
-  } else if ('order' in item) {
-    lines.push(summarizeTreatOrder(item.order));
   }
-  
-  // Contact information
+
   if (item.contact) {
     lines.push('');
     lines.push('Contact Information:');
     lines.push(`Name: ${item.contact.name}`);
     lines.push(`Email: ${item.contact.email}`);
-    
     if (item.contact.phone) {
       lines.push(`Phone: ${item.contact.phone}`);
     }
-    
-    lines.push(`Delivery Method: ${item.contact.deliveryMethod === 'pickup' ? 'Pickup in Arlington, VA' : 'Delivery (for larger orders)'}`);
-    
+    lines.push(`Pickup: Arlington, VA`);
     if (item.contact.targetDate) {
       lines.push(`Target Date: ${item.contact.targetDate}`);
     }
-    
     if (item.contact.notes) {
       lines.push(`Notes: ${item.contact.notes}`);
     }
   }
-  
+
   return lines.join('\n');
 }
 
 // Format contact info for display
 export function formatContactInfo(contact: ContactInfo): string {
   let lines: string[] = [];
-  
   lines.push(`Name: ${contact.name}`);
   lines.push(`Email: ${contact.email}`);
-  
   if (contact.phone) {
     lines.push(`Phone: ${contact.phone}`);
   }
-  
-  lines.push(`Fulfillment: ${contact.deliveryMethod === 'pickup' ? 'Pickup in Arlington, VA' : 'Delivery'}`);
+  lines.push(`Pickup: Arlington, VA`);
   lines.push(`Target Date: ${contact.targetDate}`);
-  
   if (contact.notes) {
     lines.push(`Notes: ${contact.notes}`);
   }
-  
   return lines.join('\n');
 }
 
@@ -150,20 +122,19 @@ export function makeCombinedPlainTextSummary(items: RequestItem[]): string {
   if (items.length === 0) {
     return 'No items in request.';
   }
-  
+
   const itemSummaries = items.map((item, index) => {
     const separator = '='.repeat(50);
     return `${separator}\nITEM ${index + 1}\n${separator}\n\n${makePlainTextSummary(item)}`;
   });
-  
+
   return itemSummaries.join('\n\n');
 }
 
 // Generate full order summary with items and contact (for checkout review)
 export function makeOrderSummary(items: CartItem[], contact: ContactInfo): string {
   let parts: string[] = [];
-  
-  // Items
+
   parts.push('ORDER ITEMS');
   parts.push('='.repeat(50));
   items.forEach((item, index) => {
@@ -171,17 +142,14 @@ export function makeOrderSummary(items: CartItem[], contact: ContactInfo): strin
     parts.push('-'.repeat(30));
     if (item.itemType === ITEMS.CAKE && 'config' in item) {
       parts.push(summarizeCakeConfig(item.config));
-    } else if ('order' in item) {
-      parts.push(summarizeTreatOrder(item.order));
     }
   });
-  
-  // Contact
+
   parts.push('\n' + '='.repeat(50));
-  parts.push('CONTACT & DELIVERY');
+  parts.push('CONTACT & PICKUP');
   parts.push('='.repeat(50));
   parts.push(formatContactInfo(contact));
-  
+
   return parts.join('\n');
 }
 
