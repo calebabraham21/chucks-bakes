@@ -3,34 +3,48 @@
 @tailwind utilities;
 
 @layer base {
-  /* Mobile-first fluid typography - scaled down */
+  /* Mobile-first fluid typography */
   html {
-    font-size: clamp(14px, 3.5vw, 16px);
+    font-size: clamp(16px, 4vw, 16px);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-size-adjust: 100%;
   }
-  
+
+  /* Desktop: keep existing compact scale */
+  @media (min-width: 768px) {
+    html {
+      font-size: clamp(14px, 3.5vw, 16px);
+    }
+  }
+
   body {
     @apply min-h-screen bg-[#fde7ee];
     /* Safe area support for notched devices */
     padding-bottom: env(safe-area-inset-bottom);
   }
-  
-  /* Fluid heading scale - mobile-first - scaled down */
+
+  /* Heading scale — mobile gets larger sizes */
   h1 {
-    font-size: clamp(1.25rem, 4vw, 1.625rem);
+    font-size: clamp(1.625rem, 5vw, 1.75rem);
     line-height: 1.2;
   }
-  
+
   h2 {
-    font-size: clamp(1.125rem, 3.5vw, 1.5rem);
+    font-size: clamp(1.375rem, 4.5vw, 1.5rem);
     line-height: 1.3;
   }
-  
+
   h3 {
-    font-size: clamp(1rem, 3vw, 1.25rem);
+    font-size: clamp(1.125rem, 3.5vw, 1.25rem);
     line-height: 1.4;
+  }
+
+  /* Desktop headings: restore original compact scale */
+  @media (min-width: 768px) {
+    h1 { font-size: clamp(1.25rem, 4vw, 1.625rem); }
+    h2 { font-size: clamp(1.125rem, 3.5vw, 1.5rem); }
+    h3 { font-size: clamp(1rem, 3vw, 1.25rem); }
   }
   
   /* Better reading experience */
