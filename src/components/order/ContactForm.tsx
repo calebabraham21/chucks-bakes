@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { contactInfoSchema, type ContactInfo } from '../../lib/validation';
 import { Input } from '../ui/Input';
@@ -7,6 +7,13 @@ import { POLICIES } from '../../lib/constants';
 interface ContactFormProps {
   defaultValues?: Partial<ContactInfo>;
   onSubmit: (data: ContactInfo) => void;
+}
+
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 10);
+  if (digits.length <= 3) return digits.length ? `(${digits}` : '';
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
 }
 
 // Get minimum date (10 days from now)
@@ -22,6 +29,7 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<ContactInfo>({
     resolver: zodResolver(contactInfoSchema),
@@ -68,20 +76,24 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
         {...register('email')}
       />
 
-      <Input
-        label="Phone"
-        type="tel"
-        inputMode="numeric"
-        autoComplete="tel"
-        placeholder="5551234567"
-        error={errors.phone?.message}
-        helperText="Numbers only (no dashes or spaces)."
-        required
-        {...register('phone', {
-          onChange: (e) => {
-            e.target.value = e.target.value.replace(/\D/g, '');
-          }
-        })}
+      <Controller
+        name="phone"
+        control={control}
+        render={({ field }) => (
+          <Input
+            label="Phone"
+            type="tel"
+            inputMode="numeric"
+            autoComplete="tel"
+            placeholder="(555) 123-4567"
+            error={errors.phone?.message}
+            required
+            value={field.value}
+            onChange={(e) => field.onChange(formatPhone(e.target.value))}
+            onBlur={field.onBlur}
+            name={field.name}
+          />
+        )}
       />
 
       <div className="p-3 bg-[#fff5f7] rounded-xl border border-[#ffc1d4]">

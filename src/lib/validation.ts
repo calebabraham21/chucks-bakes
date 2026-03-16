@@ -22,9 +22,7 @@ export const contactInfoSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Please enter a valid email address'),
   phone: z.string()
-    .min(10, 'Please enter a valid phone number (at least 10 digits)')
-    .max(15, 'Phone number is too long')
-    .regex(/^\d+$/, 'Phone number should only contain digits'),
+    .refine(val => val.replace(/\D/g, '').length === 10, 'Please enter a valid 10-digit phone number'),
   deliveryMethod: z.literal('pickup').default('pickup'),
   targetDate: z.string().min(1, 'Please select a target date'),
   notes: z.string().optional(),
