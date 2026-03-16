@@ -1,17 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-
-const PHOTOS = [
-  { url: '/IMG_3212.jpeg', alt: 'Custom Cake' },
-  { url: '/IMG_4029.jpeg', alt: 'Custom Cake' },
-  { url: '/IMG_4422.jpeg', alt: 'Custom Cake' },
-  { url: '/IMG_4611.jpeg', alt: 'Custom Cake' },
-  { url: '/IMG_5076.jpeg', alt: 'Custom Cake' },
-  { url: '/IMG_5439.jpeg', alt: 'Custom Cake' },
-  { url: '/IMG_5929.jpeg', alt: 'Custom Cake' },
-  { url: '/IMG_6109.jpeg', alt: 'Custom Cake' },
-];
+import { PHOTOS } from '../lib/photos';
 
 const loadedUrls = new Set<string>();
 

@@ -92,23 +92,7 @@ export const WRITING_STYLES = [
 
 export const ORDER_EMAIL = 'orders@chucksbakes.com';
 
-export const MAX_COLOR_CHIPS = 3;
 export const MAX_THEME_LENGTH = 100;
 export const MAX_WRITING_LENGTH = 50;
 export const MAX_TOPPINGS = 4;
 
-// Preset color options for cakes
-export const PRESET_COLORS = [
-  { value: 'pink', label: 'Pink', hex: '#ff6b9d' },
-  { value: 'lavender', label: 'Lavender', hex: '#c8a2d0' },
-  { value: 'mint', label: 'Mint', hex: '#98d8c8' },
-  { value: 'peach', label: 'Peach', hex: '#ffb088' },
-  { value: 'sky-blue', label: 'Sky Blue', hex: '#87ceeb' },
-  { value: 'lemon', label: 'Lemon', hex: '#fff44f' },
-  { value: 'coral', label: 'Coral', hex: '#ff7f50' },
-  { value: 'sage', label: 'Sage', hex: '#b2c9ab' },
-  { value: 'lilac', label: 'Lilac', hex: '#c8a2c8' },
-  { value: 'cream', label: 'Cream', hex: '#fffdd0' },
-  { value: 'rose-gold', label: 'Rose Gold', hex: '#b76e79' },
-  { value: 'white', label: 'White', hex: '#ffffff' },
-] as const;

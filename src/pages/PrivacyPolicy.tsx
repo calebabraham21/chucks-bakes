@@ -75,7 +75,7 @@ export function PrivacyPolicy() {
             <h2 className="text-xl font-bold text-black mb-3">Your rights</h2>
             <p>
               You can ask us to view or delete your personal information at any time. Just email us
-              at <a href="mailto:[your-email-here]" className="text-[#ff6b9d] hover:underline font-medium">[your-email-here]</a> and
+              at <a href="mailto:orders@chucksbakes.com" className="text-[#ff6b9d] hover:underline font-medium">orders@chucksbakes.com</a> and
               we'll take care of it promptly.
             </p>
           </div>
