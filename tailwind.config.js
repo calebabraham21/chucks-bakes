@@ -74,8 +74,8 @@ export default {
         'bakery-soft-pink': '#ffddeb',
       },
       fontFamily: {
-        sans: ['Crimson Text', 'Georgia', 'serif'],
-        serif: ['Crimson Text', 'Georgia', 'serif'],
+        sans: ['Lora', 'Georgia', 'serif'],
+        serif: ['Lora', 'Georgia', 'serif'],
       },
       fontWeight: {
         normal: '400',

@@ -48,6 +48,8 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
   const size = watch('size');
   const writingStyle = watch('writingStyle');
   const frostingFlavor = watch('frostingFlavor');
+  const flavor = watch('flavor');
+  const filling = watch('filling');
 
   const isChocolateFrosting = frostingFlavor === 'chocolate';
 
@@ -96,9 +98,10 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
         label="Cake Flavor"
         options={CAKE_FLAVORS.map(f => ({ value: f.value, label: f.label }))}
         placeholder="Select a flavor"
+        value={flavor}
+        onChange={(val) => setValue('flavor', val, { shouldValidate: true })}
         error={errors.flavor?.message}
         required
-        {...register('flavor')}
       />
 
       {/* Filling */}
@@ -106,9 +109,10 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
         label="Filling"
         options={CAKE_FILLINGS.map(f => ({ value: f.value, label: f.label }))}
         placeholder="Select a filling"
+        value={filling}
+        onChange={(val) => setValue('filling', val, { shouldValidate: true })}
         error={errors.filling?.message}
         required
-        {...register('filling')}
       />
 
       {/* Frosting Flavor (SMBC) */}
@@ -116,9 +120,10 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
         label="Frosting Flavor (Swiss Meringue Buttercream)"
         options={SMBC_FLAVORS.map(f => ({ value: f.value, label: f.label }))}
         placeholder="Select frosting flavor"
+        value={frostingFlavor}
+        onChange={(val) => setValue('frostingFlavor', val, { shouldValidate: true })}
         error={errors.frostingFlavor?.message}
         required
-        {...register('frostingFlavor')}
       />
 
       {isChocolateFrosting && (
@@ -132,8 +137,9 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
         label="Writing Style (optional)"
         options={WRITING_STYLES.map(w => ({ value: w.value, label: w.label }))}
         placeholder="Select writing style"
+        value={writingStyle ?? ''}
+        onChange={(val) => setValue('writingStyle', val, { shouldValidate: true })}
         error={errors.writingStyle?.message}
-        {...register('writingStyle')}
       />
 
       {writingStyle === 'fondant' && (

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Mail, Instagram } from 'lucide-react';
 
 export function Footer() {
@@ -31,8 +32,15 @@ export function Footer() {
           </a>
         </div>
 
+        {/* Policy Links */}
+        <div className="flex items-center justify-center gap-4 mt-8 text-sm text-gray-400">
+          <Link to="/policies" className="hover:text-[#ff6b9d] transition-colors">Order Policies</Link>
+          <span>·</span>
+          <Link to="/privacy" className="hover:text-[#ff6b9d] transition-colors">Privacy Policy</Link>
+        </div>
+
         {/* Copyright */}
-        <div className="text-center mt-8 text-sm text-gray-500">
+        <div className="text-center mt-3 text-sm text-gray-500">
           © {new Date().getFullYear()} Chuck's Bakes
         </div>
       </div>
