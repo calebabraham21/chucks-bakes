@@ -285,3 +285,123 @@
   animation: modalSlideUp 0.12s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   will-change: transform, opacity;
 }
+
+/* Toast slide-in/out animations */
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.95);
+  }
+}
+
+.toast-enter {
+  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.toast-exit {
+  animation: toastSlideOut 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* Cart badge pop on update */
+@keyframes cartBadgePop {
+  0%   { transform: scale(0.4); }
+  55%  { transform: scale(1.35); }
+  80%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.cart-badge-pop {
+  animation: cartBadgePop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Checkout step slide — going forward (left-to-right content) */
+@keyframes checkoutSlideInForward {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Checkout step slide — going back */
+@keyframes checkoutSlideInBack {
+  from { opacity: 0; transform: translateX(-18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.checkout-slide-forward {
+  animation: checkoutSlideInForward 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.checkout-slide-back {
+  animation: checkoutSlideInBack 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Cart item removal exit */
+@keyframes cartItemRemove {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    max-height: 300px;
+    margin-bottom: 1rem;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(10px) scale(0.97);
+    max-height: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+.cart-item-removing {
+  animation: cartItemRemove 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+  overflow: hidden;
+}
+
+/* Home logo entrance */
+@keyframes logoEntrance {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.logo-entrance {
+  animation: logoEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Staggered text entrance */
+@keyframes textFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.text-entrance {
+  animation: textFadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.text-entrance-delay {
+  animation: textFadeUp 0.45s 0.12s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}

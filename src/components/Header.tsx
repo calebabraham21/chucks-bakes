@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ShoppingBag, X, Trash2, Send, Menu, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from './ui/Button';
@@ -22,7 +22,9 @@ export function Header() {
   
   // Checkout flow: 1 = cart, 2 = contact form, 3 = review
   const [checkoutStep, setCheckoutStep] = useState(1);
+  const [checkoutDirection, setCheckoutDirection] = useState<'forward' | 'back'>('forward');
   const [checkoutContact, setCheckoutContact] = useState<ContactInfo | null>(null);
+  const [removingIndex, setRemovingIndex] = useState<number | null>(null);
   
   const cart = useOrderStore((state: any) => state.cart);
   const removeFromCart = useOrderStore((state: any) => state.removeFromCart);
@@ -72,20 +74,32 @@ export function Header() {
   };
   
   const handleProceedToContact = () => {
+    setCheckoutDirection('forward');
     setCheckoutStep(2);
   };
-  
+
   const handleContactSubmit = (contact: ContactInfo) => {
     setCheckoutContact(contact);
+    setCheckoutDirection('forward');
     setCheckoutStep(3);
   };
-  
+
   const handleBackToCart = () => {
+    setCheckoutDirection('back');
     setCheckoutStep(1);
   };
-  
+
   const handleBackToContact = () => {
+    setCheckoutDirection('back');
     setCheckoutStep(2);
+  };
+
+  const handleRemoveItem = (index: number) => {
+    setRemovingIndex(index);
+    setTimeout(() => {
+      removeFromCart(index);
+      setRemovingIndex(null);
+    }, 230);
   };
   
   const handleSubmitOrder = async () => {
@@ -227,7 +241,7 @@ export function Header() {
               >
                 <ShoppingBag className="w-5 h-5 text-[#000000]" strokeWidth={2.5} />
                 {cart.length > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[#ff6b9d] text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white/70">
+                  <span key={cart.length} className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[#ff6b9d] text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white/70 cart-badge-pop">
                     {cart.length}
                   </span>
                 )}
@@ -243,7 +257,7 @@ export function Header() {
               >
                 <ShoppingBag className="w-6 h-6 text-[#000000]" strokeWidth={2.5} />
                 {cart.length > 0 && (
-                  <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-[#ff6b9d] text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-white/70">
+                  <span key={cart.length} className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-[#ff6b9d] text-white text-xs font-bold rounded-full flex items-center justify-center border-2 border-white/70 cart-badge-pop">
                     {cart.length}
                   </span>
                 )}
@@ -320,7 +334,7 @@ export function Header() {
       >
         {/* Step 1: Cart View */}
         {checkoutStep === 1 && (
-          <>
+          <div key="step-1" className={`checkout-slide-${checkoutDirection}`}>
             {cart.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 px-4">
                 <ShoppingBag className="w-20 h-20 text-gray-300 mb-6" strokeWidth={1.5} />
@@ -345,14 +359,14 @@ export function Header() {
                 {cart.map((item: CartItem, index: number) => (
                   <div
                     key={index}
-                    className="p-5 bg-bakery-cream rounded-xl border border-gray-200"
+                    className={`p-5 bg-bakery-cream rounded-xl border border-gray-200${removingIndex === index ? ' cart-item-removing' : ''}`}
                   >
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="font-bold text-base text-black">
                         Item {index + 1}
                       </h4>
                       <button
-                        onClick={() => removeFromCart(index)}
+                        onClick={() => handleRemoveItem(index)}
                         className="p-1.5 rounded-lg hover:bg-gray-100 transition-smooth focus:outline-none focus:ring-2 focus:ring-bakery-pink-400 active:scale-95"
                         aria-label={`Remove item ${index + 1}`}
                       >
@@ -401,12 +415,12 @@ export function Header() {
                 </div>
               </div>
             )}
-          </>
+          </div>
         )}
-        
+
         {/* Step 2: Contact Form */}
         {checkoutStep === 2 && (
-          <div className="space-y-4">
+          <div key="step-2" className={`space-y-4 checkout-slide-${checkoutDirection}`}>
             <ContactForm
               defaultValues={checkoutContact || undefined}
               onSubmit={handleContactSubmit}
@@ -443,7 +457,7 @@ export function Header() {
         
         {/* Step 3: Review & Submit */}
         {checkoutStep === 3 && checkoutContact && (
-          <div className="space-y-4">
+          <div key="step-3" className={`space-y-4 checkout-slide-${checkoutDirection}`}>
             {/* Order Items */}
             <div>
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">

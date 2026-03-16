@@ -61,16 +61,16 @@ export function Home() {
     <div className="bg-[#fde7ee] pt-12 pb-6">
       <div className="w-full max-w-6xl mx-auto px-4">
         {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <img 
-            src="/ChucksBakesLogo.png" 
-            alt="Chuck's Bakes" 
+        <div className="flex justify-center mb-8 logo-entrance">
+          <img
+            src="/ChucksBakesLogo.png"
+            alt="Chuck's Bakes"
             className="h-32 w-auto sm:h-40 md:h-48 lg:h-56"
           />
         </div>
 
         {/* Description */}
-        <div className="text-center mb-4 max-w-2xl mx-auto">
+        <div className="text-center mb-4 max-w-2xl mx-auto text-entrance-delay">
           <p className="text-lg sm:text-xl md:text-2xl text-black-700 leading-relaxed font-semibold">
             {WELCOME_DESCRIPTION}
           </p>

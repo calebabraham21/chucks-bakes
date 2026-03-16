@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'info';
@@ -12,42 +12,57 @@ interface ToastProps {
 }
 
 export function Toast({ message, type = 'success', isVisible, onClose, duration = 4000 }: ToastProps) {
+  const [shouldRender, setShouldRender] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+
+  useEffect(() => {
+    if (isVisible) {
+      setShouldRender(true);
+      setIsExiting(false);
+    } else if (shouldRender) {
+      setIsExiting(true);
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+        setIsExiting(false);
+      }, 240);
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible]);
+
   useEffect(() => {
     if (isVisible && duration > 0) {
       const timer = setTimeout(() => {
         onClose();
       }, duration);
-      
       return () => clearTimeout(timer);
     }
   }, [isVisible, duration, onClose]);
-  
-  if (!isVisible) return null;
-  
+
+  if (!shouldRender) return null;
+
   const icons = {
     success: CheckCircle,
     error: AlertCircle,
     info: Info,
   };
-  
-  
+
   const Icon = icons[type];
-  
+
   const bgColors = {
     success: '#16a34a',
-    error: '#dc2626', 
+    error: '#dc2626',
     info: '#2563eb',
   };
-  
+
   return (
     <div
-      className="fixed top-24 left-4 right-4 z-[100]"
+      className={`fixed top-24 left-4 right-4 z-[100] ${isExiting ? 'toast-exit' : 'toast-enter'}`}
       role="alert"
       aria-live="polite"
     >
       <div
         className="flex items-center gap-3 px-5 py-4 rounded-xl max-w-md mx-auto"
-        style={{ 
+        style={{
           backgroundColor: bgColors[type],
           color: 'white',
           boxShadow: '0 10px 40px rgba(0,0,0,0.4)',
@@ -67,4 +82,3 @@ export function Toast({ message, type = 'success', isVisible, onClose, duration 
     </div>
   );
 }
-
