@@ -7,7 +7,7 @@ import { Toast } from './ui/Toast';
 import { ContactForm } from './order/ContactForm';
 import { useOrderStore } from '../lib/state';
 import { makeItemSummary } from '../lib/summary';
-import { ITEM_LABELS, ITEMS } from '../lib/constants';
+import { ITEM_LABELS } from '../lib/constants';
 import { classNames } from '../lib/utils';
 import { submitOrderBatch, sendConfirmationEmail, prepareOrdersForSubmission } from '../lib/api';
 import type { CartItem, ContactInfo } from '../lib/validation';
