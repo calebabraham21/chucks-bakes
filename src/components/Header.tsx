@@ -271,18 +271,19 @@ export function Header() {
       {/* Mobile Sidebar Navigation */}
       <div className="md:hidden">
         {/* Overlay */}
-        {isSidebarOpen && (
-          <div 
-            className="fixed inset-0 bg-black/50 z-50 transition-opacity"
-            onClick={() => setIsSidebarOpen(false)}
-            aria-hidden="true"
-          />
-        )}
-        
+        <div
+          className={classNames(
+            'fixed inset-0 bg-black/50 z-50 transition-opacity duration-300',
+            isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          )}
+          onClick={() => setIsSidebarOpen(false)}
+          aria-hidden="true"
+        />
+
         {/* Sidebar */}
         <aside
           className={classNames(
-            'fixed top-0 left-0 h-full w-64 bg-[#fff5f7] border-r border-[#ffc1d4] z-50 transform transition-transform duration-150',
+            'fixed top-0 left-0 h-full w-64 bg-[#fff5f7] border-r border-[#ffc1d4] z-50 transform transition-transform duration-300',
             isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           )}
           style={{ transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)' }}

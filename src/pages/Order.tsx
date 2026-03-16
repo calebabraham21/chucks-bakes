@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { ArrowLeft, ArrowRight, Clock, CreditCard, MapPin } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Stepper } from '../components/ui/Stepper';
-import { ChooseItem } from '../components/order/ChooseItem';
 import { ConfigureCake } from '../components/order/ConfigureCake';
 import { ReviewAndAdd } from '../components/order/ReviewAndAdd';
 import { useOrderStore } from '../lib/state';
@@ -11,7 +10,7 @@ import type { ItemType } from '../lib/constants';
 import type { CakeConfig } from '../lib/validation';
 
 const STEPS = [
-  { id: 1, label: 'Choose' },
+  { id: 1, label: 'Start' },
   { id: 2, label: 'Configure' },
   { id: 3, label: 'Add to Cart' },
 ];
@@ -22,8 +21,6 @@ export function Order() {
   const setOrderDraft = useOrderStore((state: any) => state.setOrderDraft);
   const setCurrentStep = useOrderStore((state: any) => state.setCurrentStep);
   const [isTransitioning, setIsTransitioning] = useState(false);
-
-  const chooseItemTitle = 'Choose Your Item';
 
   useEffect(() => {
     setIsTransitioning(true);
@@ -120,13 +117,16 @@ export function Order() {
         </div>
 
         <div className="mt-4 max-w-2xl mx-auto">
-          <div>
-            {currentStep === 1 && (
-              <h2 id="step-heading" className="text-2xl font-bold text-black mb-3" tabIndex={-1}>
-                {chooseItemTitle}
-              </h2>
-            )}
-
+          {currentStep === 1 ? (
+            <div className="flex justify-center pt-4">
+              <button
+                onClick={() => handleItemSelect(ITEMS.CAKE)}
+                className="bg-white border-2 border-black text-black hover:bg-[#d63f6f] hover:text-white font-bold py-3 px-8 rounded-lg shadow-soft transition-all duration-300 active:scale-95"
+              >
+                Order Now
+              </button>
+            </div>
+          ) : (
             <div className="bg-white rounded-xl shadow-soft p-4">
               {/* Navigation buttons - desktop only - sticky below header */}
               <div className="hidden sm:flex gap-3 mb-5 pb-5 border-b border-[#ffd1dc] sticky top-20 bg-white z-10 -mx-4 px-4 pt-4">
@@ -157,10 +157,6 @@ export function Order() {
                 key={currentStep}
                 className={`step-content ${isTransitioning ? 'step-entering' : 'step-entered'}`}
               >
-                {currentStep === 1 && (
-                  <ChooseItem onSelect={handleItemSelect} />
-                )}
-
                 {currentStep === 2 && orderDraft && (
                   <ConfigureCake
                     defaultValues={'config' in orderDraft ? orderDraft.config : undefined}
@@ -173,7 +169,7 @@ export function Order() {
                 )}
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
