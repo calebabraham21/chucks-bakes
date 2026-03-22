@@ -79,7 +79,7 @@ export function ReviewAndAdd({ draft }: ReviewAndAddProps) {
     <div>
       <div>
         <h2 id="step-heading" className="text-2xl font-semibold text-black mb-2" tabIndex={-1}>
-          Review Your Item
+          Review your Cake
         </h2>
         <p className="text-gray-600 mb-6">
           Check the details below, then add to cart

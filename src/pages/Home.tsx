@@ -70,12 +70,12 @@ export function Home() {
 
         {/* About / Intro */}
         <div className="mb-6 text-center max-w-2xl mx-auto text-entrance-delay">
-          <p className="text-gray-700 text-lg sm:text-xl leading-relaxed mb-4">
+          <p className="text-black text-lg sm:text-xl leading-relaxed mb-4">
             Hi! I'm Cristina, the founder of Chuck's Bakes! Named after Charleston, SC or "Chuck Town",
             Chuck's started as a way to document my love of baking. Since then, I have turned Chuck's
             into my business so I can share my cakes with all of you!
           </p>
-          <p className="text-gray-700 text-lg sm:text-xl leading-relaxed">
+          <p className="text-black text-lg sm:text-xl leading-relaxed">
             Whether you are ordering a cake for a birthday (my fav), graduation, anniversary, holiday, or just because, I can't wait to be a part of your celebration!
           </p>
         </div>
@@ -93,12 +93,12 @@ export function Home() {
         {/* Carousel */}
         <div>
           <div className="flex items-baseline justify-between mb-4">
-            <h2 className="text-2xl font-bold text-black">Recent Cakes</h2>
+            <h2 className="text-2xl font-bold text-black">Gallery</h2>
             <Link
               to="/gallery"
               className="flex items-center gap-1 text-sm font-semibold text-[#ff6b9d] hover:text-[#d63f6f] transition-colors group"
             >
-              See all cakes
+              Full Gallery
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>

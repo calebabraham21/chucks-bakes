@@ -31,7 +31,7 @@ export const POLICIES = {
 
 // Cake sizes with pricing
 export const CAKE_SIZES = [
-  { value: '6in-3layer', label: '6" 3 Layer (serves 10-12) — starting at $110', price: 110, note: 'Writing on board if exceeding 7 characters' },
+  { value: '6in-3layer', label: '6" 3 Layer (serves 10-12) — starting at $110', price: 110, note: 'Writing on cake board if exceeding 7 characters' },
   { value: '8in-3layer', label: '8" 3 Layer (serves 20-25) — starting at $160', price: 160 },
   { value: '2tier', label: '2 Tier (contact for pricing)', price: null, note: 'Please inquire for pricing' },
   { value: '3tier', label: '3 Tier (serves 50-70) — contact for pricing', price: null, note: 'Please inquire for pricing' },
@@ -46,6 +46,8 @@ export const CAKE_FLAVORS = [
   { value: 'funfetti', label: 'Funfetti' },
   { value: 'spice', label: 'Spice' },
   { value: 'orange-olive-oil', label: 'Orange Olive Oil (+$10)', upcharge: 10 },
+  { value: 'almond', label: 'Almond (+$10)', upcharge: 10 },
+  { value: 'coconut', label: 'Coconut (+$10)', upcharge: 10 },
   { value: 'gf-chocolate', label: 'Gluten Free Chocolate' },
   { value: 'gf-vanilla', label: 'Gluten Free Vanilla' },
 ] as const;
@@ -59,6 +61,7 @@ export const CAKE_FILLINGS = [
   { value: 'chocolate-ganache', label: 'Chocolate Ganache (+$10)', upcharge: 10 },
   { value: 'cream-cheese', label: 'Cream Cheese Frosting (+$5)', upcharge: 5 },
   { value: 'coconut-cream-cheese', label: 'Coconut Cream Cheese (+$5)', upcharge: 5 },
+  { value: 'espresso-pastry-cream', label: 'Espresso Pastry Cream (+$10)', upcharge: 10 },
 ] as const;
 
 // All cakes are frosted in Swiss Meringue Buttercream

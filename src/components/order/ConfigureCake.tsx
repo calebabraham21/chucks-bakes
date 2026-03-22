@@ -69,7 +69,7 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
         <h2 id="step-heading" className="text-2xl font-semibold text-black mb-2" tabIndex={-1}>
-          Configure Your Cake
+          Customize Your Cake
         </h2>
         <p className="text-gray-600 mb-6">
           All cakes are frosted in Swiss Meringue Buttercream
@@ -151,10 +151,10 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
       {writingStyle && writingStyle !== 'none' && (
         <Input
           label="What should the cake say?"
-          placeholder="e.g., Happy Birthday Sarah!"
+          placeholder="e.g., Happy Birthday Lola!"
           maxLength={MAX_WRITING_LENGTH}
           error={errors.writingText?.message}
-          helperText={`Up to ${MAX_WRITING_LENGTH} characters`}
+          helperText="Requests over 30 characters will be reviewed"
           {...register('writingText')}
         />
       )}
