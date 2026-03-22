@@ -1,11 +1,12 @@
 import { forwardRef } from 'react';
-import type { InputHTMLAttributes } from 'react';
+import type { InputHTMLAttributes, ReactNode } from 'react';
 import { classNames } from '../../lib/utils';
 
 interface RadioOption {
   value: string;
   label: string;
   helper?: string;
+  icon?: ReactNode;
 }
 
 interface RadioGroupProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange'> {
@@ -38,7 +39,7 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
                 <label
                   htmlFor={radioId}
                   className={classNames(
-                    'flex items-start p-4 rounded-xl border-2 cursor-pointer transition-smooth',
+                    'flex items-center p-4 rounded-xl border-2 cursor-pointer transition-smooth',
                     isChecked
                       ? 'border-bakery-pink-400 bg-bakery-pink-50'
                       : 'border-gray-200 hover:border-bakery-pink-300 hover:bg-bakery-pink-50/50',
@@ -52,18 +53,23 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
                     value={option.value}
                     checked={isChecked}
                     onChange={(e) => onChange?.(e.target.value)}
-                    className="mt-0.5 w-4 h-4 text-bakery-pink-500 border-gray-300 focus:ring-bakery-pink-400"
+                    className="w-4 h-4 text-bakery-pink-500 border-gray-300 focus:ring-bakery-pink-400"
                     {...props}
                   />
                   
-                  <div className="ml-3 flex-1">
-                    <span className="block text-sm font-medium text-gray-800">
-                      {option.label}
-                    </span>
-                    {option.helper && (
-                      <span className="block mt-1 text-sm text-gray-600">
-                        {option.helper}
+                  <div className="ml-3 flex-1 flex items-center justify-between gap-3">
+                    <div>
+                      <span className="block text-sm font-medium text-gray-800">
+                        {option.label}
                       </span>
+                      {option.helper && (
+                        <span className="block mt-1 text-sm text-gray-600">
+                          {option.helper}
+                        </span>
+                      )}
+                    </div>
+                    {option.icon && (
+                      <div className="flex-shrink-0">{option.icon}</div>
                     )}
                   </div>
                 </label>

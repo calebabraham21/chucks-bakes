@@ -419,3 +419,32 @@
   animation: textFadeUp 0.45s 0.12s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   opacity: 0;
 }
+
+/* Order Now button — left-to-right pink fill */
+.order-now-btn {
+  position: relative;
+  background: white;
+  border: 2px solid black;
+  color: black;
+  overflow: hidden;
+  transition: color 0.35s ease;
+  z-index: 0;
+}
+
+.order-now-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #d63f6f;
+  transform: translateX(-100%);
+  transition: transform 0.35s ease;
+  z-index: -1;
+}
+
+.order-now-btn:hover::before {
+  transform: translateX(0);
+}
+
+.order-now-btn:hover {
+  color: white;
+}

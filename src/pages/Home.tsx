@@ -2,8 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { PHOTOS } from '../lib/photos';
-
-const loadedUrls = new Set<string>();
+import { loadedUrls } from '../lib/imageCache';
 
 export function Home() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -84,7 +83,7 @@ export function Home() {
         <div className="flex justify-center mb-10 text-entrance-delay">
           <Link
             to="/order"
-            className="bg-white border-2 border-black text-black hover:bg-[#d63f6f] hover:text-white font-bold py-3 px-8 rounded-lg shadow-soft transition-all duration-300 active:scale-95"
+            className="order-now-btn font-bold py-3 px-8 rounded-lg shadow-soft active:scale-95"
           >
             Order Now
           </Link>

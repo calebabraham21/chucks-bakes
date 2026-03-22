@@ -121,7 +121,7 @@ export function Order() {
             <div className="flex justify-center pt-4">
               <button
                 onClick={() => handleItemSelect(ITEMS.CAKE)}
-                className="bg-white border-2 border-black text-black hover:bg-[#d63f6f] hover:text-white font-bold py-3 px-8 rounded-lg shadow-soft transition-all duration-300 active:scale-95"
+                className="order-now-btn font-bold py-3 px-8 rounded-lg shadow-soft active:scale-95"
               >
                 Order Now
               </button>
@@ -129,7 +129,7 @@ export function Order() {
           ) : (
             <div className="bg-white rounded-xl shadow-soft p-4">
               {/* Navigation buttons - desktop only - sticky below header */}
-              <div className="hidden sm:flex gap-3 mb-5 pb-5 border-b border-[#ffd1dc] sticky top-20 bg-white z-10 -mx-4 px-4 pt-4">
+              <div className="hidden sm:flex gap-3 mb-5 pb-5 border-b border-[#ffd1dc] sticky top-20 bg-white z-10 -mx-4 px-4 -mt-4 pt-8">
                 {canGoBack && (
                   <Button
                     variant="secondary"

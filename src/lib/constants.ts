@@ -46,8 +46,8 @@ export const CAKE_FLAVORS = [
   { value: 'funfetti', label: 'Funfetti' },
   { value: 'spice', label: 'Spice' },
   { value: 'orange-olive-oil', label: 'Orange Olive Oil (+$10)', upcharge: 10 },
-  { value: 'almond', label: 'Almond (+$10)', upcharge: 10 },
-  { value: 'coconut', label: 'Coconut (+$10)', upcharge: 10 },
+  { value: 'almond', label: 'Almond' },
+  { value: 'coconut', label: 'Coconut' },
   { value: 'gf-chocolate', label: 'Gluten Free Chocolate' },
   { value: 'gf-vanilla', label: 'Gluten Free Vanilla' },
 ] as const;

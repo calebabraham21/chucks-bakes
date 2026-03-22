@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cakeConfigSchema, type CakeConfig } from '../../lib/validation';
@@ -15,6 +16,75 @@ import {
 import { Select } from '../ui/Select';
 import { RadioGroup } from '../ui/RadioGroup';
 import { Input } from '../ui/Input';
+
+// ── Cake size icons ──────────────────────────────────────────────
+const cakeSizeIcons: Record<string, ReactNode> = {
+  '6in-3layer': (
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+      {/* body */}
+      <rect x="12" y="14" width="20" height="24" rx="2" fill="#fdf0e8" stroke="#f0c8a0" strokeWidth="1.2"/>
+      {/* layer lines */}
+      <line x1="12" y1="22" x2="32" y2="22" stroke="#f0c8a0" strokeWidth="1.2"/>
+      <line x1="12" y1="30" x2="32" y2="30" stroke="#f0c8a0" strokeWidth="1.2"/>
+      {/* frosting */}
+      <rect x="12" y="10" width="20" height="6" rx="3" fill="#ffb3cc"/>
+      <ellipse cx="22" cy="10" rx="10" ry="2.5" fill="#ffc6d9"/>
+    </svg>
+  ),
+  '8in-3layer': (
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+      {/* body */}
+      <rect x="4" y="14" width="36" height="24" rx="2" fill="#fdf0e8" stroke="#f0c8a0" strokeWidth="1.2"/>
+      {/* layer lines */}
+      <line x1="4" y1="22" x2="40" y2="22" stroke="#f0c8a0" strokeWidth="1.2"/>
+      <line x1="4" y1="30" x2="40" y2="30" stroke="#f0c8a0" strokeWidth="1.2"/>
+      {/* frosting */}
+      <rect x="4" y="10" width="36" height="6" rx="3" fill="#ffb3cc"/>
+      <ellipse cx="22" cy="10" rx="18" ry="2.5" fill="#ffc6d9"/>
+    </svg>
+  ),
+  '2tier': (
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+      {/* bottom tier */}
+      <rect x="4" y="28" width="36" height="13" rx="2" fill="#fdf0e8" stroke="#f0c8a0" strokeWidth="1.2"/>
+      <rect x="4" y="24" width="36" height="6" rx="3" fill="#ffb3cc"/>
+      {/* top tier */}
+      <rect x="12" y="14" width="20" height="12" rx="2" fill="#fdf0e8" stroke="#f0c8a0" strokeWidth="1.2"/>
+      <rect x="12" y="10" width="20" height="6" rx="3" fill="#ffb3cc"/>
+      <ellipse cx="22" cy="10" rx="10" ry="2.5" fill="#ffc6d9"/>
+    </svg>
+  ),
+  '3tier': (
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+      {/* bottom tier */}
+      <rect x="2" y="33" width="40" height="9" rx="2" fill="#fdf0e8" stroke="#f0c8a0" strokeWidth="1.2"/>
+      <rect x="2" y="29" width="40" height="6" rx="3" fill="#ffb3cc"/>
+      {/* middle tier */}
+      <rect x="9" y="21" width="26" height="10" rx="2" fill="#fdf0e8" stroke="#f0c8a0" strokeWidth="1.2"/>
+      <rect x="9" y="17" width="26" height="6" rx="3" fill="#ffb3cc"/>
+      {/* top tier */}
+      <rect x="16" y="11" width="12" height="8" rx="2" fill="#fdf0e8" stroke="#f0c8a0" strokeWidth="1.2"/>
+      <rect x="16" y="7" width="12" height="6" rx="3" fill="#ffb3cc"/>
+      <ellipse cx="22" cy="7" rx="6" ry="2" fill="#ffc6d9"/>
+    </svg>
+  ),
+  'quarter-sheet': (
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+      {/* body */}
+      <rect x="8" y="22" width="28" height="16" rx="2" fill="#fdf0e8" stroke="#f0c8a0" strokeWidth="1.2"/>
+      {/* frosting */}
+      <rect x="8" y="17" width="28" height="7" rx="3" fill="#ffb3cc"/>
+    </svg>
+  ),
+  'half-sheet': (
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+      {/* body */}
+      <rect x="2" y="22" width="40" height="16" rx="2" fill="#fdf0e8" stroke="#f0c8a0" strokeWidth="1.2"/>
+      {/* frosting */}
+      <rect x="2" y="17" width="40" height="7" rx="3" fill="#ffb3cc"/>
+    </svg>
+  ),
+};
 
 interface ConfigureCakeProps {
   defaultValues?: Partial<CakeConfig>;
@@ -80,7 +150,7 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
       <RadioGroup
         label="Size"
         name="size"
-        options={CAKE_SIZES.map(s => ({ value: s.value, label: s.label }))}
+        options={CAKE_SIZES.map(s => ({ value: s.value, label: s.label, icon: cakeSizeIcons[s.value] }))}
         value={size}
         onChange={(value) => setValue('size', value, { shouldValidate: true })}
         error={errors.size?.message}
@@ -89,7 +159,7 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
 
       {sizeNote && (
         <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
-          <p className="text-sm text-amber-800">📝 {sizeNote}</p>
+          <p className="text-sm text-amber-800">{sizeNote}</p>
         </div>
       )}
 
