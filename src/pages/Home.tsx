@@ -91,7 +91,7 @@ export function Home() {
 
         {/* Carousel */}
         <div>
-          <div className="flex items-baseline justify-between mb-4">
+          <div className="max-w-[820px] mx-auto flex items-baseline justify-between mb-4">
             <h2 className="text-2xl font-bold text-black">Gallery</h2>
             <Link
               to="/gallery"
@@ -102,7 +102,7 @@ export function Home() {
             </Link>
           </div>
 
-          <div className="relative overflow-hidden">
+          <div className="max-w-[820px] mx-auto relative overflow-hidden">
             {/* Fade edges */}
             <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#fde7ee] to-transparent z-10 pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#fde7ee] to-transparent z-10 pointer-events-none" />
