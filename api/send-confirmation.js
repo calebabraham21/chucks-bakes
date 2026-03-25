@@ -23,7 +23,10 @@ function generateEmailHtml(orderData) {
   // Get fulfillment info from first order (they should all have same contact)
   const contact = orders[0]?.contact || {};
   const deliveryMethod = contact.deliveryMethod === 'delivery' ? 'Delivery' : 'Pickup';
-  const targetDate = contact.targetDate || 'Not specified';
+  const rawDate = contact.targetDate;
+  const targetDate = rawDate
+    ? new Date(rawDate + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    : 'Not specified';
   
   // Generate items HTML
   const itemsHtml = orders.map((order, index) => {
@@ -72,16 +75,20 @@ function generateEmailHtml(orderData) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Order Confirmation - Chuck's Bakes</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f9fafb;">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f9fafb;">
     <tr>
       <td align="center" style="padding: 40px 20px;">
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb;">
-          
+
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #111827; padding: 24px 32px; border-radius: 8px 8px 0 0; text-align: center;">
+              <p style="margin: 0; color: #ffffff; font-size: 20px; font-weight: 700; letter-spacing: 0.5px;">Chuck's Bakes</p>
+            </td>
+          </tr>
+
           <!-- Main Content -->
           <tr>
             <td style="padding: 32px;">
@@ -103,7 +110,7 @@ function generateEmailHtml(orderData) {
               </div>
               
               <!-- Fulfillment Info -->
-              <div style="background-color: #f9fafb; border-radius: 6px; padding: 16px; margin-bottom: 24px;">
+              <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 16px; margin-bottom: 24px;">
                 <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
                   <tr>
                     <td width="50%" style="padding: 4px 8px;">
@@ -252,7 +259,7 @@ export default async function handler(req, res) {
         from: "Chuck's Bakes <orders@chucksbakes.com>",
         to: [customerEmail],
         reply_to: 'orders@chucksbakes.com',
-        subject: `Order Received: ${orderIdDisplay}`,
+        subject: `We got your order! [${orderIdDisplay}]`,
         html: htmlContent,
       }),
     });
