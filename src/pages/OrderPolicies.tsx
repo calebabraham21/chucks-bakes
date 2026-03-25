@@ -6,7 +6,7 @@ export function OrderPolicies() {
       <div className="w-full max-w-2xl mx-auto px-4">
 
         <h1 className="font-bold text-black text-center mb-2">Order Policies</h1>
-        <p className="text-center text-gray-500 text-sm mb-10">
+        <p className="text-center text-gray-500 text-sm mb-10 max-w-md mx-auto">
           By placing an order with Chuck's Bakes, you agree to the following policies.
         </p>
 

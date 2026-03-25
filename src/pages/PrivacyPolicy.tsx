@@ -3,9 +3,7 @@ export function PrivacyPolicy() {
     <div className="bg-[#fde7ee] py-10">
       <div className="w-full max-w-2xl mx-auto px-4">
 
-        <h1 className="font-bold text-black text-center mb-2">Privacy Policy</h1>
-        <p className="text-center text-gray-500 text-sm mb-10">Last updated: {new Date().getFullYear()}</p>
-
+        <h1 className="font-bold text-black text-center mb-8">Privacy Policy</h1>
         <div className="bg-white rounded-2xl shadow-soft p-6 sm:p-8 space-y-8 text-gray-700 leading-relaxed">
 
           <p>
