@@ -120,7 +120,7 @@ export function Order() {
           ) : (
             <div className="bg-white rounded-xl shadow-soft p-4">
               {/* Navigation buttons - desktop only - sticky below header */}
-              <div className="hidden sm:flex gap-3 mb-5 pb-5 border-b border-[#ffd1dc] sticky top-20 bg-white z-10 -mx-4 px-4 -mt-4 pt-8">
+              <div className="hidden sm:flex gap-3 mb-5 py-3 border-b border-[#ffd1dc] sticky top-20 bg-white z-10 -mx-4 px-4">
                 {canGoBack && (
                   <Button
                     variant="secondary"
@@ -131,7 +131,6 @@ export function Order() {
                     Back
                   </Button>
                 )}
-
                 {showNextButton && (
                   <Button
                     variant="primary"
