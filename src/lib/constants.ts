@@ -20,7 +20,7 @@ export const ITEM_DESCRIPTIONS = {
 export const POLICIES = {
   advanceNotice: 'Orders must be placed at least 10 days in advance',
   cancellationFee: 'Cancellation fee is half of total once the order is confirmed',
-  payment: 'Full payment required to secure order (invoice sent once order details are finalized)',
+  payment: 'Full payment required to secure your order — an invoice will be sent once details are finalized. No payments are processed on this website.',
   pickup: 'All orders are pickup only in Arlington, VA',
   orderDenied: 'Orders may be denied at my discretion',
 } as const;

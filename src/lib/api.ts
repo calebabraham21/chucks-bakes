@@ -21,10 +21,14 @@ export function prepareOrdersForSubmission(
   cart: CartItem[],
   contact: ContactInfo
 ): RequestItem[] {
+  const cleanedContact = {
+    ...contact,
+    phone: contact.phone.replace(/\D/g, ''),
+  };
   return cart.map((item) => ({
     itemType: item.itemType,
     config: item.config,
-    contact,
+    contact: cleanedContact,
   }));
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowRight, Clock, CreditCard, MapPin } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Stepper } from '../components/ui/Stepper';
 import { ConfigureCake } from '../components/order/ConfigureCake';
@@ -90,21 +90,12 @@ export function Order() {
         {currentStep === 1 && (
           <div className="max-w-2xl mx-auto mb-4">
             <div className="bg-white/80 backdrop-blur-sm rounded-xl p-5 border border-[#ffc1d4]/50 shadow-sm">
-              <h3 className="font-bold text-[#000] mb-4 text-lg">📋 Before you order:</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-base">
-                <div className="flex items-start gap-3">
-                  <Clock className="w-6 h-6 text-[#ff6b9d] flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">{POLICIES.advanceNotice}</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <CreditCard className="w-6 h-6 text-[#ff6b9d] flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">{POLICIES.payment}</span>
-                </div>
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-6 h-6 text-[#ff6b9d] flex-shrink-0 mt-0.5" />
-                  <span className="text-gray-700">{POLICIES.pickup}</span>
-                </div>
-              </div>
+              <h3 className="font-bold text-[#000] mb-3 text-lg">Before you order:</h3>
+              <ul className="list-disc list-inside space-y-2 text-gray-700 text-base">
+                <li>{POLICIES.advanceNotice}</li>
+                <li>{POLICIES.payment}</li>
+                <li>{POLICIES.pickup}</li>
+              </ul>
               <p className="text-sm text-gray-500 mt-4 pt-3 border-t border-[#ffc1d4]/50">
                 ⚠️ {POLICIES.orderDenied}
               </p>

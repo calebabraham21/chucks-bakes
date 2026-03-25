@@ -76,7 +76,7 @@ function generateEmailHtml(orderData) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Order Confirmation - Chuck's Bakes</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f9fafb;">
+<body style="margin: 0; padding: 0; font-family: Georgia, 'Palatino Linotype', Palatino, 'Book Antiqua', serif; background-color: #f9fafb;">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f9fafb;">
     <tr>
       <td align="center" style="padding: 40px 20px;">

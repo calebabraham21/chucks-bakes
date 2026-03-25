@@ -17,22 +17,16 @@ export function Success() {
           <div className="bg-white rounded-2xl shadow-soft p-5 mb-8 text-left">
             <p className="text-sm text-gray-500 mb-1">Order ID</p>
             <p className="font-bold text-black font-mono tracking-wide">{lastOrderId}</p>
-            <p className="text-xs text-gray-400 mt-1">Save this for your records</p>
+            <p className="text-xs text-gray-400 mt-1">Check your email for a confirmation — if you don't see it, check your spam, junk, or promotions folder.</p>
           </div>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex justify-center">
           <Link
             to="/"
-            className="flex-1 bg-white border-2 border-black text-black hover:bg-[#d63f6f] hover:text-white font-bold py-3 px-6 rounded-lg shadow-soft transition-all duration-300 active:scale-95"
+            className="bg-white border-2 border-black text-black hover:bg-[#d63f6f] hover:text-white font-bold py-2 px-5 text-sm rounded-lg shadow-soft transition-all duration-300 active:scale-95"
           >
             Back to Home
-          </Link>
-          <Link
-            to="/order"
-            className="flex-1 bg-white border-2 border-black text-black hover:bg-[#d63f6f] hover:text-white font-bold py-3 px-6 rounded-lg shadow-soft transition-all duration-300 active:scale-95"
-          >
-            Place Another Order
           </Link>
         </div>
 
