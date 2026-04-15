@@ -22,6 +22,13 @@
 // Property key for the API token
 const TOKEN_PROPERTY = 'API_TOKEN';
 
+// Merchant notification email — change this to whatever address should receive new-order alerts.
+// IMPORTANT: The script owner must authorize the Mail service the first time this script is
+// run or deployed. Google will show an OAuth consent screen asking for "Send email on your behalf"
+// permission. You can trigger it by running testSetup() or testOrderSubmission() manually in the
+// Apps Script editor after saving, then accepting the permission prompt.
+const MERCHANT_NOTIFY_EMAIL = 'chucksbakes@gmail.com';
+
 // Maximum open orders per customer (checked by phone number)
 const MAX_OPEN_ORDERS_PER_CUSTOMER = 1;
 
@@ -147,8 +154,16 @@ function doPost(e) {
     
     // Add the order row
     addOrderRow(sheet, data, orderId);
-    
+
     Logger.log('=== SUCCESS: Row added ===');
+
+    // Send merchant notification — failures here must never block the success response
+    try {
+      sendMerchantNotification(data, orderId);
+    } catch (notifyError) {
+      Logger.log('Merchant notification failed (non-fatal): ' + notifyError.toString());
+    }
+
     return createResponse(200, 'Order received successfully', { success: true, orderId: orderId });
     
   } catch (error) {
@@ -324,6 +339,69 @@ function addOrderRow(sheet, data, orderId) {
       dataRange.setBackground('#fff5f7');
     }
   }
+}
+
+/**
+ * Send a plain-text notification email to the merchant after an order is saved.
+ * Uses MailApp, which counts against the Gmail daily send quota (~100/day for personal,
+ * 1,500/day for Workspace). Errors are caught by the caller and logged, not re-thrown.
+ */
+function sendMerchantNotification(data, orderId) {
+  const contact = data.contact || {};
+  const config  = data.config  || {};
+  const order   = data.order   || {};
+
+  const subject = 'New Chuck\'s Bakes order: ' + orderId;
+
+  // Build a compact plain-text body with the essentials for quick triage
+  const lines = [
+    'New order received on Chuck\'s Bakes.',
+    '',
+    'ORDER ID:    ' + orderId,
+    'ITEM TYPE:   ' + (data.itemType || 'unknown'),
+    '',
+    '--- Customer ---',
+    'Name:        ' + (contact.name  || ''),
+    'Email:       ' + (contact.email || ''),
+    'Phone:       ' + (contact.phone || ''),
+    'Target Date: ' + (contact.targetDate || ''),
+    'Notes:       ' + (contact.notes || '(none)'),
+    '',
+  ];
+
+  // Cake-specific details
+  if (data.itemType === 'cake' && data.config) {
+    lines.push('--- Cake Details ---');
+    lines.push('Size:        ' + (config.size          || ''));
+    lines.push('Flavor:      ' + (config.flavor        || ''));
+    lines.push('Filling:     ' + (config.filling       || ''));
+    lines.push('Frosting:    ' + (config.frostingFlavor || ''));
+
+    const toppings = (config.toppings && config.toppings.length > 0)
+      ? config.toppings.join(', ')
+      : '(none)';
+    lines.push('Toppings:    ' + toppings);
+
+    if (config.writingStyle && config.writingStyle !== 'none') {
+      lines.push('Writing:     ' + config.writingStyle
+        + (config.writingText ? ' — "' + config.writingText + '"' : ''));
+    }
+    if (config.theme)           lines.push('Theme:       ' + config.theme);
+    if (config.colors)          lines.push('Colors:      ' + config.colors);
+    if (config.specialRequests) lines.push('Special:     ' + config.specialRequests);
+
+  } else if (data.order) {
+    // Catch-all for non-cake item types
+    lines.push('--- Order Details ---');
+    if (order.quantity) lines.push('Quantity:    ' + order.quantity);
+    if (order.type)     lines.push('Type:        ' + order.type);
+  }
+
+  lines.push('');
+  lines.push('Log in to Google Sheets to review and update the order status.');
+
+  MailApp.sendEmail(MERCHANT_NOTIFY_EMAIL, subject, lines.join('\n'));
+  Logger.log('Merchant notification sent to ' + MERCHANT_NOTIFY_EMAIL);
 }
 
 /**
