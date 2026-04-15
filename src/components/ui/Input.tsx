@@ -53,7 +53,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             style={{ backgroundColor: '#ef4444', color: 'white' }}
             role="alert"
           >
-            ⚠️ {error}
+            {error}
           </div>
         )}
         

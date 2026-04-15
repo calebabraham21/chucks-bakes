@@ -97,7 +97,7 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
       />
 
       <div className="p-3 bg-[#fff5f7] rounded-xl border border-[#ffc1d4]">
-        <p className="text-sm text-gray-700">📍 {POLICIES.pickup}</p>
+        <p className="text-sm text-gray-700">{POLICIES.pickup}</p>
       </div>
 
       <div>
@@ -111,7 +111,7 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
           {...register('targetDate')}
         />
         <p className="text-xs text-gray-500 mt-1">
-          ⏰ {POLICIES.advanceNotice}
+          {POLICIES.advanceNotice}
         </p>
       </div>
 
@@ -135,14 +135,14 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
             style={{ backgroundColor: '#ef4444', color: 'white' }}
             role="alert"
           >
-            ⚠️ {errors.notes.message}
+            {errors.notes.message}
           </div>
         )}
       </div>
 
       {/* Policy reminder */}
       <div className="p-4 bg-[#fff5f7] rounded-xl border border-[#ffc1d4]">
-        <h3 className="font-medium text-black mb-2">📋 Reminder</h3>
+        <h3 className="font-medium text-black mb-2">Reminder</h3>
         <ul className="text-sm text-gray-700 space-y-1">
           <li>• {POLICIES.payment}</li>
           <li>• {POLICIES.cancellationFee}</li>

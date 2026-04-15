@@ -198,7 +198,7 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
 
       {isChocolateFrosting && (
         <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
-          <p className="text-sm text-amber-800">🍫 Chocolate frosted cakes cannot be dyed</p>
+          <p className="text-sm text-amber-800">Chocolate frosted cakes cannot be dyed</p>
         </div>
       )}
 
@@ -214,7 +214,7 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
 
       {writingStyle === 'fondant' && (
         <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
-          <p className="text-sm text-amber-800">✏️ Fondant writing adds $5 to your order</p>
+          <p className="text-sm text-amber-800">Fondant writing adds $5 to your order</p>
         </div>
       )}
 

@@ -18,7 +18,7 @@ interface ReviewAndAddProps {
   draft: OrderDraft;
 }
 
-function buildRows(draft: OrderDraft): { label: string; value: string }[] {
+export function buildRows(draft: OrderDraft): { label: string; value: string }[] {
   if (draft.itemType !== ITEMS.CAKE || !('config' in draft)) return [];
   const c = draft.config;
   const rows: { label: string; value: string }[] = [];
@@ -64,7 +64,7 @@ export function ReviewAndAdd({ draft }: ReviewAndAddProps) {
 
   const handleAddToCart = () => {
     addToCart(draft as CartItem);
-    showToast('✓ Item added to cart!', 'success');
+    showToast('Item added to cart!', 'success');
     setItemAdded(true);
     clearDraft();
   };

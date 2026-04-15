@@ -20,7 +20,7 @@ function ScrollToTop() {
   return null;
 }
 
-// 🚧 Toggle this to show/hide the coming soon page
+// Toggle this to show/hide the coming soon page
 // Set to false when you're ready to launch the full site!
 const COMING_SOON_MODE = false;
 

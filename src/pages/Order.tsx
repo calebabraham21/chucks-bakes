@@ -97,7 +97,7 @@ export function Order() {
                 <li>{POLICIES.pickup}</li>
               </ul>
               <p className="text-sm text-gray-500 mt-4 pt-3 border-t border-[#ffc1d4]/50">
-                ⚠️ {POLICIES.orderDenied}
+                {POLICIES.orderDenied}
               </p>
             </div>
           </div>

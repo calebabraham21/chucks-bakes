@@ -6,7 +6,7 @@ import { Modal } from './ui/Modal';
 import { Toast } from './ui/Toast';
 import { ContactForm } from './order/ContactForm';
 import { useOrderStore } from '../lib/state';
-import { makeItemSummary } from '../lib/summary';
+import { buildRows } from './order/ReviewAndAdd';
 import { ITEM_LABELS } from '../lib/constants';
 import { classNames } from '../lib/utils';
 import { submitOrderBatch, sendConfirmationEmail, prepareOrdersForSubmission } from '../lib/api';
@@ -375,9 +375,14 @@ export function Header() {
                         <X className="w-4 h-4 text-gray-600" />
                       </button>
                     </div>
-                    <pre className="whitespace-pre-wrap text-sm text-black font-sans leading-relaxed">
-                      {makeItemSummary(item)}
-                    </pre>
+                    <div className="divide-y divide-gray-200">
+                      {buildRows(item).map(({ label, value }) => (
+                        <div key={label} className="py-1.5 flex gap-3">
+                          <span className="text-xs font-medium text-gray-500 w-28 flex-shrink-0">{label}</span>
+                          <span className="text-xs text-black">{value}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
                 
