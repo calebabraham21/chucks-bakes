@@ -84,8 +84,8 @@ function generateEmailHtml(orderData) {
 
           <!-- Header -->
           <tr>
-            <td style="background-color: #ffa3ca; padding: 24px 32px; border-radius: 8px 8px 0 0; text-align: center;">
-              <p style="margin: 0; color: #ffffff; font-size: 20px; font-weight: 700; letter-spacing: 0.5px;">Chuck's Bakes</p>
+            <td style="background-color: #FDE7EE; padding: 24px 32px; border-radius: 8px 8px 0 0; text-align: center;">
+              <p style="margin: 0; color: #000000; font-size: 20px; font-weight: 700; letter-spacing: 0.5px;">Chuck's Bakes</p>
             </td>
           </tr>
 
