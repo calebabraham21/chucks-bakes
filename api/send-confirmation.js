@@ -268,10 +268,9 @@ export default async function handler(req, res) {
 
     if (!emailResponse.ok) {
       console.error('Resend API error:', emailResult);
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Failed to send confirmation email',
-        error: emailResult.message || 'Unknown email error'
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to send confirmation email'
       });
     }
 

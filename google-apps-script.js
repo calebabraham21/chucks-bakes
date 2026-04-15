@@ -168,7 +168,7 @@ function doPost(e) {
     
   } catch (error) {
     Logger.log('=== ERROR: ' + error.toString() + ' ===');
-    return createResponse(500, 'Error processing order: ' + error.message);
+    return createResponse(500, 'An error occurred while processing your order. Please try again.');
   }
 }
 
