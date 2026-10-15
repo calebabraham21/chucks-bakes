@@ -1,4 +1,4 @@
-export function PrivacyPolicy() {
+export default function PrivacyPolicy() {
   return (
     <div className="bg-[#fde7ee] py-10">
       <div className="w-full max-w-2xl mx-auto px-4">

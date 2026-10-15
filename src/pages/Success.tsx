@@ -1,8 +1,8 @@
 import { Link } from 'react-router';
 import { useOrderStore } from '../lib/state';
 
-export function Success() {
-  const lastOrderId = useOrderStore((state: any) => state.lastOrderId);
+export default function Success() {
+  const lastOrderId = useOrderStore((state) => state.lastOrderId);
 
   return (
     <div className="bg-[#fde7ee] py-16">

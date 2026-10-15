@@ -26,7 +26,7 @@ const RECIPES: Recipe[] = [
   // },
 ];
 
-export function RecipePost() {
+export default function RecipePost() {
   const { slug } = useParams<{ slug: string }>();
   const post = RECIPES.find(r => r.slug === slug);
 

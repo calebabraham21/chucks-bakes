@@ -1,14 +1,16 @@
+import logoSrc from '../assets/ChucksBakesLogo.png?w=320&format=webp';
+
 export function ComingSoon() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#fde7ee] via-[#fff5f7] to-[#ffc1d4] flex items-center justify-center p-4">
       <div className="text-center">
         <div className="mb-8">
-          <img 
-            src="/ChucksBakesLogo.png" 
-            alt="Chuck's Bakes" 
+          <img
+            src={logoSrc}
+            alt="Chuck's Bakes"
             className="h-32 sm:h-40 w-auto mx-auto"
-            width="200"
-            height="96"
+            width={320}
+            height={320}
           />
         </div>
         
