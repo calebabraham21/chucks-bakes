@@ -98,4 +98,5 @@ export const ORDER_EMAIL = 'orders@chucksbakes.com';
 export const MAX_THEME_LENGTH = 100;
 export const MAX_WRITING_LENGTH = 50;
 export const MAX_TOPPINGS = 4;
+export const MIN_LEAD_DAYS = 10;
 

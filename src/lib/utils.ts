@@ -2,27 +2,6 @@ import classNames from 'classnames';
 
 export { classNames };
 
-// Type guard utilities
-export function isDefined<T>(value: T | undefined | null): value is T {
-  return value !== undefined && value !== null;
-}
-
-// Format helper for display
-export function formatLabel(value: string): string {
-  return value
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
-// Accessibility helper for focus management
-export function moveFocusTo(elementId: string) {
-  const element = document.getElementById(elementId);
-  if (element) {
-    element.focus();
-  }
-}
-
 // localStorage helpers with error handling
 export function safeLocalStorageGet<T>(key: string, fallback: T): T {
   try {
@@ -50,3 +29,18 @@ export function safeLocalStorageRemove(key: string): void {
   }
 }
 
+/** Today's date plus `days`, as a local-time `YYYY-MM-DD` string (the format of `<input type="date">`). */
+export function localDateString(days = 0, from = new Date()): string {
+  const d = new Date(from.getFullYear(), from.getMonth(), from.getDate() + days);
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
+/** Formats up to 10 digits as `(555) 123-4567` while the user types. */
+export function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 10);
+  if (digits.length <= 3) return digits.length ? `(${digits}` : '';
+  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}

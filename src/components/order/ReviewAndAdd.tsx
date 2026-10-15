@@ -2,68 +2,27 @@ import { useState } from 'react';
 import { ShoppingBag, Plus } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
-import type { OrderDraft, CartItem } from '../../lib/validation';
+import type { OrderDraft } from '../../lib/validation';
 import { useOrderStore } from '../../lib/state';
-import {
-  ITEMS,
-  CAKE_SIZES,
-  CAKE_FLAVORS,
-  CAKE_FILLINGS,
-  SMBC_FLAVORS,
-  CAKE_TOPPINGS,
-  WRITING_STYLES,
-} from '../../lib/constants';
+import { buildRows } from '../../lib/summary';
 
 interface ReviewAndAddProps {
   draft: OrderDraft;
 }
 
-export function buildRows(draft: OrderDraft): { label: string; value: string }[] {
-  if (draft.itemType !== ITEMS.CAKE || !('config' in draft)) return [];
-  const c = draft.config;
-  const rows: { label: string; value: string }[] = [];
-
-  const size = CAKE_SIZES.find(s => s.value === c.size)?.label || c.size;
-  const flavor = CAKE_FLAVORS.find(f => f.value === c.flavor)?.label || c.flavor;
-  const filling = CAKE_FILLINGS.find(f => f.value === c.filling)?.label || c.filling;
-  const frosting = SMBC_FLAVORS.find(f => f.value === c.frostingFlavor)?.label || c.frostingFlavor;
-
-  rows.push({ label: 'Size', value: size });
-  rows.push({ label: 'Cake Flavor', value: flavor });
-  rows.push({ label: 'Filling', value: filling });
-  rows.push({ label: 'Frosting', value: `Swiss Meringue Buttercream — ${frosting}` });
-
-  if (c.toppings?.length) {
-    const labels = c.toppings.map(t => CAKE_TOPPINGS.find(tp => tp.value === t)?.label || t);
-    rows.push({ label: 'Toppings', value: labels.join(', ') });
-  }
-
-  if (c.writingStyle && c.writingStyle !== 'none') {
-    const styleLabel = WRITING_STYLES.find(w => w.value === c.writingStyle)?.label || c.writingStyle;
-    rows.push({ label: 'Writing Style', value: styleLabel });
-    if (c.writingText) rows.push({ label: 'Writing Text', value: `"${c.writingText}"` });
-  }
-
-  if (c.theme) rows.push({ label: 'Theme / Design', value: c.theme });
-  if (c.colors) rows.push({ label: 'Colors', value: c.colors });
-  if (c.specialRequests) rows.push({ label: 'Special Requests', value: c.specialRequests });
-
-  return rows;
-}
-
 export function ReviewAndAdd({ draft }: ReviewAndAddProps) {
   const [itemAdded, setItemAdded] = useState(false);
 
-  const addToCart = useOrderStore((state: any) => state.addToCart);
-  const clearDraft = useOrderStore((state: any) => state.clearDraft);
-  const cart = useOrderStore((state: any) => state.cart);
-  const openCart = useOrderStore((state: any) => state.openCart);
-  const showToast = useOrderStore((state: any) => state.showToast);
+  const addToCart = useOrderStore((state) => state.addToCart);
+  const clearDraft = useOrderStore((state) => state.clearDraft);
+  const cart = useOrderStore((state) => state.cart);
+  const openCart = useOrderStore((state) => state.openCart);
+  const showToast = useOrderStore((state) => state.showToast);
 
   const rows = buildRows(draft);
 
   const handleAddToCart = () => {
-    addToCart(draft as CartItem);
+    addToCart(draft);
     showToast('Item added to cart!', 'success');
     setItemAdded(true);
     clearDraft();
@@ -76,7 +35,7 @@ export function ReviewAndAdd({ draft }: ReviewAndAddProps) {
           className="w-20 h-20 mx-auto mb-4 rounded-2xl flex items-center justify-center success-pop shadow-lg"
           style={{ background: 'linear-gradient(135deg, #16a34a 0%, #22c55e 100%)' }}
         >
-          <ShoppingBag className="w-10 h-10 text-white" />
+          <ShoppingBag className="w-10 h-10 text-white" aria-hidden="true" />
         </div>
 
         <h2 className="text-2xl font-bold text-black mb-2">Added to Cart!</h2>
