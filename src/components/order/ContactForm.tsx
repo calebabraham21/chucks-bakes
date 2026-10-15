@@ -2,29 +2,17 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { contactInfoSchema, type ContactInfo } from '../../lib/validation';
 import { Input } from '../ui/Input';
-import { POLICIES } from '../../lib/constants';
+import { POLICIES, MIN_LEAD_DAYS } from '../../lib/constants';
+import { formatPhone, localDateString } from '../../lib/utils';
 
 interface ContactFormProps {
+  id?: string;
   defaultValues?: Partial<ContactInfo>;
   onSubmit: (data: ContactInfo) => void;
 }
 
-function formatPhone(value: string): string {
-  const digits = value.replace(/\D/g, '').slice(0, 10);
-  if (digits.length <= 3) return digits.length ? `(${digits}` : '';
-  if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
-}
-
-// Get minimum date (10 days from now)
-function getMinDate(): string {
-  const date = new Date();
-  date.setDate(date.getDate() + 10);
-  return date.toISOString().split('T')[0];
-}
-
-export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
-  const minDate = getMinDate();
+export default function ContactForm({ id, defaultValues, onSubmit }: ContactFormProps) {
+  const minDate = localDateString(MIN_LEAD_DAYS);
 
   const {
     register,
@@ -44,7 +32,7 @@ export function ContactForm({ defaultValues, onSubmit }: ContactFormProps) {
   });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form id={id} onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
       <div>
         <h2 id="step-heading" className="text-2xl font-semibold text-black mb-2" tabIndex={-1}>
           Contact Information
