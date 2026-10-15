@@ -210,7 +210,11 @@ export function Select({
                     role="option"
                     aria-selected={isSelected}
                     onMouseDown={(e) => e.preventDefault()}
-                    onMouseEnter={() => setActiveIndex(index)}
+                    onPointerMove={(e) => {
+                      // Scrolling the list under a stationary pointer must not steal the keyboard highlight.
+                      if (e.movementX === 0 && e.movementY === 0) return;
+                      if (index !== activeIndex) setActiveIndex(index);
+                    }}
                     onClick={() => handleSelect(option.value)}
                     className={classNames(
                       'flex items-center justify-between px-4 py-2.5 cursor-pointer transition-colors',
