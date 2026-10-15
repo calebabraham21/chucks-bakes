@@ -51,6 +51,8 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
   const frostingFlavor = watch('frostingFlavor');
   const flavor = watch('flavor');
   const filling = watch('filling');
+  const colors = watch('colors');
+  const iconChoices = { flavor, filling, frostingFlavor, toppings, colors };
 
   const isChocolateFrosting = frostingFlavor === 'chocolate';
 
@@ -81,7 +83,7 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
       <RadioGroup
         label="Size"
         name="size"
-        options={CAKE_SIZES.map(s => ({ value: s.value, label: s.label, icon: <CakeSizeIcon size={s.value} /> }))}
+        options={CAKE_SIZES.map(s => ({ value: s.value, label: s.label, icon: <CakeSizeIcon size={s.value} choices={iconChoices} selected={size === s.value} /> }))}
         value={size}
         onChange={(value) => setValue('size', value, { shouldValidate: true })}
         error={errors.size?.message}
