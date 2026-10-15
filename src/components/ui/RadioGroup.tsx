@@ -23,9 +23,9 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
     return (
       <fieldset ref={ref} className={classNames('w-full', className)}>
         {label && (
-          <legend className="block text-sm font-medium text-gray-700 mb-3">
+          <legend className="block text-base font-medium text-gray-700 mb-3">
             {label}
-            {props.required && <span className="text-bakery-pink-500 ml-1">*</span>}
+            {props.required && <span className="text-bakery-pink-500 ml-1" aria-hidden="true">*</span>}
           </legend>
         )}
         
@@ -53,7 +53,7 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
                     value={option.value}
                     checked={isChecked}
                     onChange={(e) => onChange?.(e.target.value)}
-                    className="w-4 h-4 text-bakery-pink-500 border-gray-300 focus:ring-bakery-pink-400"
+                    className="w-4 h-4 accent-bakery-pink-500 border-gray-300 focus:ring-bakery-pink-400"
                     {...props}
                   />
                   
