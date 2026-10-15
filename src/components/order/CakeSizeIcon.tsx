@@ -283,7 +283,7 @@ export function CakeSizeIcon({ size, choices, selected = false }: CakeSizeIconPr
   const boardRy = isRound ? r1(boardRx * TILT) : 2.5;
   const topR = topTier.rx + OVERHANG;
   const hasCherry = palette.toppings.has('cherries');
-  const candleX = r1(hasCherry ? topTier.cx - topR * 0.32 : topTier.cx);
+  const candleX = r1(hasCherry ? topTier.cx - topR * 0.36 : topTier.cx);
   const s = (offset: number) => r1(surface - offset);
 
   return (
@@ -352,7 +352,7 @@ export function CakeSizeIcon({ size, choices, selected = false }: CakeSizeIconPr
             ))}
 
             {hasCherry && (
-              <g className={styles.cherry} style={{ transform: selected ? `translateX(${r1(topR * 0.3)}px)` : undefined }}>
+              <g transform={selected ? `translate(${r1(topR * 0.32)} 0)` : undefined}>
                 <path d={`M${topTier.cx} ${s(2.6)}q0.4-2.4 2-3.4`} stroke="#5d8a3a" strokeWidth={0.6} strokeLinecap="round" />
                 <circle cx={topTier.cx} cy={s(1.3)} r={2} fill="#d7263d" stroke="#a3172b" strokeWidth={0.4} />
                 <circle cx={topTier.cx - 0.7} cy={s(2)} r={0.55} fill="#fff" fillOpacity={0.75} />
