@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { ShoppingBag, X, Trash2, Send, Menu, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Modal } from './ui/Modal';

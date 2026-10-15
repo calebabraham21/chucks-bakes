@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router';
 import { Calendar, ArrowLeft } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 

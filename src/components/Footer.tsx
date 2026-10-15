@@ -1,5 +1,6 @@
-import { Link } from 'react-router-dom';
-import { Mail, Instagram } from 'lucide-react';
+import { Link } from 'react-router';
+import { Mail } from 'lucide-react';
+import { InstagramIcon } from './icons/InstagramIcon';
 
 export function Footer() {
   return (
@@ -13,7 +14,7 @@ export function Footer() {
             href="mailto:orders@chucksbakes.com"
             className="flex items-center gap-2 text-black hover:text-[#ff6b9d] transition-colors group"
           >
-            <Mail className="w-5 h-5" />
+            <Mail className="w-5 h-5" aria-hidden="true" />
             <span className="font-medium">orders@chucksbakes.com</span>
           </a>
 
@@ -27,7 +28,7 @@ export function Footer() {
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-black hover:text-[#ff6b9d] transition-colors group"
           >
-            <Instagram className="w-5 h-5" />
+            <InstagramIcon className="w-5 h-5" />
             <span className="font-medium">@chucksbakes</span>
           </a>
         </div>
