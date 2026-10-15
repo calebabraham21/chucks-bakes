@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch, type SubmitErrorHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { cakeConfigSchema, type CakeConfig } from '../../lib/validation';
 import {
@@ -26,7 +26,7 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     formState: { errors },
   } = useForm<CakeConfig>({
@@ -45,14 +45,18 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
     },
   });
 
-  const toppings = watch('toppings') || [];
-  const size = watch('size');
-  const writingStyle = watch('writingStyle');
-  const frostingFlavor = watch('frostingFlavor');
-  const flavor = watch('flavor');
-  const filling = watch('filling');
-  const colors = watch('colors');
+  const [watchedToppings, size, writingStyle, frostingFlavor, flavor, filling, colors] = useWatch({
+    control,
+    name: ['toppings', 'size', 'writingStyle', 'frostingFlavor', 'flavor', 'filling', 'colors'],
+  });
+  const toppings = watchedToppings || [];
   const iconChoices = { flavor, filling, frostingFlavor, toppings, colors };
+
+  // The form opts out of native validation, so move focus to the size picker ourselves when it's the problem.
+  const handleInvalid: SubmitErrorHandler<CakeConfig> = (formErrors, event) => {
+    if (!formErrors.size) return;
+    (event?.target as HTMLFormElement | undefined)?.querySelector<HTMLInputElement>('input[name="size"]')?.focus();
+  };
 
   const isChocolateFrosting = frostingFlavor === 'chocolate';
 
@@ -69,7 +73,7 @@ export function ConfigureCake({ defaultValues, onSubmit }: ConfigureCakeProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit, handleInvalid)} noValidate className="space-y-6">
       <div>
         <h2 id="step-heading" className="text-2xl font-semibold text-black mb-2" tabIndex={-1}>
           Customize Your Cake
