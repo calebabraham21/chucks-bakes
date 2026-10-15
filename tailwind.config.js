@@ -1,3 +1,5 @@
+import colors from 'tailwindcss/colors'
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -43,6 +45,9 @@ export default {
     },
     extend: {
       colors: {
+        // `theme.colors` above replaces Tailwind's palette, so any other scale used in markup must be listed here
+        red: colors.red,
+        amber: colors.amber,
         // Pink & Brown bakery palette
         'bakery-pink': {
           50: '#fff5f7',
@@ -74,8 +79,8 @@ export default {
         'bakery-soft-pink': '#ffddeb',
       },
       fontFamily: {
-        sans: ['Lora', 'Georgia', 'serif'],
-        serif: ['Lora', 'Georgia', 'serif'],
+        sans: ['"Lora Variable"', 'Lora', 'Georgia', 'serif'],
+        serif: ['"Lora Variable"', 'Lora', 'Georgia', 'serif'],
       },
       fontWeight: {
         normal: '400',

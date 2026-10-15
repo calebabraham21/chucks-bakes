@@ -26,7 +26,7 @@ export function Stepper({ steps, currentStep }: StepperProps) {
                 {/* Step circle */}
                 <div
                   className={classNames(
-                    'w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-smooth',
+                    'relative z-10 w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-smooth',
                     isComplete && 'bg-[#ff6b9d] text-white',
                     isCurrent && 'bg-[#000000] text-white ring-4 ring-[#ffd1dc]',
                     isUpcoming && 'bg-[#ffd1dc] text-[#525252]'
@@ -56,7 +56,7 @@ export function Stepper({ steps, currentStep }: StepperProps) {
               {index < steps.length - 1 && (
                 <div
                   className={classNames(
-                    'absolute top-5 left-1/2 w-full h-0.5 transition-smooth -z-10',
+                    'absolute top-5 left-1/2 w-full h-0.5 transition-smooth',
                     isComplete ? 'bg-[#ff6b9d]' : 'bg-[#ffd1dc]'
                   )}
                   aria-hidden="true"

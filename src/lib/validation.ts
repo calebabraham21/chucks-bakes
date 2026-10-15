@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { ITEMS, MAX_THEME_LENGTH, MAX_WRITING_LENGTH, MAX_TOPPINGS } from './constants';
+import { ITEMS, MAX_THEME_LENGTH, MAX_WRITING_LENGTH, MAX_TOPPINGS, MIN_LEAD_DAYS } from './constants';
+import { localDateString } from './utils';
 
 // Cake configuration schema
 export const cakeConfigSchema = z.object({
@@ -24,7 +25,10 @@ export const contactInfoSchema = z.object({
   phone: z.string()
     .refine(val => val.replace(/\D/g, '').length === 10, 'Please enter a valid 10-digit phone number'),
   deliveryMethod: z.literal('pickup').default('pickup'),
-  targetDate: z.string().min(1, 'Please select a target date'),
+  targetDate: z.string()
+    .min(1, 'Please select a target date')
+    // ISO dates compare correctly as strings; evaluated per call so "today" stays current
+    .refine(val => val >= localDateString(MIN_LEAD_DAYS), `Please choose a date at least ${MIN_LEAD_DAYS} days from today`),
   notes: z.string().optional(),
 });
 

@@ -1,24 +1,21 @@
 import { create } from 'zustand';
-import type { OrderDraft, CartItem, ContactInfo } from './validation';
+import type { OrderDraft, CartItem } from './validation';
 import { safeLocalStorageGet, safeLocalStorageSet, safeLocalStorageRemove } from './utils';
 
 const ORDER_DRAFT_KEY = 'chucks-bakes-order-draft';
 const CART_KEY = 'chucks-bakes-cart';
 const CURRENT_STEP_KEY = 'chucks-bakes-current-step';
 const LAST_ORDER_ID_KEY = 'chucks-bakes-last-order-id';
-const CHECKOUT_CONTACT_KEY = 'chucks-bakes-checkout-contact';
 
-interface OrderState {
+export type ToastType = 'success' | 'error' | 'info';
+
+export interface OrderState {
   // Current order being built (on Order page)
   orderDraft: OrderDraft | null;
   currentStep: number;
 
   // Shopping cart
   cart: CartItem[];
-
-  // Checkout state
-  checkoutStep: number; // 1 = view cart, 2 = contact form, 3 = review
-  checkoutContact: ContactInfo | null;
 
   // Last submitted order ID (for success page)
   lastOrderId: string | null;
@@ -27,7 +24,7 @@ interface OrderState {
   isCartOpen: boolean;
 
   // Toast state (global)
-  toast: { message: string; type: 'success' | 'error' | 'info'; isVisible: boolean };
+  toast: { message: string; type: ToastType; isVisible: boolean };
 
   // Order page actions
   setOrderDraft: (draft: OrderDraft | null) => void;
@@ -38,47 +35,37 @@ interface OrderState {
   addToCart: (item: CartItem) => boolean;
   removeFromCart: (index: number) => void;
   clearCart: () => void;
-  isCartFull: () => boolean;
 
   // Cart modal actions
   openCart: () => void;
   closeCart: () => void;
 
   // Toast actions
-  showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
+  showToast: (message: string, type?: ToastType) => void;
   hideToast: () => void;
-
-  // Checkout actions
-  setCheckoutStep: (step: number) => void;
-  setCheckoutContact: (contact: ContactInfo | null) => void;
-  resetCheckout: () => void;
 
   // Success page
   setLastOrderId: (orderId: string | null) => void;
 
   // Persistence
   loadFromLocalStorage: () => void;
-  saveToLocalStorage: () => void;
 }
 
 export const useOrderStore = create<OrderState>((set, get) => ({
   orderDraft: null,
   currentStep: 1,
   cart: [],
-  checkoutStep: 1,
-  checkoutContact: null,
   lastOrderId: null,
   isCartOpen: false,
-  toast: { message: '', type: 'success' as const, isVisible: false },
+  toast: { message: '', type: 'success', isVisible: false },
 
-  setOrderDraft: (draft: OrderDraft | null) => {
+  setOrderDraft: (draft) => {
     set({ orderDraft: draft });
-    const state = get();
     safeLocalStorageSet(ORDER_DRAFT_KEY, draft);
-    safeLocalStorageSet(CURRENT_STEP_KEY, state.currentStep);
+    safeLocalStorageSet(CURRENT_STEP_KEY, get().currentStep);
   },
 
-  setCurrentStep: (step: number) => {
+  setCurrentStep: (step) => {
     set({ currentStep: step });
     safeLocalStorageSet(CURRENT_STEP_KEY, step);
   },
@@ -89,8 +76,8 @@ export const useOrderStore = create<OrderState>((set, get) => ({
     safeLocalStorageRemove(CURRENT_STEP_KEY);
   },
 
-  addToCart: (item: CartItem) => {
-    set((state: OrderState) => {
+  addToCart: (item) => {
+    set((state) => {
       const newCart = [...state.cart, item];
       safeLocalStorageSet(CART_KEY, newCart);
       return { cart: newCart };
@@ -98,9 +85,9 @@ export const useOrderStore = create<OrderState>((set, get) => ({
     return true;
   },
 
-  removeFromCart: (index: number) => {
-    set((state: OrderState) => {
-      const newCart = state.cart.filter((_: CartItem, i: number) => i !== index);
+  removeFromCart: (index) => {
+    set((state) => {
+      const newCart = state.cart.filter((_, i) => i !== index);
       safeLocalStorageSet(CART_KEY, newCart);
       return { cart: newCart };
     });
@@ -111,8 +98,6 @@ export const useOrderStore = create<OrderState>((set, get) => ({
     safeLocalStorageRemove(CART_KEY);
   },
 
-  isCartFull: () => false,
-
   openCart: () => {
     set({ isCartOpen: true });
   },
@@ -121,10 +106,10 @@ export const useOrderStore = create<OrderState>((set, get) => ({
     set({ isCartOpen: false });
   },
 
-  showToast: (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+  showToast: (message, type = 'success') => {
     set({ toast: { message, type, isVisible: true } });
     setTimeout(() => {
-      set((state: OrderState) => {
+      set((state) => {
         if (state.toast.message === message) {
           return { toast: { ...state.toast, isVisible: false } };
         }
@@ -134,28 +119,10 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   },
 
   hideToast: () => {
-    set((state: OrderState) => ({ toast: { ...state.toast, isVisible: false } }));
+    set((state) => ({ toast: { ...state.toast, isVisible: false } }));
   },
 
-  setCheckoutStep: (step: number) => {
-    set({ checkoutStep: step });
-  },
-
-  setCheckoutContact: (contact: ContactInfo | null) => {
-    set({ checkoutContact: contact });
-    if (contact) {
-      safeLocalStorageSet(CHECKOUT_CONTACT_KEY, contact);
-    } else {
-      safeLocalStorageRemove(CHECKOUT_CONTACT_KEY);
-    }
-  },
-
-  resetCheckout: () => {
-    set({ checkoutStep: 1, checkoutContact: null });
-    safeLocalStorageRemove(CHECKOUT_CONTACT_KEY);
-  },
-
-  setLastOrderId: (orderId: string | null) => {
+  setLastOrderId: (orderId) => {
     set({ lastOrderId: orderId });
     if (orderId) {
       safeLocalStorageSet(LAST_ORDER_ID_KEY, orderId);
@@ -165,26 +132,12 @@ export const useOrderStore = create<OrderState>((set, get) => ({
   },
 
   loadFromLocalStorage: () => {
-    const draft = safeLocalStorageGet<OrderDraft | null>(ORDER_DRAFT_KEY, null);
-    const step = safeLocalStorageGet<number>(CURRENT_STEP_KEY, 1);
-    const cart = safeLocalStorageGet<CartItem[]>(CART_KEY, []);
-    const checkoutContact = safeLocalStorageGet<ContactInfo | null>(CHECKOUT_CONTACT_KEY, null);
-    const lastOrderId = safeLocalStorageGet<string | null>(LAST_ORDER_ID_KEY, null);
-
     set({
-      orderDraft: draft,
-      currentStep: step,
-      cart,
-      checkoutContact,
-      lastOrderId,
+      orderDraft: safeLocalStorageGet<OrderDraft | null>(ORDER_DRAFT_KEY, null),
+      currentStep: safeLocalStorageGet<number>(CURRENT_STEP_KEY, 1),
+      cart: safeLocalStorageGet<CartItem[]>(CART_KEY, []),
+      lastOrderId: safeLocalStorageGet<string | null>(LAST_ORDER_ID_KEY, null),
     });
-  },
-
-  saveToLocalStorage: () => {
-    const state = get();
-    safeLocalStorageSet(ORDER_DRAFT_KEY, state.orderDraft);
-    safeLocalStorageSet(CURRENT_STEP_KEY, state.currentStep);
-    safeLocalStorageSet(CART_KEY, state.cart);
   },
 }));
 

@@ -35,7 +35,13 @@ export function prepareOrdersForSubmission(
 /**
  * Submit a single order request to the API
  */
-export async function submitOrder(orderData: RequestItem & { website?: string }): Promise<SubmitOrderResponse> {
+type OrderSubmission = RequestItem & {
+  website?: string;
+  orderId?: string;
+  skipLimitCheck?: boolean;
+};
+
+export async function submitOrder(orderData: OrderSubmission): Promise<SubmitOrderResponse> {
   try {
     const response = await fetch('/api/order', {
       method: 'POST',
@@ -57,7 +63,7 @@ export async function submitOrder(orderData: RequestItem & { website?: string })
       data = JSON.parse(text);
     } catch (parseError) {
       console.error('Failed to parse response:', text);
-      throw new Error('Invalid response from server');
+      throw new Error('Invalid response from server', { cause: parseError });
     }
 
     if (!response.ok) {
@@ -117,13 +123,13 @@ export async function submitOrderBatch(orders: (RequestItem & { website?: string
       console.log(`[OrderBatch] Submitting item ${i + 1}/${orders.length}, skipLimitCheck: ${!isFirstItem}`);
       
       // Add orderId and skipLimitCheck flag to the request
-      const orderWithId = {
+      const orderWithId: OrderSubmission = {
         ...order,
         orderId: orderId,
         skipLimitCheck: !isFirstItem, // Only check limit on first item
       };
       
-      const result = await submitOrder(orderWithId as any);
+      const result = await submitOrder(orderWithId);
       
       console.log(`[OrderBatch] Item ${i + 1} result:`, result.success ? 'SUCCESS' : `FAILED - ${result.message}`);
       

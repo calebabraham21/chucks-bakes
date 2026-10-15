@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Stepper } from '../components/ui/Stepper';
@@ -6,7 +7,6 @@ import { ConfigureCake } from '../components/order/ConfigureCake';
 import { ReviewAndAdd } from '../components/order/ReviewAndAdd';
 import { useOrderStore } from '../lib/state';
 import { ITEMS, POLICIES } from '../lib/constants';
-import type { ItemType } from '../lib/constants';
 import type { CakeConfig } from '../lib/validation';
 
 const STEPS = [
@@ -15,26 +15,18 @@ const STEPS = [
   { id: 3, label: 'Add to Cart' },
 ];
 
-export function Order() {
-  const orderDraft = useOrderStore((state: any) => state.orderDraft);
-  const currentStep = useOrderStore((state: any) => state.currentStep);
-  const setOrderDraft = useOrderStore((state: any) => state.setOrderDraft);
-  const setCurrentStep = useOrderStore((state: any) => state.setCurrentStep);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+export default function Order() {
+  const orderDraft = useOrderStore((state) => state.orderDraft);
+  const currentStep = useOrderStore((state) => state.currentStep);
+  const setOrderDraft = useOrderStore((state) => state.setOrderDraft);
+  const setCurrentStep = useOrderStore((state) => state.setCurrentStep);
+  const stepRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setIsTransitioning(true);
-    const timer = setTimeout(() => setIsTransitioning(false), 50);
-
-    const heading = document.getElementById('step-heading');
-    if (heading) {
-      heading.focus();
-    }
-
-    return () => clearTimeout(timer);
+    stepRef.current?.querySelector<HTMLElement>('#step-heading')?.focus();
   }, [currentStep]);
 
-  const handleItemSelect = (_itemType: ItemType) => {
+  const handleItemSelect = () => {
     setOrderDraft({
       itemType: ITEMS.CAKE,
       config: {
@@ -70,17 +62,14 @@ export function Order() {
   };
 
   const handleNext = () => {
-    const form = document.querySelector('form');
-    if (form) {
-      form.requestSubmit();
-    }
+    stepRef.current?.querySelector('form')?.requestSubmit();
   };
 
   const canGoBack = currentStep > 1;
   const showNextButton = currentStep === 2;
 
   return (
-    <div className="bg-[#fde7ee] pb-24 sm:pb-8">
+    <div className="bg-[#fde7ee] pb-8">
       <div className="container mx-auto py-3 sm:py-5">
         <h1 className="font-bold text-[#000000] mb-3 sm:mb-5 text-center">
           Order Process
@@ -111,7 +100,8 @@ export function Order() {
           {currentStep === 1 ? (
             <div className="flex justify-center pt-4">
               <button
-                onClick={() => handleItemSelect(ITEMS.CAKE)}
+                type="button"
+                onClick={handleItemSelect}
                 className="order-now-btn font-bold py-3 px-8 rounded-lg shadow-soft active:scale-95"
               >
                 Order Now
@@ -143,10 +133,7 @@ export function Order() {
                 )}
               </div>
 
-              <div
-                key={currentStep}
-                className={`step-content ${isTransitioning ? 'step-entering' : 'step-entered'}`}
-              >
+              <div key={currentStep} ref={stepRef} className="step-content">
                 {currentStep === 2 && orderDraft && (
                   <ConfigureCake
                     defaultValues={'config' in orderDraft ? orderDraft.config : undefined}
@@ -163,7 +150,8 @@ export function Order() {
         </div>
       </div>
 
-      {/* Sticky bottom navigation - mobile only */}
+      {/* Sticky bottom navigation - mobile only. Portaled so the page transition transform can't offset it. */}
+      {(canGoBack || showNextButton) && createPortal(
       <div className="sm:hidden sticky-cta-bar">
         <div className="mobile-container py-3">
           <div className="flex gap-3">
@@ -171,11 +159,10 @@ export function Order() {
               <Button
                 variant="secondary"
                 onClick={handleBack}
-                size="lg"
                 className="flex-shrink-0 flex items-center gap-2"
               >
                 <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-                <span className="sr-only sm:not-sr-only">Back</span>
+                <span className="sr-only">Back</span>
               </Button>
             )}
 
@@ -183,9 +170,8 @@ export function Order() {
               <Button
                 variant="primary"
                 onClick={handleNext}
-                size="lg"
                 fullWidth={!canGoBack}
-                className="flex items-center justify-center gap-2"
+                className="flex-1 flex items-center justify-center gap-2"
               >
                 <span>Continue to {STEPS[currentStep]?.label}</span>
                 <ArrowRight className="w-5 h-5" aria-hidden="true" />
@@ -193,7 +179,9 @@ export function Order() {
             )}
           </div>
         </div>
-      </div>
+      </div>,
+      document.body
+      )}
     </div>
   );
 }

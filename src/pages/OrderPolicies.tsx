@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
-export function OrderPolicies() {
+export default function OrderPolicies() {
   return (
     <div className="bg-[#fde7ee] py-10">
       <div className="w-full max-w-2xl mx-auto px-4">
