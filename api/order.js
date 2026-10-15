@@ -105,7 +105,7 @@ export default async function handler(req, res) {
       result = JSON.parse(responseText);
     } catch (parseError) {
       console.error('Failed to parse response:', responseText);
-      throw new Error('Invalid response from Google Sheets');
+      throw new Error('Invalid response from Google Sheets', { cause: parseError });
     }
 
     if (result.statusCode !== 200) {

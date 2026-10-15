@@ -9,51 +9,64 @@
  * - This serverless function runs on the server, so it can safely access the key
  */
 
+const HTML_ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
+/**
+ * Escape customer-supplied text before interpolating it into the email HTML
+ */
+export function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (ch) => HTML_ESCAPES[ch]);
+}
+
 /**
  * Generate HTML email template for order confirmation
  */
-function generateEmailHtml(orderData) {
-  const { orders, orderIds, customerEmail, customerName } = orderData;
+export function generateEmailHtml(orderData) {
+  const { orders, orderIds } = orderData;
+  const customerName = escapeHtml(orderData.customerName);
   
   // Format order IDs for display
-  const orderIdDisplay = orderIds.length === 1 
+  const orderIdDisplay = escapeHtml(orderIds.length === 1 
     ? orderIds[0] 
-    : orderIds.join(', ');
+    : orderIds.join(', '));
   
   // Get fulfillment info from first order (they should all have same contact)
   const contact = orders[0]?.contact || {};
   const deliveryMethod = contact.deliveryMethod === 'delivery' ? 'Delivery' : 'Pickup';
   const rawDate = contact.targetDate;
-  const targetDate = rawDate
+  const targetDate = escapeHtml(rawDate
     ? new Date(rawDate + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-    : 'Not specified';
+    : 'Not specified');
   
   // Generate items HTML
   const itemsHtml = orders.map((order, index) => {
     const itemType = order.itemType || 'Unknown Item';
-    const itemLabel = itemType.charAt(0).toUpperCase() + itemType.slice(1);
+    const itemLabel = escapeHtml(itemType.charAt(0).toUpperCase() + itemType.slice(1));
     
     let detailsHtml = '';
     
     if (order.itemType === 'cake' && order.config) {
       const config = order.config;
+      const toppings = Array.isArray(config.toppings) ? config.toppings.join(', ') : config.toppings;
+      // The order form sends colors as free text; older payloads may send an array
+      const colors = Array.isArray(config.colors) ? config.colors.join(', ') : config.colors;
       detailsHtml = `
         <ul style="margin: 8px 0 0 0; padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.7;">
-          <li><strong>Size:</strong> ${config.size || 'Not specified'}</li>
-          <li><strong>Flavor:</strong> ${config.flavor || 'Not specified'}</li>
-          <li><strong>Filling:</strong> ${config.filling || 'Not specified'}</li>
-          <li><strong>Frosting:</strong> ${config.frostingFlavor || 'Not specified'}</li>
-          ${config.toppings?.length ? `<li><strong>Toppings:</strong> ${config.toppings.join(', ')}</li>` : ''}
-          ${config.writingText ? `<li><strong>Writing:</strong> "${config.writingText}" (${config.writingStyle || 'standard'})</li>` : ''}
-          ${config.theme ? `<li><strong>Theme:</strong> ${config.theme}</li>` : ''}
-          ${config.colors?.length ? `<li><strong>Colors:</strong> ${config.colors.join(', ')}</li>` : ''}
-          ${config.specialRequests ? `<li><strong>Special Requests:</strong> ${config.specialRequests}</li>` : ''}
+          <li><strong>Size:</strong> ${escapeHtml(config.size || 'Not specified')}</li>
+          <li><strong>Flavor:</strong> ${escapeHtml(config.flavor || 'Not specified')}</li>
+          <li><strong>Filling:</strong> ${escapeHtml(config.filling || 'Not specified')}</li>
+          <li><strong>Frosting:</strong> ${escapeHtml(config.frostingFlavor || 'Not specified')}</li>
+          ${toppings ? `<li><strong>Toppings:</strong> ${escapeHtml(toppings)}</li>` : ''}
+          ${config.writingText ? `<li><strong>Writing:</strong> "${escapeHtml(config.writingText)}" (${escapeHtml(config.writingStyle || 'standard')})</li>` : ''}
+          ${config.theme ? `<li><strong>Theme:</strong> ${escapeHtml(config.theme)}</li>` : ''}
+          ${colors ? `<li><strong>Colors:</strong> ${escapeHtml(colors)}</li>` : ''}
+          ${config.specialRequests ? `<li><strong>Special Requests:</strong> ${escapeHtml(config.specialRequests)}</li>` : ''}
         </ul>
       `;
     } else if (order.order) {
       detailsHtml = `
         <ul style="margin: 8px 0 0 0; padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.7;">
-          <li><strong>Quantity:</strong> ${order.order.quantity || 'Not specified'}</li>
+          <li><strong>Quantity:</strong> ${escapeHtml(order.order.quantity || 'Not specified')}</li>
         </ul>
       `;
     }
@@ -135,7 +148,7 @@ function generateEmailHtml(orderData) {
               <!-- Notes -->
               <div style="margin-top: 16px; padding: 12px; background-color: #f9fafb; border-radius: 6px;">
                 <p style="margin: 0; color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Additional Notes</p>
-                <p style="margin: 8px 0 0 0; color: #4b5563; font-size: 14px;">${contact.notes}</p>
+                <p style="margin: 8px 0 0 0; color: #4b5563; font-size: 14px;">${escapeHtml(contact.notes)}</p>
               </div>
               ` : ''}
               
@@ -244,7 +257,6 @@ export default async function handler(req, res) {
     const htmlContent = generateEmailHtml({
       orders,
       orderIds,
-      customerEmail,
       customerName,
     });
 
